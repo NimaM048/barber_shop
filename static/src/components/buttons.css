@@ -1,0 +1,113 @@
+@layer components {
+  /* Shared court buttons */
+  .btn-court {
+    @apply relative inline-flex items-center justify-center gap-3 overflow-hidden border border-ivory/80 bg-transparent px-8 py-3.5 text-sm font-light tracking-wide text-ivory transition duration-500;
+  }
+
+  .btn-court::before {
+    content: "";
+    @apply absolute inset-0 -z-10 origin-right scale-x-0 bg-ivory transition-transform duration-500 ease-out;
+  }
+
+  .btn-court:hover {
+    @apply text-court-900;
+  }
+
+  .btn-court:hover::before {
+    @apply origin-left scale-x-100;
+  }
+
+  .btn-court-solid {
+    @apply inline-flex items-center justify-center gap-3 border border-court-900 bg-court-900 px-8 py-3.5 text-sm font-light tracking-wide text-ivory transition duration-500 hover:bg-court-800;
+  }
+
+  .btn-court-fill {
+    @apply inline-flex items-center justify-center gap-3 border border-ivory bg-ivory px-8 py-3.5 text-sm font-medium tracking-wide text-court-900 transition duration-500 hover:bg-transparent hover:text-ivory;
+  }
+
+  .btn-court-light {
+    @apply inline-flex items-center justify-center gap-3 border border-court-900/20 bg-transparent px-8 py-3.5 text-sm font-light tracking-wide text-court-900 transition duration-500 hover:border-court-900 hover:bg-court-900 hover:text-ivory;
+  }
+
+  /* Architectural border-draw CTA */
+  .btn-draw {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #071916;
+    background: #f7f4ef;
+    border: 1px solid transparent;
+    transition:
+      color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .btn-draw-border {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .btn-draw-border svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .btn-draw-border rect {
+    fill: none;
+    stroke: #f7f4ef;
+    stroke-width: 1;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .btn-draw:hover {
+    color: #f7f4ef;
+    background: transparent;
+  }
+
+  .btn-draw:hover .btn-draw-border rect {
+    stroke-dashoffset: 0;
+  }
+
+  .btn-draw:focus-visible .btn-draw-border rect {
+    stroke-dashoffset: 0;
+  }
+
+  .btn-quiet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: rgba(247, 244, 239, 0.55);
+    transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .btn-quiet:hover {
+    color: #f7f4ef;
+  }
+
+  /* Magnetic micro-interaction */
+  .btn-magnetic {
+    will-change: transform;
+  }
+
+  .btn-magnetic:hover .btn-arrow {
+    transform: translateX(-0.35rem);
+  }
+}

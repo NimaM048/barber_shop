@@ -1,0 +1,807 @@
+@layer components {
+  /* Consultation guides */
+
+  .consult-atmosphere {
+
+    background:
+
+      radial-gradient(ellipse 55% 40% at 80% 0%, rgba(74, 122, 110, 0.14), transparent 55%),
+
+      radial-gradient(ellipse 45% 35% at 5% 70%, rgba(26, 58, 52, 0.5), transparent 50%),
+
+      #071916;
+
+  }
+
+  .consult-orb {
+
+    position: absolute;
+
+    border-radius: 9999px;
+
+    filter: blur(70px);
+
+    pointer-events: none;
+
+  }
+
+  .consult-orb-a {
+
+    width: min(42vw, 380px);
+
+    height: min(42vw, 380px);
+
+    top: 5%;
+
+    right: -5%;
+
+    background: rgba(106, 151, 140, 0.16);
+
+  }
+
+  .consult-orb-b {
+
+    width: min(36vw, 320px);
+
+    height: min(36vw, 320px);
+
+    bottom: 15%;
+
+    left: -4%;
+
+    background: rgba(247, 244, 239, 0.04);
+
+  }
+
+  .consult-progress {
+
+    position: fixed;
+
+    top: 0;
+
+    inset-inline: 0;
+
+    z-index: 60;
+
+    height: 2px;
+
+    background: transparent;
+
+  }
+
+  .consult-progress-bar {
+
+    height: 100%;
+
+    width: 0;
+
+    background: #f7f4ef;
+
+    transition: width 0.1s linear;
+
+  }
+
+  .consult-hub-grid {
+
+    display: grid;
+
+    gap: 1.15rem;
+
+  }
+
+  @media (min-width: 768px) {
+
+    .consult-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  }
+
+  .consult-hub-card {
+
+    position: relative;
+
+    display: block;
+
+    min-height: 26rem;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(247, 244, 239, 0.1);
+
+    animation: bookingFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    transition: border-color 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+  }
+
+  .consult-hub-card:hover {
+
+    border-color: rgba(247, 244, 239, 0.32);
+
+    transform: translateY(-4px);
+
+  }
+
+  .consult-hub-card img {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+
+  }
+
+  .consult-hub-card:hover img { transform: scale(1.05); }
+
+  .consult-hub-veil {
+
+    position: absolute;
+
+    inset: 0;
+
+    background: linear-gradient(to top, rgba(7, 25, 22, 0.96) 0%, rgba(7, 25, 22, 0.4) 50%, transparent 100%);
+
+  }
+
+  .consult-hub-body {
+
+    position: relative;
+
+    z-index: 1;
+
+    margin-top: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    height: 100%;
+
+    min-height: 26rem;
+
+    padding: 1.75rem;
+
+  }
+
+  .consult-hub-meta {
+
+    font-size: 0.65rem;
+
+    letter-spacing: 0.18em;
+
+    color: rgba(247, 244, 239, 0.4);
+
+  }
+
+  .consult-hub-body h2 {
+
+    margin-top: 0.65rem;
+
+    font-size: 1.75rem;
+
+    font-weight: 300;
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-hub-desc {
+
+    margin-top: 0.6rem;
+
+    font-size: 0.9rem;
+
+    line-height: 1.8;
+
+    color: rgba(247, 244, 239, 0.5);
+
+  }
+
+  .consult-hub-stats {
+
+    margin-top: 0.9rem;
+
+    font-size: 0.75rem;
+
+    color: rgba(247, 244, 239, 0.35);
+
+  }
+
+  .consult-hub-cta {
+
+    margin-top: 1.25rem;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.45rem;
+
+    font-size: 0.85rem;
+
+    color: rgba(247, 244, 239, 0.85);
+
+    transition: transform 0.4s ease;
+
+  }
+
+  .consult-hub-card:hover .consult-hub-cta { transform: translateX(-0.25rem); }
+
+  .consult-toolbar {
+
+    display: grid;
+
+    gap: 0.85rem;
+
+    position: sticky;
+
+    top: 5.5rem;
+
+    z-index: 20;
+
+    margin-inline: -0.25rem;
+
+    padding: 0.85rem 0.25rem 1.1rem;
+
+    background: linear-gradient(
+
+      to bottom,
+
+      rgba(7, 25, 22, 0.96) 55%,
+
+      rgba(7, 25, 22, 0.72) 85%,
+
+      transparent 100%
+
+    );
+
+    backdrop-filter: blur(10px);
+
+  }
+
+  @media (min-width: 768px) {
+
+    .consult-toolbar {
+
+      grid-template-columns: 1fr auto auto;
+
+      align-items: center;
+
+      top: 6rem;
+
+    }
+
+  }
+
+  .consult-filters {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 0.45rem;
+
+  }
+
+  .consult-chip {
+
+    border: 1px solid rgba(247, 244, 239, 0.15);
+
+    padding: 0.45rem 0.85rem;
+
+    font-size: 0.75rem;
+
+    color: rgba(247, 244, 239, 0.5);
+
+    transition: border-color 0.35s ease, background-color 0.35s ease, color 0.35s ease;
+
+  }
+
+  .consult-chip:hover,
+
+  .consult-chip.is-active {
+
+    border-color: #f7f4ef;
+
+    background: #f7f4ef;
+
+    color: #0d2d28;
+
+  }
+
+  .consult-check {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    font-size: 0.8rem;
+
+    color: rgba(247, 244, 239, 0.5);
+
+    cursor: pointer;
+
+  }
+
+  .consult-alerts {
+
+    display: grid;
+
+    gap: 0.65rem;
+
+    margin-bottom: 2rem;
+
+  }
+
+  .consult-alert {
+
+    display: flex;
+
+    gap: 0.85rem;
+
+    padding: 1rem 1.1rem;
+
+    border: 1px solid rgba(247, 244, 239, 0.12);
+
+    background: rgba(13, 45, 40, 0.35);
+
+  }
+
+  .consult-alert.is-danger {
+
+    border-color: rgba(240, 180, 168, 0.3);
+
+  }
+
+  .consult-alert.is-warning {
+
+    border-color: rgba(247, 244, 239, 0.22);
+
+  }
+
+  .consult-alert-icon {
+
+    font-size: 1rem;
+
+    line-height: 1.4;
+
+  }
+
+  .consult-alert-title {
+
+    font-size: 0.9rem;
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-alert-msg {
+
+    margin-top: 0.25rem;
+
+    font-size: 0.8rem;
+
+    line-height: 1.7;
+
+    color: rgba(247, 244, 239, 0.5);
+
+  }
+
+  .consult-group {
+
+    margin-bottom: 2.75rem;
+
+    scroll-margin-top: 9rem;
+
+    padding: 0.35rem;
+
+    border: 1px solid transparent;
+
+    transition:
+
+      box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+
+      background-color 0.7s ease,
+
+      border-color 0.7s ease;
+
+  }
+
+  .consult-group.is-focused {
+
+    border-color: rgba(247, 244, 239, 0.18);
+
+    background: rgba(247, 244, 239, 0.035);
+
+    box-shadow: 0 0 0 1px rgba(247, 244, 239, 0.06);
+
+    animation: consultGroupPulse 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+  }
+
+  .consult-group-head h2 {
+
+    margin-top: 0.5rem;
+
+    font-size: 1.35rem;
+
+    font-weight: 300;
+
+    transition: color 0.45s ease;
+
+  }
+
+  .consult-group.is-focused .consult-group-head h2 {
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-group-desc {
+
+    margin-top: 0.4rem;
+
+    font-size: 0.85rem;
+
+    color: rgba(247, 244, 239, 0.4);
+
+  }
+
+  .consult-tip-grid {
+
+    display: grid;
+
+    gap: 0.85rem;
+
+    margin-top: 1.25rem;
+
+  }
+
+  @media (min-width: 640px) {
+
+    .consult-tip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  }
+
+  .consult-tip {
+
+    border: 1px solid rgba(247, 244, 239, 0.1);
+
+    background: rgba(7, 25, 22, 0.45);
+
+    padding: 1.25rem;
+
+    animation: bookingFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    transition: border-color 0.4s ease, transform 0.4s ease;
+
+  }
+
+  .consult-tip:hover {
+
+    border-color: rgba(247, 244, 239, 0.28);
+
+    transform: translateY(-2px);
+
+  }
+
+  .consult-tip.is-highlight {
+
+    border-color: rgba(247, 244, 239, 0.28);
+
+    background: rgba(247, 244, 239, 0.04);
+
+  }
+
+  .consult-tip-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 0.75rem;
+
+  }
+
+  .consult-tip-icon {
+
+    font-size: 1.1rem;
+
+    opacity: 0.7;
+
+  }
+
+  .consult-tip-actions {
+
+    display: flex;
+
+    gap: 0.25rem;
+
+  }
+
+  .consult-icon-btn {
+
+    width: 2rem;
+
+    height: 2rem;
+
+    display: grid;
+
+    place-items: center;
+
+    color: rgba(247, 244, 239, 0.35);
+
+    transition: color 0.3s ease;
+
+  }
+
+  .consult-icon-btn:hover,
+
+  .consult-icon-btn.is-on {
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-tip h3 {
+
+    font-size: 1.05rem;
+
+    font-weight: 300;
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-tip > p {
+
+    margin-top: 0.55rem;
+
+    font-size: 0.85rem;
+
+    line-height: 1.8;
+
+    color: rgba(247, 244, 239, 0.5);
+
+  }
+
+  .consult-tip-media {
+
+    margin-top: 1rem;
+
+    overflow: hidden;
+
+    aspect-ratio: 16 / 10;
+
+  }
+
+  .consult-tip-media img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+  }
+
+  .consult-tip-links {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 0.65rem;
+
+    margin-top: 1rem;
+
+  }
+
+  .consult-media-link {
+
+    font-size: 0.7rem;
+
+    letter-spacing: 0.08em;
+
+    color: rgba(247, 244, 239, 0.45);
+
+    border-bottom: 1px solid rgba(247, 244, 239, 0.2);
+
+    transition: color 0.3s ease;
+
+  }
+
+  .consult-media-link:hover { color: #f7f4ef; }
+
+  .consult-accordion {
+
+    border-top: 1px solid rgba(247, 244, 239, 0.1);
+
+  }
+
+  .consult-acc-item {
+
+    border-bottom: 1px solid rgba(247, 244, 239, 0.1);
+
+  }
+
+  .consult-acc-btn {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    padding: 1.15rem 0;
+
+    text-align: right;
+
+    font-size: 0.95rem;
+
+    font-weight: 300;
+
+    color: #f7f4ef;
+
+  }
+
+  .consult-acc-plus {
+
+    color: rgba(247, 244, 239, 0.4);
+
+  }
+
+  .consult-acc-panel {
+
+    padding-bottom: 1.15rem;
+
+  }
+
+  .consult-acc-panel p {
+
+    font-size: 0.85rem;
+
+    line-height: 1.85;
+
+    color: rgba(247, 244, 239, 0.5);
+
+  }
+
+  .consult-toast-host {
+
+    position: fixed;
+
+    top: 6.5rem;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 60;
+
+    width: min(92vw, 380px);
+
+    pointer-events: none;
+
+  }
+
+  .consult-toast {
+
+    pointer-events: auto;
+
+    margin-bottom: 0.5rem;
+
+    border: 1px solid rgba(247, 244, 239, 0.15);
+
+    background: rgba(7, 25, 22, 0.95);
+
+    backdrop-filter: blur(12px);
+
+    padding: 0.9rem 1.1rem;
+
+    font-size: 0.85rem;
+
+    animation: bookingFadeIn 0.35s ease;
+
+  }
+
+  .consult-toast.is-error {
+
+    border-color: rgba(240, 180, 168, 0.35);
+
+    color: #f0d4ce;
+
+  }
+
+  .consult-empty,
+
+  .consult-error {
+
+    text-align: center;
+
+    padding: 3rem 1rem;
+
+  }
+
+  .consult-skeleton-grid {
+
+    display: grid;
+
+    gap: 1rem;
+
+  }
+
+  @media (min-width: 768px) {
+
+    .consult-skeleton-grid { grid-template-columns: repeat(2, 1fr); }
+
+  }
+
+  .consult-skeleton-card,
+
+  .consult-skeleton-detail {
+
+    background: linear-gradient(
+
+      90deg,
+
+      rgba(247, 244, 239, 0.04) 0%,
+
+      rgba(247, 244, 239, 0.09) 50%,
+
+      rgba(247, 244, 239, 0.04) 100%
+
+    );
+
+    background-size: 200% 100%;
+
+    animation: bookingShimmer 1.4s ease infinite;
+
+  }
+
+  .consult-skeleton-card { min-height: 26rem; }
+
+  .consult-skeleton-detail { min-height: 24rem; }
+
+  @media print {
+
+    .site-header,
+
+    .consult-toolbar,
+
+    .consult-detail-actions,
+
+    .consult-progress,
+
+    footer {
+
+      display: none !important;
+
+    }
+
+    .consult-stage {
+
+      background: #fff !important;
+
+      color: #111 !important;
+
+      padding-top: 0 !important;
+
+    }
+
+  }
+}

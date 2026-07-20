@@ -1,0 +1,70 @@
+{% load static %}
+
+<header id="site-header" class="site-header fixed inset-x-0 top-0 z-50" data-header>
+  <div class="site-header-shell" data-nav-glass>
+    <div class="site-header-inner mx-auto flex max-w-[1500px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12 lg:py-5">
+      <a href="{% url 'core:home' %}" class="group shrink-0" aria-label="{{ SITE_NAME }}">
+        <img
+          src="{% static 'images/brand/logo-signature.webp' %}"
+          alt="{{ SITE_NAME }}"
+          class="logo-mark site-header-logo h-16 w-auto opacity-95 transition duration-500 group-hover:opacity-100 sm:h-20 lg:h-24"
+          width="820"
+          height="787"
+          decoding="async"
+        >
+      </a>
+
+      <nav
+        class="hidden items-center gap-9 text-[0.8rem] font-light tracking-wide text-ivory/65 lg:flex"
+        aria-label="منوی اصلی"
+      >
+        <a href="{% url 'core:home' %}#services" class="nav-link transition duration-300 hover:text-ivory">خدمات</a>
+        <a href="{% url 'magazine:hub' %}" class="nav-link transition duration-300 hover:text-ivory">مجله</a>
+        <a href="{% url 'consultations:hub' %}" class="nav-link transition duration-300 hover:text-ivory">مشاوره</a>
+        <a href="{% url 'core:home' %}#gallery" class="nav-link transition duration-300 hover:text-ivory">گالری</a>
+        <a href="{% url 'core:home' %}#about" class="nav-link transition duration-300 hover:text-ivory">درباره</a>
+        <a href="{% url 'core:home' %}#contact" class="nav-link transition duration-300 hover:text-ivory">تماس</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="{% url 'appointments:create' %}"
+          class="btn-magnetic hidden items-center gap-2 border border-ivory/35 px-6 py-2.5 text-xs font-light tracking-wide text-ivory transition duration-500 hover:border-ivory hover:bg-ivory hover:text-court-900 sm:inline-flex"
+          data-magnetic
+        >
+          <span>رزرو نوبت</span>
+          <span class="btn-arrow inline-block transition-transform duration-500" aria-hidden="true">←</span>
+        </a>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center border border-ivory/30 p-2.5 text-ivory transition hover:border-ivory/60 lg:hidden"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          aria-label="باز کردن منو"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="mx-4 mt-2 hidden border border-white/10 bg-court-950/95 px-6 py-6 backdrop-blur-2xl lg:hidden"
+    data-mobile-nav
+    aria-label="منوی موبایل"
+  >
+    <div class="flex flex-col gap-5 text-sm font-light tracking-wide text-ivory/85">
+      <a href="{% url 'core:home' %}#services">خدمات</a>
+      <a href="{% url 'magazine:hub' %}">مجله</a>
+      <a href="{% url 'consultations:hub' %}">مشاوره</a>
+      <a href="{% url 'core:home' %}#gallery">گالری</a>
+      <a href="{% url 'core:home' %}#about">درباره</a>
+      <a href="{% url 'core:home' %}#contact">تماس</a>
+      <a href="{% url 'appointments:create' %}" class="btn-court mt-2 text-center">رزرو نوبت</a>
+    </div>
+  </nav>
+</header>

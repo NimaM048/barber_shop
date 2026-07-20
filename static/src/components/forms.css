@@ -1,0 +1,6 @@
+@layer components {
+  /* Form fields */
+  .field-court {
+    @apply w-full border border-ivory/15 bg-transparent px-4 py-3 text-sm text-ivory outline-none transition focus:border-ivory/45;
+  }
+}

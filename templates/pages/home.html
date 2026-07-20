@@ -1,0 +1,235 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endblock %}
+
+{% block extra_head %}
+<link rel="preload" as="image" href="{% static 'images/brand/logo-signature.webp' %}" type="image/webp" fetchpriority="high">
+{% endblock %}
+
+{% block content %}
+
+{# ─── Hero: silent luxury editorial stage ─── #}
+<section
+  class="hero-stage relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden bg-court-950"
+  data-hero
+  data-hero-stage
+  aria-label="{{ SITE_NAME }}"
+>
+  {# Atmosphere: soft mesh + blueprint grid + cursor spotlight #}
+  <div class="hero-atmosphere absolute inset-0" aria-hidden="true" data-hero-atmosphere>
+    <div class="hero-mesh" data-hero-mesh>
+      <span class="hero-mesh-orb hero-mesh-orb-a"></span>
+      <span class="hero-mesh-orb hero-mesh-orb-b"></span>
+      <span class="hero-mesh-orb hero-mesh-orb-c"></span>
+    </div>
+    <div class="hero-blueprint" data-hero-grid data-parallax-target="grid"></div>
+    <div class="hero-spotlight" data-hero-spotlight></div>
+    <div class="hero-logo-glow" data-hero-logo-glow></div>
+  </div>
+
+  <div class="noise-layer opacity-[0.1]" aria-hidden="true"></div>
+
+  {# Architectural guide marks — viewport corners #}
+  <div class="hero-guides pointer-events-none absolute inset-0 z-[3]" aria-hidden="true" data-hero-guides>
+    <span class="hero-guide hero-guide-tl"></span>
+    <span class="hero-guide hero-guide-tr"></span>
+    <span class="hero-guide hero-guide-bl"></span>
+    <span class="hero-guide hero-guide-br"></span>
+  </div>
+
+  {# Quiet editorial side mark #}
+  <p class="hero-meta hero-meta-corner pointer-events-none absolute z-[4] hidden lg:block" data-hero-meta aria-hidden="true">
+    Est. Isfahan
+  </p>
+
+  {# Brand lockup — absolute center of composition #}
+  <div class="hero-lockup relative z-10 mx-auto flex w-full max-w-[920px] flex-col items-center px-6 py-28 text-center sm:px-10 lg:py-32" data-hero-lockup>
+    <div class="hero-logo-stage relative" data-parallax-target="logo">
+      {# Stroke-draw construction of the signature #}
+      <svg
+        class="hero-logo-svg"
+        data-hero-logo-svg
+        viewBox="0 0 420 200"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g class="hero-logo-strokes" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path data-draw class="hero-draw" pathLength="1" d="M78 168 V52" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M98 168 V38" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M118 168 V58" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M138 160 V72" stroke-width="1.25"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M158 168 V48" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M178 155 V68" stroke-width="1.2"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M198 168 V42" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M218 162 V78" stroke-width="1.2"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M238 168 V55" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M258 150 V70" stroke-width="1.15"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M278 168 V46" stroke-width="1.35"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M298 158 V82" stroke-width="1.2"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M318 168 V60" stroke-width="1.3"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M338 145 V88" stroke-width="1.15"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M62 118 C92 96 128 92 168 102 C208 112 248 108 292 94 C326 84 352 88 372 108" stroke-width="1.4"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M88 138 C118 128 152 126 186 132 C228 140 268 132 312 118" stroke-width="1.15"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M132 86 C148 68 172 64 196 78 C214 90 228 88 244 74" stroke-width="1.2"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M214 52 C228 36 252 34 272 48 C286 58 298 54 312 42" stroke-width="1.15"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M54 152 C48 148 46 140 52 134" stroke-width="1.1"/>
+          <path data-draw class="hero-draw" pathLength="1" d="M368 128 C378 122 382 112 376 104" stroke-width="1.1"/>
+          <circle data-draw-dot class="hero-draw-dot" cx="108" cy="28" r="2.2" fill="currentColor" opacity="0"/>
+          <circle data-draw-dot class="hero-draw-dot" cx="248" cy="24" r="2" fill="currentColor" opacity="0"/>
+          <circle data-draw-dot class="hero-draw-dot" cx="332" cy="32" r="1.8" fill="currentColor" opacity="0"/>
+        </g>
+      </svg>
+
+      <img
+        src="{% static 'images/brand/logo-signature.webp' %}"
+        alt="{{ SITE_NAME }}"
+        class="hero-logo-img"
+        data-hero-logo-img
+        width="820"
+        height="787"
+        fetchpriority="high"
+        decoding="async"
+      >
+    </div>
+
+    <p class="hero-tagline mt-10 max-w-lg text-base font-light leading-[2.1] tracking-wide text-ivory/70 sm:mt-12 sm:text-xl sm:leading-[2.15]" data-hero-tagline>
+      {{ SITE_SUBTITLE }}
+    </p>
+
+    <div class="hero-divider mx-auto mt-10 h-px w-16 origin-center bg-ivory/35 sm:mt-12 sm:w-24" data-hero-divider aria-hidden="true"></div>
+
+    <div class="hero-cta mt-10 flex flex-col items-center justify-center gap-4 sm:mt-12 sm:flex-row sm:gap-5" data-hero-cta>
+      <a
+        href="{% url 'appointments:create' %}"
+        class="btn-draw"
+        data-magnetic
+        data-hero-btn
+      >
+        <span class="btn-draw-border" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+          </svg>
+        </span>
+        <span class="btn-draw-label relative z-10">رزرو نوبت</span>
+        <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+      </a>
+
+      <a
+        href="#services"
+        class="btn-quiet group"
+        data-magnetic
+        data-hero-btn
+      >
+        <span>مشاهده خدمات</span>
+        <span class="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0.5" aria-hidden="true">↓</span>
+      </a>
+    </div>
+  </div>
+
+  {# Scroll indicator #}
+  <div class="hero-scroll pointer-events-none absolute inset-x-0 bottom-7 z-10 flex flex-col items-center gap-3 sm:bottom-9" data-hero-scroll aria-hidden="true">
+    <span class="font-display text-[0.6rem] italic tracking-[0.35em] text-ivory/30">Scroll</span>
+    <span class="hero-scroll-track">
+      <span class="hero-scroll-thumb"></span>
+    </span>
+  </div>
+</section>
+
+{# ─── Brand ribbon ─── #}
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-fade marquee-fade-start"></div>
+  <div class="marquee-fade marquee-fade-end"></div>
+  <div class="marquee-track">
+    <span class="marquee-brand">{{ SITE_NAME }}</span>
+    <span class="marquee-sep"></span>
+    <span class="marquee-italic">Architecture of beauty</span>
+    <span class="marquee-sep"></span>
+    <span>آرایش داماد</span>
+    <span class="marquee-sep"></span>
+    <span>مراقبت پوست</span>
+    <span class="marquee-sep"></span>
+    <span>خدمات مو</span>
+    <span class="marquee-sep"></span>
+    <span class="marquee-brand">{{ SITE_NAME }}</span>
+    <span class="marquee-sep"></span>
+    <span class="marquee-italic">Architecture of beauty</span>
+    <span class="marquee-sep"></span>
+    <span>آرایش داماد</span>
+    <span class="marquee-sep"></span>
+    <span>مراقبت پوست</span>
+    <span class="marquee-sep"></span>
+    <span>خدمات مو</span>
+    <span class="marquee-sep"></span>
+  </div>
+</div>
+
+{# ─── Visual Services Catalog ─── #}
+<section id="services" class="relative overflow-hidden bg-court-950" data-services>
+  <div class="noise-layer" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-[1500px] px-6 py-16 sm:px-10 lg:px-14 lg:py-20">
+    <div class="mb-12 flex flex-col gap-4 sm:mb-14 sm:flex-row sm:items-end sm:justify-between" data-reveal>
+      <div>
+        <p class="section-label">خدمات</p>
+        <h2 class="mt-4 text-3xl font-light tracking-tight sm:text-5xl">کاتالوگ تخصص‌ها</h2>
+      </div>
+          <a href="{% url 'catalog:list' %}" class="text-sm font-light text-ivory/45 transition hover:text-ivory">
+            مشاهده همه خدمات ←
+          </a>
+          <a href="{% url 'consultations:hub' %}" class="text-sm font-light text-ivory/45 transition hover:text-ivory">
+            مشاوره قبل از مراجعه ←
+          </a>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      {% for service in showcase_services %}
+      <a
+        href="{% url 'appointments:create' %}?service={{ service.slug }}"
+        class="service-tile group relative block min-h-[28rem] overflow-hidden sm:min-h-[32rem]"
+        data-reveal
+        {% if not forloop.first %}data-delay="{{ forloop.counter0 }}"{% endif %}
+      >
+        <picture>
+          <source srcset="{% static service.image_webp %}" type="image/webp">
+          <img
+            src="{% static service.image_jpg %}"
+            alt="{{ service.name }}"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+          >
+        </picture>
+        <div class="absolute inset-0 bg-gradient-to-t from-court-950 via-court-950/45 to-transparent" aria-hidden="true"></div>
+        <div class="absolute inset-0 ring-1 ring-inset ring-ivory/10 transition duration-500 group-hover:ring-ivory/25" aria-hidden="true"></div>
+        <div class="relative z-10 flex h-full min-h-[28rem] flex-col justify-end p-7 sm:min-h-[32rem] sm:p-8">
+          <p class="text-[0.65rem] tracking-[0.22em] text-ivory/45">{{ service.label }}</p>
+          <h3 class="mt-3 text-2xl font-light text-ivory sm:text-3xl">{{ service.name }}</h3>
+          <p class="mt-3 max-w-sm text-sm font-light leading-7 text-ivory/55">{{ service.description }}</p>
+          {% if service.price %}
+          <p class="mt-4 text-xs font-light tracking-wide text-ivory/40" dir="ltr">
+            {{ service.price }} تومان · {{ service.duration }} دقیقه
+          </p>
+          {% endif %}
+          <span class="mt-6 inline-flex items-center gap-2 text-sm font-light text-ivory/80 transition group-hover:-translate-x-1">
+            رزرو این خدمت
+            <span aria-hidden="true">←</span>
+          </span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% include "components/gallery.html" %}
+
+{% include "components/brand_story.html" %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/gallery.js' %}" defer></script>
+<script src="{% static 'js/brand-story.js' %}" defer></script>
+{% endblock %}

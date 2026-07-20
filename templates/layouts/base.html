@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ SITE_SUBTITLE }} — {{ SITE_TAGLINE }}{% endblock %}">
+  <meta name="theme-color" content="#0d2d28">
+
+  <style>
+    html.is-page-entering .site-shell {
+      opacity: 0;
+      filter: blur(10px);
+      transform: scale(1.012);
+    }
+  </style>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem("site-page-transition") === "1") {
+          document.documentElement.classList.add("is-page-entering");
+          window.setTimeout(function () {
+            if (document.documentElement.classList.contains("is-page-entering")) {
+              document.documentElement.classList.add("is-page-ready");
+              document.documentElement.classList.remove("is-page-entering");
+            }
+          }, 1600);
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  {% block extra_head %}{% endblock %}
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="relative min-h-screen overflow-x-hidden bg-court-900 font-sans font-light text-ivory antialiased">
+  <div class="site-progress" data-site-progress aria-hidden="true">
+    <div class="site-progress-track"></div>
+    <div class="site-progress-bar" data-site-progress-bar></div>
+  </div>
+
+  <div class="noise-layer fixed inset-0 z-[1] pointer-events-none opacity-[0.07]" aria-hidden="true"></div>
+
+  <div class="site-shell relative z-[2]" data-site-shell>
+    {% include "components/header.html" %}
+
+    {% if messages %}
+    <div class="fixed inset-x-4 top-24 z-50 mx-auto max-w-md" role="status">
+      {% for message in messages %}
+      <p class="border border-ivory/15 bg-court-900/95 px-4 py-3 text-sm text-ivory backdrop-blur-md">
+        {{ message }}
+      </p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <main id="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% include "components/footer.html" %}
+  </div>
+
+  <button
+    type="button"
+    class="scroll-top"
+    data-scroll-top
+    aria-label="بازگشت به بالا"
+    aria-hidden="true"
+    tabindex="-1"
+    hidden
+  >
+    <svg class="scroll-top-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M8 12.5V3.5M8 3.5L3.5 8M8 3.5L12.5 8"
+        stroke="currentColor"
+        stroke-width="1.15"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="{% static 'js/main.js' %}" defer></script>
+  <script src="{% static 'js/footer-finale.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

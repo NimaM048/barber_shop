@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ barber.display_name }} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-3xl px-4 py-16">
+  <a href="{% url 'barbers:list' %}" class="text-sm text-amber-800 hover:underline">بازگشت به لیست</a>
+  <h1 class="mt-4 text-3xl font-bold text-stone-900">{{ barber.display_name }}</h1>
+  <p class="mt-2 text-sm text-stone-500">{{ barber.experience_years }} سال سابقه</p>
+  {% if barber.bio %}
+  <p class="mt-6 leading-relaxed text-stone-700">{{ barber.bio }}</p>
+  {% endif %}
+  <a href="{% url 'appointments:create' %}" class="mt-8 inline-flex rounded-xl bg-stone-900 px-5 py-3 text-sm font-semibold text-white hover:bg-stone-700">
+    رزرو با این آرایشگر
+  </a>
+</section>
+{% endblock %}

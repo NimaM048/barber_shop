@@ -1,0 +1,27 @@
+@layer components {
+  /* Header — fixed top bar */
+
+  [data-nav-glass] {
+
+    border-bottom: 1px solid rgba(247, 244, 239, 0.1);
+
+    background-color: rgba(7, 25, 22, 0.88);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+  }
+
+  .site-nav.is-solid,
+
+  [data-nav-glass].is-solid {
+
+    background-color: rgba(7, 25, 22, 0.88);
+
+    backdrop-filter: blur(18px);
+
+    border-bottom-color: rgba(247, 244, 239, 0.1);
+
+  }
+}

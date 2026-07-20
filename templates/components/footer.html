@@ -1,0 +1,186 @@
+{% load static %}
+{% with f=footer_finale %}
+<footer
+  id="contact"
+  class="ff-stage"
+  data-footer-finale
+  aria-label="{{ f.aria_label|default:'پایان تجربه برند' }}"
+>
+  {# Atmospheric depth — gradients, vignette, grain, soft glow #}
+  <div class="ff-atmosphere" aria-hidden="true">
+    <div class="ff-glow" data-ff-glow></div>
+    <div class="ff-vignette"></div>
+    <div class="ff-grain noise-layer"></div>
+  </div>
+
+  {# Oversized background typography #}
+  {% if f.bg_word %}
+  <p class="ff-bg-word" data-ff-bg-word aria-hidden="true" lang="en" dir="ltr">
+    {{ f.bg_word }}
+  </p>
+  {% endif %}
+
+  <div class="ff-inner">
+    {# Architectural guides #}
+    <div class="ff-guides" aria-hidden="true">
+      <span class="ff-guide ff-guide-start"></span>
+      <span class="ff-guide ff-guide-end"></span>
+    </div>
+
+    {# ── Act I — Reflection ── #}
+    <section class="ff-act ff-act-reflect" aria-labelledby="ff-philosophy-heading">
+      <header class="ff-act-meta" data-ff-reveal>
+        {% if f.edition_label %}
+        <p class="ff-edition" lang="en" dir="ltr">{{ f.edition_label }}</p>
+        {% endif %}
+        {% if f.section_label %}
+        <p class="ff-section-label">{{ f.section_label }}</p>
+        {% endif %}
+      </header>
+
+      <h2 id="ff-philosophy-heading" class="ff-philosophy" data-ff-reveal data-ff-delay="1">
+        {% for line in f.philosophy_lines %}
+        <span class="ff-philosophy-line">{{ line }}</span>
+        {% endfor %}
+      </h2>
+
+      {% if f.philosophy_caption %}
+      <p class="ff-philosophy-caption" data-ff-reveal data-ff-delay="2" lang="en" dir="ltr">
+        {{ f.philosophy_caption }}
+      </p>
+      {% endif %}
+    </section>
+
+    {# Quiet hairline bridge between acts #}
+    <div class="ff-bridge" data-ff-reveal data-ff-delay="2" aria-hidden="true">
+      <span class="ff-bridge-line"></span>
+    </div>
+
+    {# ── Act II — Decision ── #}
+    <section class="ff-act ff-act-decide" aria-labelledby="ff-cta-heading">
+      <div class="ff-decide-copy" data-ff-reveal data-ff-delay="3">
+        {% if f.cta_statement %}
+        <p id="ff-cta-heading" class="ff-cta-statement">{{ f.cta_statement }}</p>
+        {% endif %}
+        <span class="ff-cta-arrow" aria-hidden="true">↓</span>
+        {% if f.cta_prompt %}
+        <p class="ff-cta-prompt">{{ f.cta_prompt }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ff-cta-actions" data-ff-reveal data-ff-delay="4" role="group" aria-label="اقدام‌ها">
+        {% if f.cta_primary_label and f.cta_primary_href %}
+        <a
+          href="{{ f.cta_primary_href }}"
+          class="btn-draw ff-cta-primary"
+          data-magnetic
+        >
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">{{ f.cta_primary_label }}</span>
+          <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+        </a>
+        {% endif %}
+
+        {% if f.cta_secondary_label and f.cta_secondary_href %}
+        <a
+          href="{{ f.cta_secondary_href }}"
+          class="btn-quiet ff-cta-secondary group"
+          data-magnetic
+        >
+          <span>{{ f.cta_secondary_label }}</span>
+          <span class="ff-cta-secondary-mark transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-0.5" aria-hidden="true">←</span>
+        </a>
+        {% endif %}
+      </div>
+    </section>
+
+    {# ── Act III — Connection ── #}
+    <section class="ff-act ff-act-connect" aria-labelledby="ff-contact-heading">
+      <header class="ff-connect-head" data-ff-reveal data-ff-delay="5">
+        <p id="ff-contact-heading" class="ff-contact-caption">
+          {{ f.contact_caption|default:"ارتباط" }}
+        </p>
+        <span class="ff-hairline" aria-hidden="true"></span>
+      </header>
+
+      <ul class="ff-contact-list" data-ff-reveal data-ff-delay="6">
+        {% for item in f.contacts %}
+        <li class="ff-contact-item">
+          <span class="ff-contact-label">{{ item.label }}</span>
+          {% if item.href %}
+          <a
+            href="{{ item.href }}"
+            class="ff-contact-value"
+            {% if item.ltr %}dir="ltr"{% endif %}
+            {% if item.key == "website" or item.key == "instagram" or item.key == "telegram" or item.key == "email" %}lang="en"{% endif %}
+            {% if item.external %}target="_blank" rel="noopener noreferrer"{% endif %}
+          >{{ item.value }}</a>
+          {% else %}
+          <span
+            class="ff-contact-value ff-contact-value--static"
+            {% if item.ltr %}dir="ltr"{% endif %}
+            {% if item.key == "website" or item.key == "instagram" or item.key == "telegram" or item.key == "email" %}lang="en"{% endif %}
+          >{{ item.value }}</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    {# ── Brand Signature ── #}
+    <div class="ff-signature" data-ff-reveal data-ff-delay="7">
+      <span class="ff-sig-rule" aria-hidden="true"></span>
+
+      <img
+        src="{{ f.logo_src }}"
+        alt="{{ f.logo_alt }}"
+        class="ff-logo"
+        width="820"
+        height="787"
+        loading="lazy"
+        decoding="async"
+      >
+
+      {% if f.signature %}
+      <p class="ff-sig-tagline" lang="en" dir="ltr">{{ f.signature }}</p>
+      {% endif %}
+
+      {% if f.show_founder and f.founder_name %}
+      <p class="ff-sig-founder">
+        {% if f.founder_title %}<span class="ff-sig-founder-title">{{ f.founder_title }}</span>{% endif %}
+        <span class="ff-sig-founder-name">{{ f.founder_name }}</span>
+      </p>
+      {% endif %}
+
+      {% if f.founded_year or f.website %}
+      <p class="ff-sig-meta" lang="en" dir="ltr">
+        {% if f.founded_year %}<span>{{ f.founded_year }}</span>{% endif %}
+        {% if f.founded_year and f.website %}<span class="ff-sig-dot" aria-hidden="true">·</span>{% endif %}
+        {% if f.website %}<span>{{ f.website }}</span>{% endif %}
+      </p>
+      {% endif %}
+    </div>
+
+    {# Closing bar — navigation + copyright #}
+    <div class="ff-close" data-ff-reveal data-ff-delay="8">
+      {% if f.show_navigation and f.nav_links %}
+      <nav class="ff-nav" aria-label="ناوبری پایانی">
+        {% for link in f.nav_links %}
+        <a
+          href="{{ link.href }}"
+          class="ff-nav-link"
+          {% if link.external %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >{{ link.label }}</a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+
+      <p class="ff-copyright">{{ f.copyright }}</p>
+    </div>
+  </div>
+</footer>
+{% endwith %}

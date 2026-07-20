@@ -1,0 +1,6 @@
+{% extends "layouts/base.html" %}
+{# Legacy template — wizard lives in booking.html #}
+{% block content %}
+<meta http-equiv="refresh" content="0;url={% url 'appointments:create' %}">
+<p class="p-10 text-center text-ivory/50">در حال انتقال به صفحه رزرو…</p>
+{% endblock %}

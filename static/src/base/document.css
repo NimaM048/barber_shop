@@ -1,0 +1,55 @@
+@layer base {
+  html {
+
+    scroll-behavior: auto;
+
+    background-color: #0d2d28;
+
+  }
+
+  html.lenis,
+
+  html.lenis body {
+
+    height: auto;
+
+  }
+
+  .lenis.lenis-smooth {
+
+    scroll-behavior: auto !important;
+
+  }
+
+  body {
+
+    font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+
+    background-color: #0d2d28;
+
+    color: #f7f4ef;
+
+  }
+
+  ::selection {
+
+    background-color: #f7f4ef;
+
+    color: #0d2d28;
+
+  }
+
+  :focus-visible {
+
+    outline: 1px solid #f7f4ef;
+
+    outline-offset: 4px;
+
+  }
+
+  img {
+
+    max-width: 100%;
+
+  }
+}

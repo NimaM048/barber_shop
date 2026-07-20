@@ -1,0 +1,24 @@
+﻿@import "tailwindcss/base";
+@import "./base/document.css";
+
+@import "tailwindcss/components";
+@import "./components/primitives.css";
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/header.css";
+@import "./components/chrome.css";
+@import "./components/hero.css";
+@import "./components/brand-ribbon.css";
+@import "./components/gallery.css";
+@import "./components/booking.css";
+@import "./components/consultations.css";
+
+@import "tailwindcss/utilities";
+@import "./utilities/motion.css";
+
+@import "./animations/keyframes.css";
+
+/* Feature sections — unlayered (same cascade as before) */
+@import "./components/magazine.css";
+@import "./components/brand-story.css";
+@import "./components/footer-finale.css";

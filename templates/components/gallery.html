@@ -1,0 +1,242 @@
+{% load static %}
+{# Luxury editorial portfolio — data from PortfolioService #}
+<section
+  id="gallery"
+  class="gallery-stage relative overflow-hidden bg-court-950"
+  data-gallery-root
+  aria-label="گالری آثار"
+>
+  <div class="gallery-atmosphere" aria-hidden="true">
+    <div class="gallery-glow gallery-glow-a"></div>
+    <div class="gallery-glow gallery-glow-b"></div>
+    <div class="gallery-grid-plane"></div>
+  </div>
+  <div class="noise-layer opacity-[0.07]" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-[1600px] px-5 pb-4 pt-16 sm:px-8 sm:pt-20 lg:px-12 lg:pt-24">
+    <header class="gallery-header mx-auto max-w-2xl text-center" data-reveal>
+      <p class="section-label">پورتفولیو</p>
+      <h2 class="gallery-heading mt-4 text-3xl font-light tracking-tight sm:text-5xl">
+        گالری آثار
+      </h2>
+      <p class="mx-auto mt-4 max-w-md text-sm font-light leading-8 text-ivory/45 sm:mt-5">
+        هر فریم، روایت یک نتیجه دقیق — انتخاب کنید، نزدیک شوید، جزئیات را ببینید.
+      </p>
+    </header>
+
+    {% if gallery_categories %}
+    <div
+      class="gallery-filters mt-10 flex flex-wrap items-center justify-center gap-2 sm:mt-12 sm:gap-3"
+      data-gallery-filters
+      role="tablist"
+      aria-label="فیلتر دسته‌بندی گالری"
+      data-reveal
+    >
+      {% for cat in gallery_categories %}
+      <button
+        type="button"
+        class="gallery-filter{% if cat.slug == 'all' %} is-active{% endif %}"
+        role="tab"
+        aria-selected="{% if cat.slug == 'all' %}true{% else %}false{% endif %}"
+        data-gallery-filter="{{ cat.slug }}"
+      >
+        <span>{{ cat.title }}</span>
+      </button>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="gallery-shell relative mt-6 sm:mt-8">
+    <div class="gallery-fade gallery-fade-start" aria-hidden="true"></div>
+    <div class="gallery-fade gallery-fade-end" aria-hidden="true"></div>
+
+    <div
+      class="gallery-swiper swiper"
+      data-gallery-swiper
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="اسلایدر گالری"
+    >
+      <div class="swiper-wrapper">
+        {% for item in gallery_items %}
+        <div
+          class="swiper-slide gallery-slide-wrap"
+          data-gallery-slide
+          data-category="{{ item.category }}"
+          data-item-id="{{ item.id }}"
+          data-item-index="{{ forloop.counter0 }}"
+        >
+          <article class="gallery-card group" data-gallery-card>
+            <button
+              type="button"
+              class="gallery-card-hit"
+              data-gallery-open="{{ forloop.counter0 }}"
+              aria-label="مشاهده {{ item.title }}"
+            >
+              <div class="gallery-frame-shell">
+                <span class="gallery-corner gallery-corner-tl" aria-hidden="true"></span>
+                <span class="gallery-corner gallery-corner-tr" aria-hidden="true"></span>
+                <span class="gallery-corner gallery-corner-bl" aria-hidden="true"></span>
+                <span class="gallery-corner gallery-corner-br" aria-hidden="true"></span>
+                <span class="gallery-glass" aria-hidden="true"></span>
+
+                <div class="gallery-media" data-gallery-media>
+                  {% if item.cover.lqip %}
+                  <img
+                    class="gallery-lqip"
+                    src="{{ item.cover.lqip }}"
+                    alt=""
+                    aria-hidden="true"
+                    decoding="async"
+                  >
+                  {% endif %}
+                  <picture class="gallery-picture">
+                    {% if item.cover.avif %}
+                    <source srcset="{{ item.cover.avif }}" type="image/avif">
+                    {% endif %}
+                    {% if item.cover.webp %}
+                    <source srcset="{{ item.cover.webp }}" type="image/webp">
+                    {% endif %}
+                    <img
+                      class="gallery-img"
+                      src="{{ item.cover.src }}"
+                      alt="{{ item.cover.alt }}"
+                      width="720"
+                      height="960"
+                      loading="lazy"
+                      decoding="async"
+                      data-gallery-img
+                    >
+                  </picture>
+
+                  <div class="gallery-shade" aria-hidden="true"></div>
+                  <div class="gallery-depth" aria-hidden="true"></div>
+
+                  {% if item.has_video %}
+                  <span class="gallery-play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                      <circle cx="12" cy="12" r="10.5" stroke="currentColor" stroke-width="1"/>
+                      <path d="M10 8.5v7l6-3.5-6-3.5z" fill="currentColor"/>
+                    </svg>
+                  </span>
+                  {% endif %}
+
+                  {% if item.has_before_after %}
+                  <span class="gallery-ba-badge">قبل / بعد</span>
+                  {% endif %}
+                </div>
+
+                <div class="gallery-meta">
+                  {% if item.category_title %}
+                  <p class="gallery-cat">{{ item.category_title }}</p>
+                  {% endif %}
+                  <h3 class="gallery-title">{{ item.title }}</h3>
+                  {% if item.subtitle %}
+                  <p class="gallery-sub">{{ item.subtitle }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </button>
+          </article>
+        </div>
+        {% empty %}
+        <div class="swiper-slide !w-full">
+          <p class="px-6 py-20 text-center text-sm text-ivory/40">هنوز اثری در گالری ثبت نشده است.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery-controls relative z-10 mx-auto flex max-w-[1600px] items-center justify-center gap-5 px-5 pb-16 pt-8 sm:gap-7 sm:px-8 sm:pb-20 sm:pt-10 lg:px-12">
+    <button type="button" class="gallery-nav gallery-prev" aria-label="اسلاید قبلی" data-gallery-prev>
+      <span aria-hidden="true">→</span>
+    </button>
+    <div class="gallery-pagination" data-gallery-pagination role="tablist" aria-label="صفحه‌بندی گالری"></div>
+    <button type="button" class="gallery-nav gallery-next" aria-label="اسلاید بعدی" data-gallery-next>
+      <span aria-hidden="true">←</span>
+    </button>
+  </div>
+
+  {# Fullscreen lightbox viewer #}
+  <div
+    class="gallery-lightbox"
+    data-gallery-lightbox
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-label="نمایشگر تمام‌صفحه گالری"
+  >
+    <div class="gallery-lb-backdrop" data-gallery-lb-close aria-hidden="true"></div>
+
+    <div class="gallery-lb-shell">
+      <header class="gallery-lb-top">
+        <div class="gallery-lb-heading">
+          <p class="gallery-lb-cat" data-lb-category></p>
+          <h3 class="gallery-lb-title" data-lb-title></h3>
+        </div>
+        <button type="button" class="gallery-lb-close" data-gallery-lb-close aria-label="بستن">
+          <span aria-hidden="true">✕</span>
+        </button>
+      </header>
+
+      <div class="gallery-lb-stage" data-lb-stage>
+        <button type="button" class="gallery-lb-nav gallery-lb-prev" data-lb-prev aria-label="قبلی">
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <div class="gallery-lb-viewport" data-lb-viewport>
+          {# Image mode #}
+          <div class="gallery-lb-media is-active" data-lb-mode="image">
+            <img class="gallery-lb-img" data-lb-img alt="" draggable="false">
+          </div>
+
+          {# Video mode #}
+          <div class="gallery-lb-media" data-lb-mode="video" hidden>
+            <video class="gallery-lb-video" data-lb-video controls playsinline></video>
+          </div>
+
+          {# Before/After mode #}
+          <div class="gallery-lb-media" data-lb-mode="ba" hidden>
+            <div class="gallery-compare" data-lb-compare>
+              <div class="gallery-compare-after">
+                <img data-lb-after alt="" draggable="false">
+              </div>
+              <div class="gallery-compare-before" data-lb-before-pane style="width: 50%">
+                <img data-lb-before alt="" draggable="false">
+              </div>
+              <div class="gallery-compare-handle" data-lb-compare-handle role="slider" aria-label="مقایسه قبل و بعد" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+                <span class="gallery-compare-line" aria-hidden="true"></span>
+                <span class="gallery-compare-knob" aria-hidden="true">
+                  <span>⇄</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="gallery-lb-nav gallery-lb-next" data-lb-next aria-label="بعدی">
+          <span aria-hidden="true">←</span>
+        </button>
+      </div>
+
+      <div class="gallery-lb-thumbs" data-lb-thumbs role="tablist" aria-label="تصاویر پروژه"></div>
+
+      <aside class="gallery-lb-story" data-lb-story>
+        <p class="gallery-lb-desc" data-lb-description></p>
+        <dl class="gallery-lb-facts" data-lb-facts></dl>
+        <blockquote class="gallery-lb-review" data-lb-review hidden></blockquote>
+        <div class="gallery-lb-cta" data-lb-cta>
+          <p class="gallery-lb-cta-title" data-lb-cta-title></p>
+          <div class="gallery-lb-cta-actions">
+            <a class="gallery-lb-btn gallery-lb-btn-ghost" data-lb-consult href="#">دریافت مشاوره</a>
+            <a class="gallery-lb-btn gallery-lb-btn-solid" data-lb-book href="#">رزرو این خدمت</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  {{ gallery_items|json_script:"gallery-payload" }}
+</section>

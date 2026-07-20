@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}خدمات | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="relative min-h-[100svh] bg-court-900 pt-28 pb-20">
+  <div class="noise-layer" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-[1100px] px-5 lg:px-10">
+    <div class="max-w-xl" data-reveal>
+      <p class="section-label">کاتالوگ</p>
+      <h1 class="mt-5 text-3xl font-light sm:text-5xl">خدمات</h1>
+      <p class="mt-4 text-sm font-light leading-8 text-ivory/50">
+        قیمت و مدت زمان هر خدمت را ببینید و مستقیم رزرو کنید.
+      </p>
+    </div>
+
+    {% if services %}
+    <ul class="mt-14 divide-y divide-ivory/10 border-y border-ivory/10" data-reveal data-delay="1">
+      {% for service in services %}
+      <li class="flex flex-wrap items-center justify-between gap-4 py-7">
+        <div class="min-w-0 flex-1">
+          <h2 class="text-xl font-light text-ivory">{{ service.name }}</h2>
+          {% if service.description %}
+          <p class="mt-2 text-sm font-light leading-7 text-ivory/45">{{ service.description }}</p>
+          {% endif %}
+          {% if service.category %}
+          <p class="mt-2 text-[0.65rem] tracking-[0.18em] text-ivory/30">{{ service.category.name }}</p>
+          {% endif %}
+        </div>
+        <div class="flex flex-col items-end gap-3 text-sm text-ivory/55">
+          <p dir="ltr">
+            <span class="text-ivory">{{ service.price }}</span> تومان
+            <span class="mx-2 text-ivory/20">|</span>
+            {{ service.duration_minutes }} دقیقه
+          </p>
+          <a
+            href="{% url 'appointments:create' %}?service={{ service.slug }}"
+            class="border border-ivory/30 px-5 py-2 text-xs tracking-wide text-ivory transition hover:bg-ivory hover:text-court-900"
+          >
+            رزرو
+          </a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="mt-14 border border-ivory/10 px-6 py-12 text-center" data-reveal>
+      <p class="text-ivory/50">هنوز خدمتی ثبت نشده است.</p>
+      <p class="mt-4 text-sm text-ivory/35">سه تخصص اصلی ما: داماد، پوست و مو</p>
+      <a href="{% url 'appointments:create' %}" class="btn-court mt-8 inline-flex">رزرو نوبت</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

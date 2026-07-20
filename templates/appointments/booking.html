@@ -1,0 +1,298 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}رزرو نوبت | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}رزرو آنلاین نوبت {{ SITE_NAME }} — VIP، پوست و مو، داماد{% endblock %}
+
+{% block extra_css %}
+<style>
+  [data-booking-app] [hidden] { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section
+  class="booking-stage relative min-h-[100svh] overflow-hidden bg-court-950 pt-28 pb-24"
+  data-booking-app
+  data-api-base="{% url 'appointments:api-services' %}"
+  data-book-url="{% url 'appointments:api-book' %}"
+  data-guide-summary-base="/consultations/api/booking-summary/"
+  data-preselect="{{ preselect_service }}"
+  data-static="{% get_static_prefix %}"
+>
+  <div class="booking-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="booking-orb booking-orb-a"></div>
+    <div class="booking-orb booking-orb-b"></div>
+    <div class="booking-grid"></div>
+  </div>
+  <div class="noise-layer opacity-[0.1]" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-[1120px] px-5 sm:px-8 lg:px-10">
+    {# Header — brand signature (same mark as home) #}
+    <header class="booking-intro mb-10 text-center sm:mb-14" data-reveal>
+      <p class="section-label">رزرو نوبت</p>
+      <h1 class="booking-signature mt-6 flex justify-center">
+        <img
+          src="{% static 'images/brand/logo-signature.webp' %}"
+          alt="{{ SITE_NAME }}"
+          class="booking-signature-img"
+          width="820"
+          height="787"
+          decoding="async"
+        >
+      </h1>
+      <p class="mx-auto mt-6 max-w-md text-sm font-light leading-8 text-ivory/50">
+        مسیر رزرو در چند قدم ساده — زمان شما، با استاندارد برند.
+      </p>
+    </header>
+
+    {# Progress stepper #}
+    <nav class="booking-stepper mb-10 sm:mb-12" aria-label="مراحل رزرو" data-booking-stepper>
+      <ol class="flex items-center justify-between gap-1 sm:gap-2">
+        <li class="booking-step-item is-active" data-step-indicator="1">
+          <span class="booking-step-dot" aria-hidden="true">۱</span>
+          <span class="booking-step-label">سرویس</span>
+        </li>
+        <li class="booking-step-line" aria-hidden="true"></li>
+        <li class="booking-step-item" data-step-indicator="2">
+          <span class="booking-step-dot" aria-hidden="true">۲</span>
+          <span class="booking-step-label">تاریخ</span>
+        </li>
+        <li class="booking-step-line" aria-hidden="true"></li>
+        <li class="booking-step-item" data-step-indicator="3">
+          <span class="booking-step-dot" aria-hidden="true">۳</span>
+          <span class="booking-step-label">ساعت</span>
+        </li>
+        <li class="booking-step-line" aria-hidden="true"></li>
+        <li class="booking-step-item" data-step-indicator="4">
+          <span class="booking-step-dot" aria-hidden="true">۴</span>
+          <span class="booking-step-label">اطلاعات</span>
+        </li>
+        <li class="booking-step-line" aria-hidden="true"></li>
+        <li class="booking-step-item" data-step-indicator="5">
+          <span class="booking-step-dot" aria-hidden="true">۵</span>
+          <span class="booking-step-label">تأیید</span>
+        </li>
+      </ol>
+    </nav>
+
+    {# Toast host #}
+    <div class="booking-toast-host" data-toast-host aria-live="polite"></div>
+
+    {# Loading overlay skeleton #}
+    <div class="booking-panel" data-booking-shell>
+      <div class="booking-loading" data-booking-loading hidden>
+        <div class="booking-skeleton-grid">
+          <div class="booking-skeleton-card"></div>
+          <div class="booking-skeleton-card"></div>
+          <div class="booking-skeleton-card"></div>
+        </div>
+        <p class="mt-8 text-center text-sm text-ivory/40">در حال بارگذاری…</p>
+      </div>
+
+      {# Step consult — pre-booking guidance gate #}
+      <div data-booking-step="consult" class="booking-step-panel" hidden>
+        <div class="booking-gate" data-booking-gate>
+          <button type="button" class="booking-back" data-back>
+            <span aria-hidden="true">→</span> بازگشت به انتخاب سرویس
+          </button>
+
+          <div class="booking-gate-first" data-gate-first hidden>
+            <p class="booking-gate-first-title" data-gate-first-title></p>
+            <p class="booking-gate-first-body" data-gate-first-body></p>
+          </div>
+
+          <header class="booking-gate-hero">
+            <p class="section-label" data-gate-eyebrow></p>
+            <h2 class="booking-gate-title" data-gate-title></h2>
+            <p class="booking-gate-body" data-gate-body></p>
+          </header>
+
+          <div class="booking-gate-paths">
+            <button type="button" class="booking-gate-primary" data-gate-consult>
+              <span class="booking-gate-primary-kicker" data-gate-primary-kicker></span>
+              <span class="booking-gate-primary-title" data-gate-primary-label></span>
+              <span class="booking-gate-primary-desc" data-gate-primary-desc></span>
+              <span class="booking-gate-primary-cta" data-gate-primary-cta></span>
+            </button>
+
+            <button type="button" class="booking-gate-secondary" data-gate-continue>
+              <span class="booking-gate-secondary-title" data-gate-secondary-label></span>
+              <span class="booking-gate-secondary-desc" data-gate-secondary-desc></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {# Step 1 — Services #}
+      <div data-booking-step="1" class="booking-step-panel">
+        <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 class="text-xl font-light text-ivory sm:text-2xl">انتخاب سرویس</h2>
+            <p class="mt-2 text-sm text-ivory/45">یکی از مسیرهای رزرو را انتخاب کنید</p>
+          </div>
+        </div>
+        <div class="booking-service-grid" data-service-grid></div>
+        <div class="booking-empty" data-services-empty hidden>
+          <p class="text-lg font-light text-ivory/70">در حال حاضر سرویسی برای رزرو فعال نیست.</p>
+          <p class="mt-2 text-sm text-ivory/40">لطفاً بعداً دوباره سر بزنید.</p>
+        </div>
+        <div class="booking-error" data-services-error hidden>
+          <p data-services-error-text>خطا در دریافت سرویس‌ها</p>
+          <button type="button" class="btn-court mt-6" data-retry-services>تلاش مجدد</button>
+        </div>
+      </div>
+
+      {# Step 2 — Calendar #}
+      <div data-booking-step="2" class="booking-step-panel" hidden>
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <button type="button" class="booking-back" data-back>
+              <span aria-hidden="true">→</span> بازگشت
+            </button>
+            <h2 class="mt-4 text-xl font-light text-ivory sm:text-2xl" data-step2-title>انتخاب تاریخ</h2>
+            <p class="mt-2 text-sm text-ivory/45" data-step2-sub></p>
+          </div>
+        </div>
+        <div class="booking-calendar" data-calendar>
+          <div class="booking-cal-head">
+            <button type="button" class="booking-cal-nav" data-cal-prev aria-label="ماه قبل">→</button>
+            <h3 class="booking-cal-title" data-cal-title>—</h3>
+            <button type="button" class="booking-cal-nav" data-cal-next aria-label="ماه بعد">←</button>
+          </div>
+          <div class="booking-cal-weekdays" data-cal-weekdays></div>
+          <div class="booking-cal-grid" data-cal-grid></div>
+          <div class="booking-cal-legend">
+            <span><i class="leg leg-available"></i> آزاد</span>
+            <span><i class="leg leg-limited"></i> محدود</span>
+            <span><i class="leg leg-full"></i> تکمیل</span>
+            <span><i class="leg leg-closed"></i> تعطیل</span>
+          </div>
+        </div>
+        <div class="booking-cal-loading" data-cal-loading hidden>
+          <div class="booking-skeleton-cal"></div>
+        </div>
+      </div>
+
+      {# Step 3 — Slots #}
+      <div data-booking-step="3" class="booking-step-panel" hidden>
+        <div class="mb-8">
+          <button type="button" class="booking-back" data-back>
+            <span aria-hidden="true">→</span> بازگشت
+          </button>
+          <h2 class="mt-4 text-xl font-light text-ivory sm:text-2xl">انتخاب ساعت</h2>
+          <p class="mt-2 text-sm text-ivory/45" data-step3-sub></p>
+        </div>
+        <div class="booking-slots-meta" data-slots-meta></div>
+        <div class="booking-slots-grid" data-slots-grid></div>
+        <div class="booking-empty" data-slots-empty hidden>
+          <p class="text-lg font-light text-ivory/70">نوبت آزادی در این روز نیست.</p>
+          <button type="button" class="btn-court mt-6" data-back>انتخاب تاریخ دیگر</button>
+        </div>
+        <div class="booking-slots-loading" data-slots-loading hidden>
+          <div class="booking-skeleton-slots"></div>
+        </div>
+      </div>
+
+      {# Step 4 — Form #}
+      <div data-booking-step="4" class="booking-step-panel" hidden>
+        <div class="mb-8">
+          <button type="button" class="booking-back" data-back>
+            <span aria-hidden="true">→</span> بازگشت
+          </button>
+          <h2 class="mt-4 text-xl font-light text-ivory sm:text-2xl">اطلاعات تماس</h2>
+          <p class="mt-2 text-sm text-ivory/45">برای هماهنگی نهایی به این اطلاعات نیاز داریم</p>
+        </div>
+        <form class="booking-form" data-booking-form novalidate>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="bk-first" class="booking-label">نام</label>
+              <input id="bk-first" name="first_name" required autocomplete="given-name" class="field-court" placeholder="نام">
+              <p class="booking-field-error" data-error-for="first_name" hidden></p>
+            </div>
+            <div>
+              <label for="bk-last" class="booking-label">نام خانوادگی</label>
+              <input id="bk-last" name="last_name" required autocomplete="family-name" class="field-court" placeholder="نام خانوادگی">
+              <p class="booking-field-error" data-error-for="last_name" hidden></p>
+            </div>
+          </div>
+          <div class="mt-5">
+            <label for="bk-phone" class="booking-label">شماره تماس</label>
+            <input id="bk-phone" name="phone" type="tel" required inputmode="tel" dir="ltr" autocomplete="tel" class="field-court text-left" placeholder="0913xxxxxxx">
+            <p class="booking-field-error" data-error-for="phone" hidden></p>
+          </div>
+          <div class="mt-5">
+            <label for="bk-notes" class="booking-label">توضیحات <span class="text-ivory/30">(اختیاری)</span></label>
+            <textarea id="bk-notes" name="notes" rows="3" class="field-court resize-none" placeholder="جزئیات یا درخواست خاص…"></textarea>
+          </div>
+          <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+            <button type="button" class="booking-back-btn" data-back>بازگشت</button>
+            <button type="submit" class="btn-light-sweep booking-primary-btn">
+              <span class="relative z-10">ادامه به تأیید</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {# Step 5 — Confirm #}
+      <div data-booking-step="5" class="booking-step-panel" hidden>
+        <div class="mb-8">
+          <button type="button" class="booking-back" data-back>
+            <span aria-hidden="true">→</span> بازگشت
+          </button>
+          <h2 class="mt-4 text-xl font-light text-ivory sm:text-2xl">تأیید نهایی</h2>
+          <p class="mt-2 text-sm text-ivory/45">جزئیات رزرو را بررسی کنید</p>
+        </div>
+        <div class="booking-summary" data-summary></div>
+
+        <div class="booking-guide mt-6" data-booking-guide hidden>
+          <div class="booking-guide-head">
+            <h3 class="text-sm font-light tracking-wide text-ivory/70" data-guide-heading></h3>
+            <a class="text-xs text-ivory/40 transition hover:text-ivory" data-guide-link href="#"></a>
+          </div>
+          <ul class="booking-guide-list mt-4" data-guide-highlights></ul>
+          <div class="booking-guide-alerts mt-4" data-guide-alerts></div>
+          <label class="booking-guide-ack mt-5">
+            <input type="checkbox" data-guide-ack>
+            <span data-guide-ack-label></span>
+          </label>
+          <p class="booking-field-error mt-2" data-guide-ack-error hidden></p>
+        </div>
+
+        <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+          <button type="button" class="booking-back-btn" data-back>بازگشت</button>
+          <button type="button" class="btn-light-sweep booking-primary-btn" data-confirm-book disabled>
+            <span class="relative z-10" data-confirm-label>ثبت نهایی</span>
+          </button>
+        </div>
+      </div>
+
+      {# Success #}
+      <div data-booking-step="success" class="booking-step-panel" hidden>
+        <div class="booking-success" data-success>
+          <div class="booking-success-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" class="h-16 w-16">
+              <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="1.25" opacity="0.35"/>
+              <path d="M20 33.5L28 41.5L44 24.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="mt-8 text-2xl font-light text-ivory sm:text-3xl">رزرو شما ثبت شد</h2>
+          <p class="mt-3 text-sm text-ivory/50">جزئیات نوبت برای شما آماده است</p>
+          <div class="booking-success-card mt-10" data-success-card></div>
+          <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <button type="button" class="btn-court" data-share-booking>اشتراک‌گذاری</button>
+            <button type="button" class="btn-light-sweep booking-primary-btn" data-booking-reset>
+              <span class="relative z-10">رزرو جدید</span>
+            </button>
+            <a href="{% url 'core:home' %}" class="booking-back-btn">بازگشت به صفحه اصلی</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/booking.js' %}" defer></script>
+{% endblock %}

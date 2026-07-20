@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}نوبت‌های من | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl px-4 py-16">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-stone-900">نوبت‌های من</h1>
+      <p class="mt-2 text-stone-600">تاریخچه و وضعیت رزروهای شما.</p>
+    </div>
+    <a href="{% url 'appointments:create' %}" class="rounded-xl bg-amber-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-900">
+      نوبت جدید
+    </a>
+  </div>
+
+  {% if appointments %}
+  <ul class="mt-10 divide-y divide-stone-200">
+    {% for item in appointments %}
+    <li class="flex flex-wrap items-center justify-between gap-3 py-5">
+      <div>
+        <p class="font-semibold text-stone-900">{{ item.service.name }} — {{ item.barber.display_name }}</p>
+        <p class="mt-1 text-sm text-stone-600">{{ item.starts_at|date:"Y/m/d H:i" }}</p>
+      </div>
+      <span class="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700">
+        {{ item.get_status_display }}
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="mt-10 text-stone-500">هنوز نوبتی ثبت نکرده‌اید.</p>
+  {% endif %}
+</section>
+{% endblock %}

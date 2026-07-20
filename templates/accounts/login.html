@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}ورود | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-md px-4 py-16">
+  <h1 class="text-2xl font-bold text-stone-900">ورود</h1>
+  <p class="mt-2 text-sm text-stone-600">برای مدیریت نوبت‌ها وارد حساب خود شوید.</p>
+
+  {% if error %}
+  <p class="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" class="mt-8 space-y-4" novalidate>
+    {% csrf_token %}
+    <div>
+      <label for="username" class="mb-1 block text-sm font-medium text-stone-700">نام کاربری</label>
+      <input id="username" name="username" required autocomplete="username"
+             class="w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-stone-900 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20">
+    </div>
+    <div>
+      <label for="password" class="mb-1 block text-sm font-medium text-stone-700">رمز عبور</label>
+      <input id="password" type="password" name="password" required autocomplete="current-password"
+             class="w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-stone-900 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20">
+    </div>
+    <button type="submit" class="w-full rounded-xl bg-stone-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-stone-700">
+      ورود
+    </button>
+  </form>
+
+  <p class="mt-6 text-center text-sm text-stone-600">
+    حساب ندارید؟
+    <a href="{% url 'accounts:register' %}" class="font-medium text-amber-800 hover:underline">ثبت‌نام</a>
+  </p>
+</section>
+{% endblock %}

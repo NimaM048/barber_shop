@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}مقاله یافت نشد | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="flex min-h-[70svh] flex-col items-center justify-center bg-court-950 px-6 pt-28 text-center">
+  <p class="section-label">۴۰۴</p>
+  <h1 class="mt-4 font-display text-4xl text-ivory sm:text-5xl">مقاله یافت نشد</h1>
+  <p class="mt-4 max-w-md text-sm font-light leading-8 text-ivory/50">
+    این مطلب حذف شده یا هنوز منتشر نشده است.
+  </p>
+  <a href="{% url 'magazine:hub' %}" class="btn-court mt-10">بازگشت به مجله</a>
+</section>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}مشاوره قبل از مراجعه | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  [data-consult-hub] [hidden] { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section
+  class="consult-stage relative min-h-[100svh] overflow-hidden bg-court-950 pt-28 pb-24"
+  data-consult-hub
+  data-api-base="{% url 'consultations:api-categories' %}"
+  data-static="{% get_static_prefix %}"
+>
+  <div class="consult-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="consult-orb consult-orb-a"></div>
+    <div class="consult-orb consult-orb-b"></div>
+  </div>
+  <div class="noise-layer opacity-[0.1]" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-[1100px] px-5 sm:px-8 lg:px-10">
+    <header class="mb-12 text-center sm:mb-16" data-reveal data-hub-header>
+      <p class="section-label" data-hub-section-label></p>
+      <h1 class="mt-4 font-display text-4xl font-normal tracking-tight text-ivory sm:text-5xl lg:text-6xl" data-hub-title></h1>
+      <p class="mx-auto mt-4 max-w-lg text-sm font-light leading-8 text-ivory/50" data-hub-subtitle></p>
+    </header>
+
+    <div class="consult-toast-host" data-toast-host aria-live="polite"></div>
+
+    <div class="consult-loading" data-hub-loading>
+      <div class="consult-skeleton-grid">
+        <div class="consult-skeleton-card"></div>
+        <div class="consult-skeleton-card"></div>
+        <div class="consult-skeleton-card"></div>
+      </div>
+    </div>
+
+    <div class="consult-hub-grid" data-hub-grid hidden></div>
+
+    <div class="consult-empty" data-hub-empty hidden>
+      <p class="text-lg font-light text-ivory/70" data-hub-empty-text></p>
+    </div>
+
+    <div class="consult-error" data-hub-error hidden>
+      <p data-hub-error-text></p>
+      <button type="button" class="btn-court mt-6" data-hub-retry>تلاش مجدد</button>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/consultations.js' %}" defer></script>
+{% endblock %}
