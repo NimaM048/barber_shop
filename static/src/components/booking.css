@@ -1125,11 +1125,11 @@
 
     display: block;
 
-    width: auto;
+    width: min(82vw, 18rem);
 
-    height: 5.5rem;
+    height: auto;
 
-    max-width: min(82vw, 280px);
+    max-height: 5.5rem;
 
     object-fit: contain;
 
@@ -1141,9 +1141,9 @@
 
     .booking-signature-img {
 
-      height: 7rem;
+      width: min(78vw, 22rem);
 
-      max-width: 340px;
+      max-height: 6.5rem;
 
     }
 
@@ -1153,9 +1153,9 @@
 
     .booking-signature-img {
 
-      height: 8rem;
+      width: 24rem;
 
-      max-width: 380px;
+      max-height: 7.5rem;
 
     }
 

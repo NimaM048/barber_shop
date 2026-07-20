@@ -281,9 +281,9 @@
 
     position: relative;
 
-    width: min(78vw, 420px);
+    width: min(88vw, 480px);
 
-    aspect-ratio: 820 / 787;
+    aspect-ratio: 423 / 262;
 
     display: grid;
 
@@ -311,7 +311,9 @@
 
   .hero-logo-svg {
 
-    color: rgba(247, 244, 239, 0.88);
+    z-index: 2;
+
+    color: rgba(247, 244, 239, 0.94);
 
     opacity: 0;
 
@@ -319,17 +321,27 @@
 
     will-change: opacity, filter;
 
+    pointer-events: none;
+
+  }
+
+  .hero-logo-strokes {
+
+    filter: drop-shadow(0 0 14px rgba(247, 244, 239, 0.22));
+
   }
 
   .hero-logo-img {
 
-    opacity: 0;
+    z-index: 1;
 
-    filter: blur(18px);
+    opacity: 0;
 
     will-change: opacity, filter, transform;
 
     transform: translate3d(0, 0, 0);
+
+    filter: blur(18px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45));
 
   }
 

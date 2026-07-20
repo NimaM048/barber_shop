@@ -443,8 +443,10 @@ a.ff-contact-value:focus-visible {
 
 .ff-logo {
   display: block;
-  width: auto;
-  height: clamp(4.5rem, 12vw, 7.5rem);
+  width: clamp(11rem, 38vw, 22rem);
+  height: auto;
+  max-height: clamp(4.5rem, 10vw, 6.5rem);
+  object-fit: contain;
   filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.4));
 }
 
@@ -653,6 +655,7 @@ a.ff-contact-value:focus-visible {
   }
 
   .ff-logo {
-    height: 4.25rem;
+    width: min(78vw, 16rem);
+    max-height: 4.25rem;
   }
 }

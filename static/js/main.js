@@ -417,7 +417,7 @@
       if (logoSvg) logoSvg.style.display = "none";
       if (logoImg) {
         logoImg.style.opacity = "1";
-        logoImg.style.filter = "blur(0)";
+        logoImg.style.filter = "blur(0) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))";
       }
       if (tagline) {
         tagline.style.opacity = "1";
@@ -456,10 +456,13 @@
         });
       }
 
-      gsap.set(drawPaths, { strokeDashoffset: 1 });
-      gsap.set(drawDots, { opacity: 0 });
-      gsap.set(logoSvg, { opacity: 0, filter: "blur(14px)" });
-      gsap.set(logoImg, { opacity: 0, filter: "blur(20px)" });
+      if (drawPaths.length) gsap.set(drawPaths, { strokeDashoffset: 1 });
+      if (drawDots.length) gsap.set(drawDots, { opacity: 0 });
+      if (logoSvg) gsap.set(logoSvg, { opacity: 0, filter: "blur(14px)" });
+      gsap.set(logoImg, {
+        opacity: 0,
+        filter: "blur(20px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
+      });
       gsap.set(divider, { scaleX: 0, opacity: 0 });
       gsap.set(ctaBtns, { opacity: 0, y: 18 });
       gsap.set(cta, { opacity: 1 });
@@ -492,32 +495,50 @@
         0.35
       );
 
-      /* 5–6 — logo not immediate; SVG stroke draw */
-      intro.to(logoSvg, { opacity: 1, duration: 0.28 }, 0.4);
-      intro.to(
-        drawPaths,
-        {
-          strokeDashoffset: 0,
-          duration: 1.55,
-          stagger: { each: 0.03, from: "start" },
-          ease: "power1.inOut",
-        },
-        0.45
-      );
-      intro.to(
-        drawDots,
-        { opacity: 1, duration: 0.35, stagger: 0.09, ease: "power1.out" },
-        1.55
-      );
+      /* 5–6 — signature stroke-draw construction */
+      if (logoSvg && drawPaths.length) {
+        intro.to(logoSvg, { opacity: 1, duration: 0.28 }, 0.4);
+        intro.to(
+          drawPaths,
+          {
+            strokeDashoffset: 0,
+            duration: 1.55,
+            stagger: { each: 0.03, from: "start" },
+            ease: "power1.inOut",
+          },
+          0.45
+        );
+        intro.to(
+          drawDots,
+          { opacity: 1, duration: 0.35, stagger: 0.09, ease: "power1.out" },
+          1.55
+        );
 
-      /* 7 — SVG blur → focus, then brand image settles into focus */
-      intro.to(logoSvg, { filter: "blur(0px)", duration: 0.85, ease: "power2.out" }, 1.5);
-      intro.to(
-        logoImg,
-        { opacity: 1, filter: "blur(0px)", duration: 1.05, ease: "power2.out" },
-        1.6
-      );
-      intro.to(logoSvg, { opacity: 0, duration: 0.5, ease: "power1.out" }, 2.0);
+        /* 7 — SVG softens into focus, brand image settles, construction dissolves */
+        intro.to(logoSvg, { filter: "blur(0px)", duration: 0.85, ease: "power2.out" }, 1.5);
+        intro.to(
+          logoImg,
+          {
+            opacity: 1,
+            filter: "blur(0px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
+            duration: 1.05,
+            ease: "power2.out",
+          },
+          1.6
+        );
+        intro.to(logoSvg, { opacity: 0, duration: 0.5, ease: "power1.out" }, 2.0);
+      } else if (logoImg) {
+        intro.to(
+          logoImg,
+          {
+            opacity: 1,
+            filter: "blur(0px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
+            duration: 1.25,
+            ease: "power2.out",
+          },
+          0.55
+        );
+      }
 
       /* 8 — Persian tagline: intact RTL reveal */
       if (tagline) {
@@ -531,7 +552,7 @@
             duration: 1.05,
             ease: "power2.out",
           },
-          1.4
+          logoSvg ? 1.4 : 1.15
         );
       }
 
@@ -539,7 +560,7 @@
       intro.to(
         divider,
         { scaleX: 1, opacity: 1, duration: 0.75, ease: "power3.inOut" },
-        2.25
+        logoSvg ? 2.25 : 1.85
       );
 
       /* 10 — CTAs rise gently */
@@ -553,12 +574,12 @@
           ease: "power3.out",
           clearProps: "transform",
         },
-        2.45
+        logoSvg ? 2.45 : 2.05
       );
 
       /* 11 — scroll indicator + quiet meta */
-      intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, 2.9);
-      intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, 3.0);
+      intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, logoSvg ? 2.9 : 2.5);
+      intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, logoSvg ? 3.0 : 2.6);
     }
 
     /* Mouse: subtle grid parallax + soft spotlight follow */
