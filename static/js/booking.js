@@ -126,8 +126,11 @@
           : state.step;
     qsa("[data-step-indicator]").forEach((item) => {
       const n = Number(item.dataset.stepIndicator);
-      item.classList.toggle("is-active", n === stepNum && state.step !== "consult");
+      const active = n === stepNum && state.step !== "consult";
+      item.classList.toggle("is-active", active);
       item.classList.toggle("is-done", n < stepNum || (state.step === "consult" && n === 1));
+      if (active) item.setAttribute("aria-current", "step");
+      else item.removeAttribute("aria-current");
     });
     qsa(".booking-step-line").forEach((line, idx) => {
       line.classList.toggle("is-done", idx + 1 < stepNum);

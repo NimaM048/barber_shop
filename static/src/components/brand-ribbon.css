@@ -122,4 +122,12 @@
     }
 
   }
+
+  html.is-lite-motion .marquee-track {
+    animation: none;
+  }
+
+  html.is-balanced-motion .marquee-track {
+    animation-duration: 72s;
+  }
 }

@@ -48,7 +48,9 @@
 
       <div class="consult-toolbar mb-8" data-detail-toolbar>
         <div class="consult-search">
+          <label class="sr-only" for="consult-tips-search">جستجو در نکات</label>
           <input
+            id="consult-tips-search"
             type="search"
             class="field-court"
             placeholder="جستجو در نکات…"
@@ -120,20 +122,20 @@
           <div class="grid gap-5 sm:grid-cols-2">
             <div>
               <label class="booking-label" for="tk-first">نام</label>
-              <input id="tk-first" name="first_name" required class="field-court" placeholder="نام">
+              <input id="tk-first" name="first_name" required autocomplete="given-name" class="field-court">
             </div>
             <div>
               <label class="booking-label" for="tk-last">نام خانوادگی</label>
-              <input id="tk-last" name="last_name" required class="field-court" placeholder="نام خانوادگی">
+              <input id="tk-last" name="last_name" required autocomplete="family-name" class="field-court">
             </div>
           </div>
           <div class="mt-5">
             <label class="booking-label" for="tk-phone">شماره تماس</label>
-            <input id="tk-phone" name="phone" type="tel" required dir="ltr" class="field-court text-left" placeholder="0913xxxxxxx">
+            <input id="tk-phone" name="phone" type="tel" required dir="ltr" inputmode="tel" autocomplete="tel" class="field-court text-left" placeholder="0913xxxxxxx">
           </div>
           <div class="mt-5">
             <label class="booking-label" for="tk-msg">پیام / سوال</label>
-            <textarea id="tk-msg" name="message" rows="4" required class="field-court resize-none" placeholder="توضیح کوتاه درباره شرایط پوست، مو یا سوال شما…"></textarea>
+            <textarea id="tk-msg" name="message" rows="4" required class="field-court resize-none" placeholder="مثلاً نوع پوست، حساسیت، یا سوال درباره مدل…"></textarea>
           </div>
           <div class="mt-5">
             <label class="booking-label" for="tk-file">فایل پیوست <span class="text-ivory/30">(اختیاری)</span></label>

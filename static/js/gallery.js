@@ -8,7 +8,14 @@
   const root = document.querySelector("[data-gallery-root]");
   if (!root || typeof Swiper === "undefined") return;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const perf = window.__sitePerf || {
+    reduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    lite: true,
+    full: false,
+  };
+  const reduceMotion = !!perf.reduce;
+  const liteMotion = !!perf.lite;
+  const fullMotion = !!perf.full;
 
   const payloadEl = document.getElementById("gallery-payload");
   let items = [];
@@ -51,7 +58,7 @@
     centeredSlides: true,
     spaceBetween: 18,
     loop: items.length > 3,
-    speed: reduceMotion ? 0 : 900,
+    speed: reduceMotion ? 0 : fullMotion ? 900 : 420,
     grabCursor: true,
     watchSlidesProgress: true,
     observer: true,
@@ -62,13 +69,13 @@
       enabled: true,
       onlyInViewport: true,
     },
-    autoplay: reduceMotion
-      ? false
-      : {
+    autoplay: fullMotion && !reduceMotion
+      ? {
           delay: 4800,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
-        },
+        }
+      : false,
     pagination: paginationEl
       ? {
           el: paginationEl,
@@ -97,7 +104,7 @@
     },
   });
 
-  if (typeof ScrollTrigger !== "undefined") {
+  if (typeof ScrollTrigger !== "undefined" && window.__sitePerf && window.__sitePerf.allowGsapScroll) {
     ScrollTrigger.create({
       trigger: swiperEl,
       start: "top 92%",

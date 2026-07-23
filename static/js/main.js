@@ -5,14 +5,30 @@
 (() => {
   "use strict";
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const perf = window.__sitePerf || {
+    reduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    lite: true,
+    full: false,
+    allowSmoothScroll: false,
+    allowParallax: false,
+    allowFilterFx: false,
+    allowScrub: false,
+    allowMagnetic: false,
+    allowGsapScroll: false,
+    allowHeroDraw: false,
+  };
+  const reduceMotion = !!perf.reduce;
+  const liteMotion = !!perf.lite;
+  const fullMotion = !!perf.full;
+  const tier = perf.tier || (fullMotion ? "full" : "lite");
+  const useGsapHero = tier === "full" || tier === "balanced";
 
   const toPersianDigits = (str) =>
     String(str).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
 
-  /* ── Lenis smooth scroll ── */
+  /* ── Lenis smooth scroll (skipped on lite / reduced) ── */
   let lenis = null;
-  if (!reduceMotion && typeof Lenis !== "undefined") {
+  if (perf.allowSmoothScroll && !reduceMotion && typeof Lenis !== "undefined") {
     lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -47,7 +63,7 @@
 
     const STORAGE_KEY = "site-nav-progress";
     const TRANSITION_KEY = "site-page-transition";
-    const LEAVE_MS = reduceMotion ? 0 : 340;
+    const LEAVE_MS = reduceMotion ? 0 : fullMotion ? 280 : 120;
     let value = 0;
     let trickleTimer = 0;
     let hiding = false;
@@ -293,17 +309,33 @@
   const mobileNav = document.querySelector("[data-mobile-nav]");
 
   if (toggle && mobileNav) {
+    const setNavOpen = (open) => {
+      mobileNav.classList.toggle("hidden", !open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
+      if (open) {
+        const firstLink = mobileNav.querySelector("a");
+        if (firstLink) firstLink.focus();
+      } else {
+        toggle.focus();
+      }
+    };
+
     toggle.addEventListener("click", () => {
       const isOpen = !mobileNav.classList.contains("hidden");
-      mobileNav.classList.toggle("hidden", isOpen);
-      toggle.setAttribute("aria-expanded", String(!isOpen));
+      setNavOpen(!isOpen);
     });
 
     mobileNav.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
-        mobileNav.classList.add("hidden");
-        toggle.setAttribute("aria-expanded", "false");
+        setNavOpen(false);
       });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (mobileNav.classList.contains("hidden")) return;
+      setNavOpen(false);
     });
   }
 
@@ -311,16 +343,22 @@
   const revealEls = document.querySelectorAll("[data-reveal]");
 
   if (revealEls.length) {
-    if (!reduceMotion && typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+    /* ScrollTrigger reveals only on full cinematic — IO is far cheaper while scrolling */
+    if (
+      perf.allowGsapScroll &&
+      !reduceMotion &&
+      typeof gsap !== "undefined" &&
+      typeof ScrollTrigger !== "undefined"
+    ) {
       revealEls.forEach((el) => {
         const delay = parseFloat(el.getAttribute("data-delay") || "0") * 0.1;
         gsap.fromTo(
           el,
-          { autoAlpha: 0, y: 40 },
+          { autoAlpha: 0, y: 28 },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 1.1,
+            duration: 0.9,
             delay,
             ease: "power3.out",
             scrollTrigger: {
@@ -344,12 +382,14 @@
             io.unobserve(el);
           });
         },
-        { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+        { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
       );
       revealEls.forEach((el) => {
         el.classList.add("reveal-prep");
         io.observe(el);
       });
+    } else {
+      revealEls.forEach((el) => el.classList.add("is-inview"));
     }
   }
 
@@ -417,7 +457,7 @@
       if (logoSvg) logoSvg.style.display = "none";
       if (logoImg) {
         logoImg.style.opacity = "1";
-        logoImg.style.filter = "blur(0) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))";
+        logoImg.style.filter = "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))";
       }
       if (tagline) {
         tagline.style.opacity = "1";
@@ -441,27 +481,70 @@
       });
     };
 
-    if (reduceMotion || typeof gsap === "undefined") {
+    if (reduceMotion || !useGsapHero || typeof gsap === "undefined") {
       showStaticHero();
-    } else {
-      const drawDots = qa("[data-draw-dot]");
-
-      /* Tagline: never split Persian glyphs — RTL clip + soft focus */
+      heroStage.classList.add("is-hero-ready");
+    } else if (!fullMotion) {
+      /* Balanced / lite: short opacity fade — no blur, clip-path, or stroke-draw */
+      if (logoSvg) gsap.set(logoSvg, { display: "none" });
+      gsap.set([mesh, grid, spotlight, guides, logoImg, tagline, divider, ctaBtns, scrollHint, meta], {
+        opacity: 0,
+      });
+      if (cta) gsap.set(cta, { opacity: 1 });
       if (tagline) {
         gsap.set(tagline, {
+          clipPath: "none",
+          webkitClipPath: "none",
+          visibility: "visible",
+          filter: "none",
+        });
+      }
+      if (logoImg) gsap.set(logoImg, { filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))" });
+      if (ctaBtns.length) gsap.set(ctaBtns, { y: 10 });
+      if (divider) gsap.set(divider, { scaleX: 0.4 });
+
+      const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
+      intro.to(mesh, { opacity: 1, duration: 0.55 }, 0);
+      intro.to(grid, { opacity: 0.07, duration: 0.5 }, 0.05);
+      intro.to(spotlight, { opacity: 1, duration: 0.45 }, 0.08);
+      intro.to(guides, { opacity: 1, duration: 0.4 }, 0.1);
+      intro.to(heroStage, { "--hero-glow-opacity": 0.5, duration: 0.6 }, 0.1);
+      intro.to(logoImg, { opacity: 1, duration: 0.55 }, 0.12);
+      intro.to(tagline, { opacity: 1, duration: 0.45 }, 0.28);
+      intro.to(divider, { opacity: 1, scaleX: 1, duration: 0.4 }, 0.38);
+      intro.to(
+        ctaBtns,
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, clearProps: "transform" },
+        0.45
+      );
+      intro.to(scrollHint, { opacity: 1, duration: 0.35 }, 0.55);
+      intro.to(meta, { opacity: 1, duration: 0.35 }, 0.55);
+    } else {
+      const drawDots = qa("[data-draw-dot]");
+      const useFilterFx = !!perf.allowFilterFx;
+
+      if (tagline) {
+        const tagFrom = {
           autoAlpha: 0,
-          filter: "blur(8px)",
           clipPath: "inset(0 0 0 100%)",
           webkitClipPath: "inset(0 0 0 100%)",
-        });
+        };
+        if (useFilterFx) tagFrom.filter = "blur(8px)";
+        gsap.set(tagline, tagFrom);
       }
 
       if (drawPaths.length) gsap.set(drawPaths, { strokeDashoffset: 1 });
       if (drawDots.length) gsap.set(drawDots, { opacity: 0 });
-      if (logoSvg) gsap.set(logoSvg, { opacity: 0, filter: "blur(14px)" });
+      if (logoSvg) {
+        const svgFrom = { opacity: 0 };
+        if (useFilterFx) svgFrom.filter = "blur(14px)";
+        gsap.set(logoSvg, svgFrom);
+      }
       gsap.set(logoImg, {
         opacity: 0,
-        filter: "blur(20px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
+        filter: useFilterFx
+          ? "blur(20px) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))"
+          : "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
       });
       gsap.set(divider, { scaleX: 0, opacity: 0 });
       gsap.set(ctaBtns, { opacity: 0, y: 18 });
@@ -478,16 +561,9 @@
         delay: 0,
       });
 
-      /* 1 — soft mesh appears */
       intro.to(mesh, { opacity: 1, duration: 1.15, ease: "power1.out" }, 0);
-
-      /* 2 — CAD blueprint grid fades in */
       intro.to(grid, { opacity: 0.085, duration: 1.05, ease: "power1.inOut" }, 0.1);
-
-      /* 3 — architectural guide marks */
       intro.to(guides, { opacity: 1, duration: 0.75, stagger: 0.06, ease: "power1.out" }, 0.2);
-
-      /* 4 — spotlight breathes behind logo */
       intro.to(spotlight, { opacity: 1, duration: 0.9 }, 0.3);
       intro.to(
         heroStage,
@@ -495,8 +571,7 @@
         0.35
       );
 
-      /* 5–6 — signature stroke-draw construction */
-      if (logoSvg && drawPaths.length) {
+      if (logoSvg && drawPaths.length && perf.allowHeroDraw) {
         intro.to(logoSvg, { opacity: 1, duration: 0.28 }, 0.4);
         intro.to(
           drawPaths,
@@ -513,14 +588,14 @@
           { opacity: 1, duration: 0.35, stagger: 0.09, ease: "power1.out" },
           1.55
         );
-
-        /* 7 — SVG softens into focus, brand image settles, construction dissolves */
-        intro.to(logoSvg, { filter: "blur(0px)", duration: 0.85, ease: "power2.out" }, 1.5);
+        if (useFilterFx) {
+          intro.to(logoSvg, { filter: "blur(0px)", duration: 0.85, ease: "power2.out" }, 1.5);
+        }
         intro.to(
           logoImg,
           {
             opacity: 1,
-            filter: "blur(0px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
+            filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
             duration: 1.05,
             ease: "power2.out",
           },
@@ -528,42 +603,36 @@
         );
         intro.to(logoSvg, { opacity: 0, duration: 0.5, ease: "power1.out" }, 2.0);
       } else if (logoImg) {
+        if (logoSvg) gsap.set(logoSvg, { display: "none" });
         intro.to(
           logoImg,
           {
             opacity: 1,
-            filter: "blur(0px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45))",
-            duration: 1.25,
+            filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
+            duration: 1.0,
             ease: "power2.out",
           },
-          0.55
+          0.45
         );
       }
 
-      /* 8 — Persian tagline: intact RTL reveal */
       if (tagline) {
-        intro.to(
-          tagline,
-          {
-            autoAlpha: 1,
-            filter: "blur(0px)",
-            clipPath: "inset(0 0 0 0%)",
-            webkitClipPath: "inset(0 0 0 0%)",
-            duration: 1.05,
-            ease: "power2.out",
-          },
-          logoSvg ? 1.4 : 1.15
-        );
+        const tagTo = {
+          autoAlpha: 1,
+          clipPath: "inset(0 0 0 0%)",
+          webkitClipPath: "inset(0 0 0 0%)",
+          duration: 1.05,
+          ease: "power2.out",
+        };
+        if (useFilterFx) tagTo.filter = "blur(0px)";
+        intro.to(tagline, tagTo, perf.allowHeroDraw ? 1.4 : 1.0);
       }
 
-      /* 9 — thin architectural divider */
       intro.to(
         divider,
         { scaleX: 1, opacity: 1, duration: 0.75, ease: "power3.inOut" },
-        logoSvg ? 2.25 : 1.85
+        perf.allowHeroDraw ? 2.25 : 1.6
       );
-
-      /* 10 — CTAs rise gently */
       intro.to(
         ctaBtns,
         {
@@ -574,43 +643,20 @@
           ease: "power3.out",
           clearProps: "transform",
         },
-        logoSvg ? 2.45 : 2.05
+        perf.allowHeroDraw ? 2.45 : 1.8
       );
-
-      /* 11 — scroll indicator + quiet meta */
-      intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, logoSvg ? 2.9 : 2.5);
-      intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, logoSvg ? 3.0 : 2.6);
+      intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, perf.allowHeroDraw ? 2.9 : 2.2);
+      intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, perf.allowHeroDraw ? 3.0 : 2.3);
     }
 
-    /* Mouse: subtle grid parallax + soft spotlight follow */
-    if (!reduceMotion) {
+    /* Mouse parallax — full tier only */
+    if (perf.allowParallax && !reduceMotion) {
       const mouse = { x: 0, y: 0, tx: 0, ty: 0, sx: 50, sy: 42, tsx: 50, tsy: 42 };
       const finePointer = window.matchMedia("(pointer: fine)").matches;
+      let parallaxFrame = 0;
+      let parallaxActive = false;
 
       if (finePointer) {
-        heroStage.addEventListener(
-          "pointermove",
-          (e) => {
-            const rect = heroStage.getBoundingClientRect();
-            mouse.tx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-            mouse.ty = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-            mouse.tsx = ((e.clientX - rect.left) / rect.width) * 100;
-            mouse.tsy = ((e.clientY - rect.top) / rect.height) * 100;
-          },
-          { passive: true }
-        );
-
-        heroStage.addEventListener(
-          "pointerleave",
-          () => {
-            mouse.tx = 0;
-            mouse.ty = 0;
-            mouse.tsx = 50;
-            mouse.tsy = 42;
-          },
-          { passive: true }
-        );
-
         const tickParallax = () => {
           mouse.x += (mouse.tx - mouse.x) * 0.045;
           mouse.y += (mouse.ty - mouse.y) * 0.045;
@@ -627,14 +673,59 @@
             logoLayer.style.transform = `translate3d(${mouse.x * 2.5}px, ${mouse.y * 2.5}px, 0)`;
           }
 
-          requestAnimationFrame(tickParallax);
+          const settling =
+            Math.abs(mouse.tx - mouse.x) > 0.002 ||
+            Math.abs(mouse.ty - mouse.y) > 0.002 ||
+            Math.abs(mouse.tsx - mouse.sx) > 0.05 ||
+            Math.abs(mouse.tsy - mouse.sy) > 0.05;
+
+          if (parallaxActive || settling) {
+            parallaxFrame = requestAnimationFrame(tickParallax);
+          } else {
+            parallaxFrame = 0;
+          }
         };
-        requestAnimationFrame(tickParallax);
+
+        const ensureTick = () => {
+          if (!parallaxFrame) parallaxFrame = requestAnimationFrame(tickParallax);
+        };
+
+        heroStage.addEventListener(
+          "pointermove",
+          (e) => {
+            const rect = heroStage.getBoundingClientRect();
+            mouse.tx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+            mouse.ty = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+            mouse.tsx = ((e.clientX - rect.left) / rect.width) * 100;
+            mouse.tsy = ((e.clientY - rect.top) / rect.height) * 100;
+            parallaxActive = true;
+            ensureTick();
+          },
+          { passive: true }
+        );
+
+        heroStage.addEventListener(
+          "pointerleave",
+          () => {
+            mouse.tx = 0;
+            mouse.ty = 0;
+            mouse.tsx = 50;
+            mouse.tsy = 42;
+            parallaxActive = false;
+            ensureTick();
+          },
+          { passive: true }
+        );
       }
     }
 
-    /* Scroll cinema: zoom out, grid fade, logo settle */
-    if (!reduceMotion && typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+    /* Scroll cinema — full tier only */
+    if (
+      perf.allowScrub &&
+      !reduceMotion &&
+      typeof gsap !== "undefined" &&
+      typeof ScrollTrigger !== "undefined"
+    ) {
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: heroStage,
@@ -680,7 +771,7 @@
       const target = parseFloat(el.getAttribute("data-target") || "0");
       const decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
       const suffix = el.getAttribute("data-suffix") || "";
-      const duration = 1800;
+      const duration = liteMotion ? 900 : 1800;
       const start = performance.now();
 
       if (reduceMotion) {
@@ -711,7 +802,7 @@
   }
 
   /* ── Magnetic buttons — soft premium pull ── */
-  if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+  if (perf.allowMagnetic && !reduceMotion && window.matchMedia("(pointer: fine)").matches) {
     document.querySelectorAll("[data-magnetic]").forEach((btn) => {
       const strength = 22;
       let frame = 0;

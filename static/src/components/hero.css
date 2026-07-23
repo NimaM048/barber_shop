@@ -15,6 +15,12 @@
 
     --hero-glow-opacity: 0;
 
+    perspective: none;
+
+  }
+
+  html.is-full-motion .hero-stage {
+
     perspective: 1200px;
 
   }
@@ -25,7 +31,7 @@
 
     transform-origin: center center;
 
-    will-change: transform, opacity;
+    will-change: auto;
 
   }
 
@@ -37,7 +43,7 @@
 
     opacity: 0;
 
-    will-change: opacity;
+    will-change: auto;
 
   }
 
@@ -47,11 +53,13 @@
 
     border-radius: 9999px;
 
-    filter: blur(90px);
+    /* Soft disc via gradient — avoids permanent 90px filter blur cost */
+
+    filter: none;
 
     pointer-events: none;
 
-    will-change: transform, opacity;
+    will-change: auto;
 
   }
 
@@ -65,9 +73,9 @@
 
     right: 8%;
 
-    background: var(--hero-mesh-a);
+    background: radial-gradient(circle, var(--hero-mesh-a) 0%, transparent 70%);
 
-    opacity: 0.7;
+    opacity: 0.85;
 
   }
 
@@ -81,9 +89,9 @@
 
     left: 4%;
 
-    background: var(--hero-mesh-b);
+    background: radial-gradient(circle, var(--hero-mesh-b) 0%, transparent 70%);
 
-    opacity: 0.85;
+    opacity: 0.95;
 
   }
 
@@ -97,9 +105,9 @@
 
     left: 42%;
 
-    background: var(--hero-mesh-c);
+    background: radial-gradient(circle, var(--hero-mesh-c) 0%, transparent 68%);
 
-    opacity: 0.9;
+    opacity: 1;
 
   }
 
@@ -123,7 +131,7 @@
 
     -webkit-mask-image: radial-gradient(ellipse 68% 58% at 50% 44%, #000 18%, transparent 78%);
 
-    will-change: transform, opacity;
+    will-change: auto;
 
     transform: translate3d(0, 0, 0);
 
@@ -149,7 +157,7 @@
 
     pointer-events: none;
 
-    will-change: opacity;
+    will-change: auto;
 
     mix-blend-mode: soft-light;
 
@@ -173,15 +181,15 @@
 
     border-radius: 9999px;
 
-    background: radial-gradient(circle, rgba(247, 244, 239, 0.14) 0%, transparent 68%);
+    background: radial-gradient(circle, rgba(247, 244, 239, 0.16) 0%, transparent 68%);
 
-    filter: blur(48px);
+    filter: none;
 
     opacity: var(--hero-glow-opacity);
 
     pointer-events: none;
 
-    will-change: opacity, transform;
+    will-change: auto;
 
     transform: translate3d(0, 0, 0) scale(1);
 
@@ -271,7 +279,7 @@
 
   .hero-lockup {
 
-    will-change: transform, opacity;
+    will-change: auto;
 
     transform: translate3d(0, 0, 0);
 
@@ -281,15 +289,15 @@
 
     position: relative;
 
-    width: min(88vw, 480px);
+    width: min(88vw, 560px);
 
-    aspect-ratio: 423 / 262;
+    aspect-ratio: 1600 / 982;
 
     display: grid;
 
     place-items: center;
 
-    will-change: transform, filter;
+    will-change: auto;
 
   }
 
@@ -319,7 +327,7 @@
 
     filter: blur(12px);
 
-    will-change: opacity, filter;
+    will-change: auto;
 
     pointer-events: none;
 
@@ -337,11 +345,15 @@
 
     opacity: 0;
 
-    will-change: opacity, filter, transform;
+    will-change: auto;
 
     transform: translate3d(0, 0, 0);
 
-    filter: blur(18px) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45));
+    /* Sharp resting state — never leave a live blur on the brand mark */
+
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28));
+
+    image-rendering: auto;
 
   }
 
@@ -365,7 +377,7 @@
 
     opacity: 0;
 
-    will-change: opacity, filter, clip-path;
+    will-change: auto;
 
     /* Keep Persian shaping stable during clip reveal */
 
@@ -379,7 +391,7 @@
 
     opacity: 0;
 
-    will-change: transform, opacity;
+    will-change: auto;
 
   }
 
@@ -395,7 +407,7 @@
 
     transform: translate3d(0, 18px, 0);
 
-    will-change: transform, opacity;
+    will-change: auto;
 
   }
 
@@ -475,25 +487,25 @@
 
   @media (prefers-reduced-motion: no-preference) {
 
-    .hero-mesh-orb-a {
+    html.is-full-motion .hero-mesh-orb-a {
 
       animation: meshDriftA 22s ease-in-out infinite alternate;
 
     }
 
-    .hero-mesh-orb-b {
+    html.is-full-motion .hero-mesh-orb-b {
 
       animation: meshDriftB 28s ease-in-out infinite alternate;
 
     }
 
-    .hero-mesh-orb-c {
+    html.is-full-motion .hero-mesh-orb-c {
 
       animation: meshDriftC 18s ease-in-out infinite alternate;
 
     }
 
-    .hero-logo-glow {
+    html.is-full-motion .hero-logo-glow {
 
       animation: glowBreathe 5.5s ease-in-out infinite;
 
@@ -502,6 +514,12 @@
     .hero-scroll-thumb {
 
       animation: scrollPulse 2.4s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+
+    }
+
+    html.is-lite-motion .hero-scroll-thumb {
+
+      animation: none;
 
     }
 

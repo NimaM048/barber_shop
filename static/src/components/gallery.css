@@ -39,7 +39,9 @@
 
     position: absolute;
 
-    filter: blur(48px);
+    /* Gradient already soft — avoid extra filter blur layer */
+
+    filter: none;
 
     opacity: 0.85;
 
@@ -213,17 +215,17 @@
 
     transform: scale(0.82) translateZ(-40px);
 
-    filter: blur(1.5px) brightness(0.72);
+    /* brightness via opacity only — live filter blur while sliding is costly */
+
+    filter: none;
 
     transition:
 
       opacity 0.85s var(--gallery-ease),
 
-      transform 0.85s var(--gallery-ease),
+      transform 0.85s var(--gallery-ease);
 
-      filter 0.85s var(--gallery-ease);
-
-    will-change: transform, opacity, filter;
+    will-change: transform, opacity;
 
   }
 
@@ -265,7 +267,7 @@
 
     transform: scale(0.9) translateZ(-18px);
 
-    filter: blur(0.6px) brightness(0.82);
+    filter: none;
 
     z-index: 1;
 
@@ -289,7 +291,7 @@
 
     transform: scale(0.75) !important;
 
-    filter: blur(4px) !important;
+    filter: none !important;
 
     pointer-events: none;
 

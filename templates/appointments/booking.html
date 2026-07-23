@@ -34,10 +34,12 @@
       <h1 class="booking-signature mt-6 flex justify-center">
         <img
           src="{% static 'images/brand/logo-signature.webp' %}"
+          srcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w"
+          sizes="(max-width: 640px) 70vw, 20rem"
           alt="{{ SITE_NAME }}"
           class="booking-signature-img"
-          width="423"
-          height="262"
+          width="1600"
+          height="982"
           decoding="async"
         >
       </h1>
@@ -49,7 +51,7 @@
     {# Progress stepper #}
     <nav class="booking-stepper mb-10 sm:mb-12" aria-label="مراحل رزرو" data-booking-stepper>
       <ol class="flex items-center justify-between gap-1 sm:gap-2">
-        <li class="booking-step-item is-active" data-step-indicator="1">
+        <li class="booking-step-item is-active" data-step-indicator="1" aria-current="step">
           <span class="booking-step-dot" aria-hidden="true">۱</span>
           <span class="booking-step-label">سرویس</span>
         </li>
@@ -207,12 +209,12 @@
           <div class="grid gap-5 sm:grid-cols-2">
             <div>
               <label for="bk-first" class="booking-label">نام</label>
-              <input id="bk-first" name="first_name" required autocomplete="given-name" class="field-court" placeholder="نام">
+              <input id="bk-first" name="first_name" required autocomplete="given-name" class="field-court">
               <p class="booking-field-error" data-error-for="first_name" hidden></p>
             </div>
             <div>
               <label for="bk-last" class="booking-label">نام خانوادگی</label>
-              <input id="bk-last" name="last_name" required autocomplete="family-name" class="field-court" placeholder="نام خانوادگی">
+              <input id="bk-last" name="last_name" required autocomplete="family-name" class="field-court">
               <p class="booking-field-error" data-error-for="last_name" hidden></p>
             </div>
           </div>
@@ -223,7 +225,7 @@
           </div>
           <div class="mt-5">
             <label for="bk-notes" class="booking-label">توضیحات <span class="text-ivory/30">(اختیاری)</span></label>
-            <textarea id="bk-notes" name="notes" rows="3" class="field-court resize-none" placeholder="جزئیات یا درخواست خاص…"></textarea>
+            <textarea id="bk-notes" name="notes" rows="3" class="field-court resize-none" placeholder="مثلاً حساسیت پوست یا ترجیح مدل…"></textarea>
           </div>
           <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
             <button type="button" class="booking-back-btn" data-back>بازگشت</button>

@@ -3,28 +3,33 @@
 {% block title %}آرایشگران | {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="mx-auto max-w-6xl px-4 py-16">
-  <h1 class="text-3xl font-bold text-stone-900">آرایشگران</h1>
-  <p class="mt-2 text-stone-600">تیم متخصص ما آماده پذیرایی از شماست.</p>
+<section class="mx-auto max-w-6xl px-4 py-20 sm:py-28">
+  <p class="section-label">Artisans</p>
+  <h1 class="mt-4 font-display text-4xl font-normal tracking-tight text-ivory sm:text-5xl">آرایشگران</h1>
+  <p class="mt-3 max-w-xl text-sm font-light leading-relaxed text-ivory/45">
+    تیم متخصص ما آماده پذیرایی از شماست.
+  </p>
 
   {% if barbers %}
-  <ul class="mt-10 divide-y divide-stone-200">
+  <ul class="mt-12 divide-y divide-ivory/10">
     {% for barber in barbers %}
-    <li class="flex items-start justify-between gap-4 py-6">
+    <li class="flex items-start justify-between gap-4 py-7">
       <div>
-        <a href="{% url 'barbers:detail' barber.pk %}" class="text-lg font-semibold text-stone-900 hover:text-amber-800">
+        <a href="{% url 'barbers:detail' barber.pk %}" class="font-display text-xl font-normal text-ivory transition hover:text-ivory/70">
           {{ barber.display_name }}
         </a>
         {% if barber.bio %}
-        <p class="mt-1 max-w-2xl text-sm text-stone-600">{{ barber.bio|truncatewords:28 }}</p>
+        <p class="mt-2 max-w-2xl text-sm font-light leading-relaxed text-ivory/40">{{ barber.bio|truncatewords:28 }}</p>
         {% endif %}
       </div>
-      <span class="shrink-0 text-xs text-stone-500">{{ barber.experience_years }} سال سابقه</span>
+      <span class="shrink-0 text-xs font-light tracking-wide text-ivory/30">{{ barber.experience_years }} سال سابقه</span>
     </li>
     {% endfor %}
   </ul>
   {% else %}
-  <p class="mt-10 text-stone-500">هنوز آرایشگری ثبت نشده است.</p>
+  <p class="mt-12 border border-ivory/10 px-5 py-8 text-sm font-light text-ivory/40">
+    هنوز آرایشگری ثبت نشده است.
+  </p>
   {% endif %}
 </section>
 {% endblock %}

@@ -1,6 +1,6 @@
 /**
  * Brand Story — editorial scroll storytelling
- * Slow, expensive motion. Respects prefers-reduced-motion.
+ * Slow, expensive motion. Respects prefers-reduced-motion + lite-motion.
  */
 (() => {
   "use strict";
@@ -8,9 +8,20 @@
   const root = document.querySelector("[data-brand-story]");
   if (!root) return;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const perf = window.__sitePerf || {
+    reduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    lite: true,
+    full: false,
+    allowScrub: false,
+    allowGsapScroll: false,
+  };
+  const reduceMotion = !!perf.reduce;
+  const liteMotion = !!perf.lite;
   const hasGsap =
-    typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+    !!perf.full &&
+    !!perf.allowGsapScroll &&
+    typeof gsap !== "undefined" &&
+    typeof ScrollTrigger !== "undefined";
 
   const q = (sel) => root.querySelector(sel);
   const qa = (sel) => [...root.querySelectorAll(sel)];
@@ -28,6 +39,12 @@
   const setEffect = (effect) => {
     const next = effect || "none";
     if (next === activeEffect || !portrait) return;
+    /* Portrait CSS filters are costly while scrolling on weak GPUs */
+    if (liteMotion) {
+      activeEffect = "none";
+      portrait.setAttribute("data-effect", "none");
+      return;
+    }
     activeEffect = next;
     portrait.setAttribute("data-effect", next);
   };
@@ -116,18 +133,30 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
+  const allowScrub = perf.allowScrub !== false;
+  const durScale = liteMotion ? 0.72 : 1;
+
   /* Use opacity (not autoAlpha) so content stays in a11y tree */
   const reveals = qa("[data-bs-reveal]");
-  gsap.set(reveals, { opacity: 0, y: 28 });
+  gsap.set(reveals, { opacity: 0, y: liteMotion ? 16 : 28 });
 
   const mask = q("[data-bs-portrait-mask]");
-  if (portraitMedia) gsap.set(portraitMedia, { scale: 1.08, yPercent: 4 });
-  if (mask) gsap.set(mask, { clipPath: "inset(10% 14% 14% 10%)" });
-  if (portrait) gsap.set(portrait, { opacity: 0.4 });
-  gsap.set(steps, { opacity: 0, y: 22 });
+  if (portraitMedia) {
+    gsap.set(portraitMedia, {
+      scale: allowScrub ? 1.08 : 1,
+      yPercent: allowScrub ? 4 : 0,
+    });
+  }
+  if (mask) {
+    gsap.set(mask, {
+      clipPath: allowScrub ? "inset(10% 14% 14% 10%)" : "inset(0% 0% 0% 0%)",
+    });
+  }
+  if (portrait) gsap.set(portrait, { opacity: allowScrub ? 0.4 : 0 });
+  gsap.set(steps, { opacity: 0, y: liteMotion ? 14 : 22 });
   if (progress) {
     gsap.set(progress, { scaleY: 0, transformOrigin: "top center" });
-    progress.setAttribute("data-bs-scrubbing", "");
+    if (allowScrub) progress.setAttribute("data-bs-scrubbing", "");
   }
   if (bgWords.length) gsap.set(bgWords, { opacity: 0 });
 
@@ -140,8 +169,8 @@
     gsap.to(phItems, {
       opacity: 1,
       y: 0,
-      duration: 1.45,
-      stagger: 0.12,
+      duration: 1.45 * durScale,
+      stagger: 0.12 * durScale,
       ease: easeLux,
       scrollTrigger: {
         trigger: philosophy,
@@ -155,8 +184,8 @@
   if (bgWords.length) {
     gsap.to(bgWords, {
       opacity: 1,
-      duration: 2.4,
-      stagger: 0.3,
+      duration: (liteMotion ? 1.4 : 2.4) * durScale,
+      stagger: liteMotion ? 0.15 : 0.3,
       ease: "power1.out",
       scrollTrigger: {
         trigger: root,
@@ -165,52 +194,66 @@
       },
     });
 
-    bgWords.forEach((word, i) => {
-      gsap.to(word, {
-        yPercent: i % 2 === 0 ? -5 : 6,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.6,
-        },
-      });
-    });
-  }
-
-  /* Portrait reveal — single scrub (no competing parallax) */
-  const composition = q('[data-bs-act="composition"]');
-  if (composition && portrait) {
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: composition,
-          start: "top 78%",
-          end: "top 32%",
-          scrub: 1.25,
-        },
-      })
-      .to(portrait, { opacity: 1, ease: "none" }, 0)
-      .to(mask, { clipPath: "inset(0% 0% 0% 0%)", ease: "none" }, 0)
-      .to(portraitMedia, { scale: 1, yPercent: 0, ease: "none" }, 0);
-
-    /* Subtle continued drift after reveal — one scrub only */
-    if (portraitMedia) {
-      gsap.fromTo(
-        portraitMedia,
-        { yPercent: 0 },
-        {
-          yPercent: -4,
+    if (allowScrub) {
+      bgWords.forEach((word, i) => {
+        gsap.to(word, {
+          yPercent: i % 2 === 0 ? -5 : 6,
           ease: "none",
           scrollTrigger: {
-            trigger: composition,
-            start: "top 32%",
+            trigger: root,
+            start: "top bottom",
             end: "bottom top",
             scrub: 1.6,
           },
-        }
-      );
+        });
+      });
+    }
+  }
+
+  /* Portrait reveal */
+  const composition = q('[data-bs-act="composition"]');
+  if (composition && portrait) {
+    if (allowScrub) {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: composition,
+            start: "top 78%",
+            end: "top 32%",
+            scrub: 1.25,
+          },
+        })
+        .to(portrait, { opacity: 1, ease: "none" }, 0)
+        .to(mask, { clipPath: "inset(0% 0% 0% 0%)", ease: "none" }, 0)
+        .to(portraitMedia, { scale: 1, yPercent: 0, ease: "none" }, 0);
+
+      if (portraitMedia) {
+        gsap.fromTo(
+          portraitMedia,
+          { yPercent: 0 },
+          {
+            yPercent: -4,
+            ease: "none",
+            scrollTrigger: {
+              trigger: composition,
+              start: "top 32%",
+              end: "bottom top",
+              scrub: 1.6,
+            },
+          }
+        );
+      }
+    } else {
+      gsap.to(portrait, {
+        opacity: 1,
+        duration: 0.9,
+        ease: easeLux,
+        scrollTrigger: {
+          trigger: composition,
+          start: "top 78%",
+          once: true,
+        },
+      });
     }
 
     const caption = portrait.querySelector(".bs-portrait-caption");
@@ -218,7 +261,7 @@
       gsap.to(caption, {
         opacity: 1,
         y: 0,
-        duration: 1.2,
+        duration: 1.2 * durScale,
         ease: easeLux,
         scrollTrigger: {
           trigger: portrait,
@@ -237,7 +280,7 @@
       gsap.to(label, {
         opacity: 1,
         y: 0,
-        duration: 1.15,
+        duration: 1.15 * durScale,
         ease: easeLux,
         scrollTrigger: {
           trigger: timeline,
@@ -250,8 +293,8 @@
     gsap.to(steps, {
       opacity: 1,
       y: 0,
-      duration: 1.15,
-      stagger: 0.1,
+      duration: 1.15 * durScale,
+      stagger: 0.1 * durScale,
       ease: easeLux,
       scrollTrigger: {
         trigger: timeline,
@@ -261,20 +304,33 @@
     });
 
     if (progress) {
-      gsap.fromTo(
-        progress,
-        { scaleY: 0 },
-        {
+      if (allowScrub) {
+        gsap.fromTo(
+          progress,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: timeline,
+              start: "top 58%",
+              end: "bottom 38%",
+              scrub: 0.7,
+            },
+          }
+        );
+      } else {
+        gsap.to(progress, {
           scaleY: 1,
-          ease: "none",
+          duration: 0.8,
+          ease: easeLux,
           scrollTrigger: {
             trigger: timeline,
             start: "top 58%",
-            end: "bottom 38%",
-            scrub: 0.7,
+            once: true,
           },
-        }
-      );
+        });
+      }
     }
 
     steps.forEach((step, index) => {
@@ -297,8 +353,8 @@
     gsap.to(valueItems, {
       opacity: 1,
       y: 0,
-      duration: 1.2,
-      stagger: 0.08,
+      duration: 1.2 * durScale,
+      stagger: 0.08 * durScale,
       ease: easeLux,
       scrollTrigger: {
         trigger: valuesAct,
@@ -315,8 +371,8 @@
     gsap.to(finaleItems, {
       opacity: 1,
       y: 0,
-      duration: 1.35,
-      stagger: 0.16,
+      duration: 1.35 * durScale,
+      stagger: 0.16 * durScale,
       ease: easeLux,
       scrollTrigger: {
         trigger: finale,

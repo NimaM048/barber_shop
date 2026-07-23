@@ -1,0 +1,191 @@
+/* Performance tiers — default is light; full motion is opt-in via html.is-full-motion */
+
+/* ── Always-on: kill the costliest continuous overdraw ── */
+.noise-layer {
+  display: none !important;
+}
+
+html.is-full-motion .noise-layer {
+  display: block !important;
+}
+
+/* Header / scroll-top: solid paint beats backdrop-filter on mid GPUs */
+[data-nav-glass],
+.site-nav.is-solid,
+[data-nav-glass].is-solid {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(7, 25, 22, 0.94) !important;
+}
+
+.scroll-top {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(7, 25, 22, 0.92) !important;
+}
+
+/* Hero: never keep permanent will-change layers */
+.hero-atmosphere,
+.hero-mesh,
+.hero-mesh-orb,
+.hero-blueprint,
+.hero-spotlight,
+.hero-logo-glow,
+.hero-lockup,
+.hero-logo-stage,
+.hero-logo-svg,
+.hero-logo-img,
+.hero-tagline,
+.hero-divider,
+.hero-cta [data-hero-btn] {
+  will-change: auto !important;
+}
+
+.hero-spotlight {
+  mix-blend-mode: normal;
+}
+
+.hero-logo-svg,
+.hero-logo-img,
+.hero-tagline {
+  filter: none !important;
+}
+
+.hero-logo-img {
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28)) !important;
+}
+
+/* Infinite loops ONLY on full cinematic tier */
+.hero-mesh-orb-a,
+.hero-mesh-orb-b,
+.hero-mesh-orb-c,
+.hero-logo-glow,
+.ff-cta-arrow {
+  animation: none !important;
+}
+
+html.is-full-motion .hero-mesh-orb-a {
+  animation: meshDriftA 22s ease-in-out infinite alternate !important;
+}
+
+html.is-full-motion .hero-mesh-orb-b {
+  animation: meshDriftB 28s ease-in-out infinite alternate !important;
+}
+
+html.is-full-motion .hero-mesh-orb-c {
+  animation: meshDriftC 18s ease-in-out infinite alternate !important;
+}
+
+html.is-full-motion .hero-logo-glow {
+  animation: glowBreathe 5.5s ease-in-out infinite !important;
+}
+
+html.is-full-motion .ff-cta-arrow {
+  animation: ff-breathe 3.6s cubic-bezier(0.22, 1, 0.36, 1) infinite !important;
+}
+
+/* Keep a cheap scroll hint pulse even on balanced (tiny layer) */
+.hero-scroll-thumb {
+  animation: scrollPulse 2.4s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+html.is-lite-motion .hero-scroll-thumb,
+html.is-reduce-motion .hero-scroll-thumb,
+html.is-tab-hidden .hero-scroll-thumb {
+  animation: none !important;
+}
+
+html.is-tab-hidden .hero-mesh-orb-a,
+html.is-tab-hidden .hero-mesh-orb-b,
+html.is-tab-hidden .hero-mesh-orb-c,
+html.is-tab-hidden .hero-logo-glow,
+html.is-tab-hidden .marquee-track,
+html.is-tab-hidden .ff-cta-arrow {
+  animation-play-state: paused !important;
+}
+
+/* Gallery: opacity/scale only — never animate filter while sliding */
+.gallery-slide-wrap {
+  filter: none !important;
+  will-change: auto !important;
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.gallery-swiper .swiper-slide-prev,
+.gallery-swiper .swiper-slide-next,
+.gallery-swiper .swiper-slide-active,
+.gallery-slide-wrap.is-filtered-out {
+  filter: none !important;
+}
+
+html.is-lite-motion .gallery-slide-wrap,
+html.is-balanced-motion .gallery-slide-wrap {
+  transform: scale(0.88);
+  opacity: 0.45;
+}
+
+html.is-lite-motion .gallery-swiper .swiper-slide-prev,
+html.is-lite-motion .gallery-swiper .swiper-slide-next,
+html.is-balanced-motion .gallery-swiper .swiper-slide-prev,
+html.is-balanced-motion .gallery-swiper .swiper-slide-next {
+  transform: scale(0.94);
+  opacity: 0.7;
+}
+
+html.is-lite-motion .gallery-swiper .swiper-slide-active,
+html.is-balanced-motion .gallery-swiper .swiper-slide-active {
+  transform: scale(1.03) translateY(-4px);
+}
+
+/* Footer glow — no live blur */
+.ff-glow,
+[data-ff-glow] {
+  filter: none !important;
+  will-change: auto !important;
+}
+
+.ff-bg-word {
+  will-change: auto !important;
+}
+
+/* Brand ribbon: slower = fewer composites on weak GPUs */
+html.is-balanced-motion .marquee-track {
+  animation-duration: 72s !important;
+}
+
+html.is-lite-motion .marquee-track {
+  animation: none !important;
+}
+
+/* Soften progress bar blur ornament */
+.site-progress-bar::after {
+  filter: none !important;
+  opacity: 0.35;
+}
+
+/* Content-visibility for below-fold sections when present */
+[data-brand-story],
+[data-footer-finale],
+[data-gallery-root] {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
+@media (max-width: 767px) {
+  .gallery-slide-wrap {
+    opacity: 0.42;
+    transform: scale(0.86);
+  }
+
+  .gallery-swiper .swiper-slide-prev,
+  .gallery-swiper .swiper-slide-next {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+
+  .hero-blueprint {
+    opacity: 0.04 !important;
+  }
+}

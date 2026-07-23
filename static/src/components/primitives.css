@@ -12,6 +12,41 @@
     @apply block w-auto object-contain;
   }
 
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: 1rem;
+    z-index: 100;
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #071916;
+    background: #f7f4ef;
+    border: 1px solid rgba(247, 244, 239, 0.35);
+    transform: translateY(-160%);
+    transition: transform 0.25s ease;
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 1px solid #f7f4ef;
+    outline-offset: 4px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .silk {
     background-image:
       radial-gradient(ellipse 80% 50% at 20% 0%, rgba(106, 151, 140, 0.12), transparent 50%),

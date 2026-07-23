@@ -112,12 +112,11 @@
   <section class="mag-rail" data-mag-rail aria-label="ناوبری مجله">
     <div class="mag-rail-inner">
       <nav class="mag-topics" data-cat-rail aria-label="موضوعات">
-        <div class="mag-topics-track" data-cat-track role="list">
+        <div class="mag-topics-track" data-cat-track>
           <button
             type="button"
             class="mag-topic {% if not filters.category %}is-active{% endif %}"
             data-cat=""
-            role="listitem"
             aria-pressed="{% if not filters.category %}true{% else %}false{% endif %}"
           >همه</button>
           {% for c in hub.categories %}
@@ -125,7 +124,6 @@
             type="button"
             class="mag-topic {% if filters.category == c.slug %}is-active{% endif %}"
             data-cat="{{ c.slug }}"
-            role="listitem"
             aria-pressed="{% if filters.category == c.slug %}true{% else %}false{% endif %}"
           >
             {{ c.title }}
@@ -300,6 +298,8 @@
             </span>
           </a>
         </li>
+        {% empty %}
+        <li class="mag-index-empty text-sm font-light text-ivory/40">هنوز مطلب پرخواننده‌ای ثبت نشده است.</li>
         {% endfor %}
       </ol>
     </div>
@@ -317,8 +317,8 @@
           دانشنامه را به مشاوره و خدمت تبدیل کنید — با استاندارد همان برندی که می‌خوانید.
         </p>
         <div class="mag-journey-actions">
+          <a href="{{ hub.conversion.booking_url }}" class="btn-court-fill" data-journey-book>{{ hub.conversion.booking_label }}</a>
           <a href="{{ hub.conversion.consultation_url }}" class="btn-court" data-journey-consult>{{ hub.conversion.consultation_label }}</a>
-          <a href="{{ hub.conversion.booking_url }}" class="btn-quiet" data-journey-book>{{ hub.conversion.booking_label }} ←</a>
           <a href="{{ hub.conversion.services_url }}" class="mag-text-link" data-journey-services>مشاهده خدمات</a>
         </div>
       </div>

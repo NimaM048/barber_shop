@@ -191,9 +191,7 @@
 
     border: 1px solid rgba(247, 244, 239, 0.1);
 
-    background: rgba(7, 25, 22, 0.55);
-
-    backdrop-filter: blur(18px);
+    background: rgba(7, 25, 22, 0.92);
 
     padding: 1.5rem;
 
@@ -911,9 +909,7 @@
 
     border: 1px solid rgba(247, 244, 239, 0.15);
 
-    background: rgba(7, 25, 22, 0.95);
-
-    backdrop-filter: blur(12px);
+    background: rgba(7, 25, 22, 0.98);
 
     padding: 0.9rem 1.1rem;
 
@@ -1399,9 +1395,7 @@
 
     border-top: 1px solid rgba(247, 244, 239, 0.12);
 
-    background: rgba(7, 25, 22, 0.94);
-
-    backdrop-filter: blur(14px);
+    background: rgba(7, 25, 22, 0.98);
 
   }
 

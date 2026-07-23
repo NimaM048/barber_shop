@@ -1,6 +1,6 @@
 /**
  * Footer Finale — cinematic closing chapter
- * Slow layered reveal. Respects prefers-reduced-motion.
+ * Full tier: GSAP reveal. Balanced/lite: IntersectionObserver fades.
  */
 (() => {
   "use strict";
@@ -8,9 +8,20 @@
   const root = document.querySelector("[data-footer-finale]");
   if (!root) return;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const perf = window.__sitePerf || {
+    reduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    lite: true,
+    full: false,
+    allowFilterFx: false,
+    allowScrub: false,
+    allowGsapScroll: false,
+  };
+  const reduceMotion = !!perf.reduce;
+  const useCinema = !!perf.full && !!perf.allowGsapScroll;
   const hasGsap =
-    typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+    useCinema &&
+    typeof gsap !== "undefined" &&
+    typeof ScrollTrigger !== "undefined";
 
   const qa = (sel) => [...root.querySelectorAll(sel)];
   const bgWord = root.querySelector("[data-ff-bg-word]");
@@ -22,7 +33,7 @@
     reveals.forEach((el) => el.classList.add("is-inview"));
   };
 
-  /* ── Reduced motion / no GSAP ── */
+  /* ── Balanced / lite / reduced: cheap IO reveals ── */
   if (reduceMotion || !hasGsap) {
     root.classList.add("is-static");
 
@@ -52,6 +63,7 @@
         );
         bgIo.observe(root);
       }
+      if (glow) glow.style.opacity = "1";
     } else {
       showAll();
     }
@@ -60,8 +72,12 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  /* Initial state — stay in a11y tree via opacity, not visibility */
-  gsap.set(reveals, { opacity: 0, y: 28, filter: "blur(6px)" });
+  const useBlur = !!perf.allowFilterFx;
+  gsap.set(reveals, {
+    opacity: 0,
+    y: 28,
+    ...(useBlur ? { filter: "blur(6px)" } : {}),
+  });
   if (bgWord) gsap.set(bgWord, { opacity: 0, scale: 1.04, y: 40 });
   if (glow) gsap.set(glow, { opacity: 0, scale: 0.92 });
 
@@ -78,11 +94,7 @@
   });
 
   if (glow) {
-    tl.to(
-      glow,
-      { opacity: 1, scale: 1, duration: 2.2, ease: "power2.out" },
-      0
-    );
+    tl.to(glow, { opacity: 1, scale: 1, duration: 2.2, ease: "power2.out" }, 0);
   }
 
   if (bgWord) {
@@ -101,21 +113,19 @@
 
   reveals.forEach((el) => {
     const delay = Number(el.getAttribute("data-ff-delay") || 0) * 0.14;
-    tl.to(
-      el,
-      {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 1.25,
-        clearProps: "filter",
-      },
-      0.35 + delay
-    );
+    const to = {
+      opacity: 1,
+      y: 0,
+      duration: 1.25,
+    };
+    if (useBlur) {
+      to.filter = "blur(0px)";
+      to.clearProps = "filter";
+    }
+    tl.to(el, to, 0.35 + delay);
   });
 
-  /* Tiny parallax on background word — breath, not drama */
-  if (bgWord) {
+  if (perf.allowScrub && bgWord) {
     gsap.to(bgWord, {
       yPercent: -8,
       ease: "none",
@@ -128,7 +138,7 @@
     });
   }
 
-  if (glow) {
+  if (perf.allowScrub && glow) {
     gsap.to(glow, {
       yPercent: -6,
       ease: "none",

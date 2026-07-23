@@ -10,7 +10,7 @@
   <div class="relative mx-auto max-w-[1100px] px-5 lg:px-10">
     <div class="max-w-xl" data-reveal>
       <p class="section-label">کاتالوگ</p>
-      <h1 class="mt-5 text-3xl font-light sm:text-5xl">خدمات</h1>
+      <h1 class="mt-5 font-display text-3xl font-normal sm:text-5xl">خدمات</h1>
       <p class="mt-4 text-sm font-light leading-8 text-ivory/50">
         قیمت و مدت زمان هر خدمت را ببینید و مستقیم رزرو کنید.
       </p>
@@ -21,7 +21,7 @@
       {% for service in services %}
       <li class="flex flex-wrap items-center justify-between gap-4 py-7">
         <div class="min-w-0 flex-1">
-          <h2 class="text-xl font-light text-ivory">{{ service.name }}</h2>
+          <h2 class="font-display text-xl font-normal text-ivory">{{ service.name }}</h2>
           {% if service.description %}
           <p class="mt-2 text-sm font-light leading-7 text-ivory/45">{{ service.description }}</p>
           {% endif %}

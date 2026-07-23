@@ -15,6 +15,7 @@
 
 @import "tailwindcss/utilities";
 @import "./utilities/motion.css";
+@import "./utilities/perf.css";
 
 @import "./animations/keyframes.css";
 

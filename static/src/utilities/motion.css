@@ -3,14 +3,22 @@
 
     opacity: 0;
 
-    transform: translateY(36px);
+    transform: translateY(18px);
 
   }
 
   .is-inview {
 
-    animation: reveal 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 
+  }
+
+  html.is-full-motion .reveal-prep {
+    transform: translateY(36px);
+  }
+
+  html.is-full-motion .is-inview {
+    animation-duration: 1.15s;
   }
 
   .delay-1 { animation-delay: 0.1s; }

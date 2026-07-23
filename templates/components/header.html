@@ -6,10 +6,12 @@
       <a href="{% url 'core:home' %}" class="group shrink-0" aria-label="{{ SITE_NAME }}">
         <img
           src="{% static 'images/brand/logo-signature.webp' %}"
+          srcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w"
+          sizes="12rem"
           alt="{{ SITE_NAME }}"
           class="logo-mark site-header-logo"
-          width="423"
-          height="262"
+          width="1600"
+          height="982"
           decoding="async"
         >
       </a>
@@ -53,7 +55,7 @@
 
   <nav
     id="mobile-nav"
-    class="mx-4 mt-2 hidden border border-white/10 bg-court-950/95 px-6 py-6 backdrop-blur-2xl lg:hidden"
+    class="mx-4 mt-2 hidden border border-ivory/10 bg-court-950 px-6 py-6 lg:hidden"
     data-mobile-nav
     aria-label="منوی موبایل"
   >
