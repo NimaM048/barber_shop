@@ -1,19 +1,34 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+  {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{{ SITE_SUBTITLE }} — {{ SITE_TAGLINE }}{% endblock %}">
   <meta name="theme-color" content="#0d2d28">
+  <meta name="robots" content="{% block meta_robots %}index,follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+  {% block social_meta %}
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ SITE_SUBTITLE }} — {{ SITE_TAGLINE }}{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{% block og_image %}{% static 'images/brand/hero-cinematic.jpg' %}{% endblock %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ SITE_SUBTITLE }}{% endblock %}">
+  {% endblock %}
 
   <style>
     html.is-page-entering .site-shell {
       opacity: 0;
-      transform: translate3d(0, 8px, 0);
+      transform: translate3d(0, 5px, 0);
     }
   </style>
-  {% load static %}
   <script src="{% static 'js/perf.js' %}"></script>
   <script>
     (function () {
@@ -41,14 +56,15 @@
   {% block extra_head %}{% endblock %}
   {% block extra_css %}{% endblock %}
 </head>
-<body class="relative min-h-screen overflow-x-hidden bg-court-900 font-sans font-light text-ivory antialiased">
+<body class="relative min-h-screen overflow-x-hidden bg-court-950 font-sans font-light text-ivory antialiased{% block body_class %}{% endblock %}">
   <a href="#main" class="skip-link">پرش به محتوا</a>
   <div class="site-progress" data-site-progress aria-hidden="true">
     <div class="site-progress-track"></div>
     <div class="site-progress-bar" data-site-progress-bar></div>
   </div>
 
-  <div class="noise-layer fixed inset-0 z-[1] pointer-events-none opacity-[0.07]" aria-hidden="true"></div>
+  <div class="site-atmosphere pointer-events-none fixed inset-0 z-0" aria-hidden="true"></div>
+  <div class="noise-layer fixed inset-0 z-[1] pointer-events-none" aria-hidden="true"></div>
 
   <div class="site-shell relative z-[2]" data-site-shell>
     {% include "components/header.html" %}

@@ -259,6 +259,18 @@
 
   /* ── Scroll to top ── */
   const scrollTopBtn = document.querySelector("[data-scroll-top]");
+  const headerEl = document.querySelector("[data-header]");
+  const navBar = document.querySelector("[data-nav-bar], [data-nav-glass]");
+
+  const onChromeScroll = () => {
+    const y = lenis ? lenis.scroll : window.scrollY || document.documentElement.scrollTop;
+    if (headerEl) headerEl.classList.toggle("is-compact", y > 24);
+    if (navBar) navBar.classList.toggle("is-solid", y > 24);
+    if (scrollTopBtn) {
+      /* visibility handled below when present */
+    }
+  };
+
   if (scrollTopBtn) {
     scrollTopBtn.hidden = false;
     const SHOW_AFTER = Math.max(420, Math.round(window.innerHeight * 0.65));
@@ -277,6 +289,8 @@
       ticking = false;
       const y = lenis ? lenis.scroll : window.scrollY || document.documentElement.scrollTop;
       setVisible(y > SHOW_AFTER);
+      if (headerEl) headerEl.classList.toggle("is-compact", y > 24);
+      if (navBar) navBar.classList.toggle("is-solid", y > 24);
     };
 
     const onScroll = () => {
@@ -302,17 +316,39 @@
         window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
       }
     });
+  } else if (headerEl || navBar) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      onChromeScroll();
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    if (lenis) lenis.on("scroll", onScroll);
+    else window.addEventListener("scroll", onScroll, { passive: true });
+    update();
   }
 
   /* ── Mobile nav ── */
   const toggle = document.querySelector("[data-nav-toggle]");
   const mobileNav = document.querySelector("[data-mobile-nav]");
+  const mobileBackdrop = document.querySelector("[data-mobile-backdrop]");
 
   if (toggle && mobileNav) {
     const setNavOpen = (open) => {
-      mobileNav.classList.toggle("hidden", !open);
+      if (open) {
+        mobileNav.hidden = false;
+        if (mobileBackdrop) mobileBackdrop.hidden = false;
+      } else {
+        mobileNav.hidden = true;
+        if (mobileBackdrop) mobileBackdrop.hidden = true;
+      }
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
+      document.documentElement.classList.toggle("is-nav-open", open);
       if (open) {
         const firstLink = mobileNav.querySelector("a");
         if (firstLink) firstLink.focus();
@@ -322,9 +358,13 @@
     };
 
     toggle.addEventListener("click", () => {
-      const isOpen = !mobileNav.classList.contains("hidden");
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
       setNavOpen(!isOpen);
     });
+
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener("click", () => setNavOpen(false));
+    }
 
     mobileNav.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
@@ -334,7 +374,7 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
-      if (mobileNav.classList.contains("hidden")) return;
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
       setNavOpen(false);
     });
   }
@@ -354,11 +394,11 @@
         const delay = parseFloat(el.getAttribute("data-delay") || "0") * 0.1;
         gsap.fromTo(
           el,
-          { autoAlpha: 0, y: 28 },
+          { autoAlpha: 0, y: 16 },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.9,
+            duration: 0.8,
             delay,
             ease: "power3.out",
             scrollTrigger: {
@@ -428,6 +468,14 @@
   if (heroStage) {
     const q = (sel) => heroStage.querySelector(sel);
     const qa = (sel) => heroStage.querySelectorAll(sel);
+    const present = (...items) =>
+      items
+        .flatMap((item) => {
+          if (!item) return [];
+          if (typeof item.length === "number" && !item.tagName) return Array.from(item);
+          return [item];
+        })
+        .filter(Boolean);
 
     const mesh = q("[data-hero-mesh]");
     const grid = q("[data-hero-grid]");
@@ -445,8 +493,16 @@
     const atmosphere = q("[data-hero-atmosphere]");
     const meta = qa("[data-hero-meta]");
     const logoLayer = q('[data-parallax-target="logo"]');
+    const heroMedia = q("[data-hero-media]");
+
+    const revealHeroMedia = () => {
+      if (!heroMedia) return;
+      heroMedia.style.opacity = "1";
+      heroMedia.classList.add("is-ready");
+    };
 
     const showStaticHero = () => {
+      revealHeroMedia();
       if (mesh) mesh.style.opacity = "1";
       if (grid) grid.style.opacity = "0.07";
       guides.forEach((g) => {
@@ -487,9 +543,9 @@
     } else if (!fullMotion) {
       /* Balanced / lite: short opacity fade — no blur, clip-path, or stroke-draw */
       if (logoSvg) gsap.set(logoSvg, { display: "none" });
-      gsap.set([mesh, grid, spotlight, guides, logoImg, tagline, divider, ctaBtns, scrollHint, meta], {
-        opacity: 0,
-      });
+      if (heroMedia) gsap.set(heroMedia, { opacity: 0 });
+      const fadeTargets = present(mesh, grid, spotlight, guides, logoImg, tagline, divider, ctaBtns, scrollHint, meta);
+      if (fadeTargets.length) gsap.set(fadeTargets, { opacity: 0 });
       if (cta) gsap.set(cta, { opacity: 1 });
       if (tagline) {
         gsap.set(tagline, {
@@ -504,21 +560,30 @@
       if (divider) gsap.set(divider, { scaleX: 0.4 });
 
       const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
-      intro.to(mesh, { opacity: 1, duration: 0.55 }, 0);
-      intro.to(grid, { opacity: 0.07, duration: 0.5 }, 0.05);
-      intro.to(spotlight, { opacity: 1, duration: 0.45 }, 0.08);
-      intro.to(guides, { opacity: 1, duration: 0.4 }, 0.1);
-      intro.to(heroStage, { "--hero-glow-opacity": 0.5, duration: 0.6 }, 0.1);
-      intro.to(logoImg, { opacity: 1, duration: 0.55 }, 0.12);
-      intro.to(tagline, { opacity: 1, duration: 0.45 }, 0.28);
-      intro.to(divider, { opacity: 1, scaleX: 1, duration: 0.4 }, 0.38);
-      intro.to(
-        ctaBtns,
-        { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, clearProps: "transform" },
-        0.45
-      );
-      intro.to(scrollHint, { opacity: 1, duration: 0.35 }, 0.55);
-      intro.to(meta, { opacity: 1, duration: 0.35 }, 0.55);
+      if (heroMedia) {
+        intro.to(heroMedia, {
+          opacity: 1,
+          duration: 0.85,
+          onStart: () => heroMedia.classList.add("is-ready"),
+        }, 0);
+      }
+      if (mesh) intro.to(mesh, { opacity: 1, duration: 0.55 }, 0.05);
+      if (grid) intro.to(grid, { opacity: 0.07, duration: 0.5 }, 0.08);
+      if (spotlight) intro.to(spotlight, { opacity: 1, duration: 0.45 }, 0.1);
+      if (guides.length) intro.to(guides, { opacity: 1, duration: 0.4 }, 0.12);
+      intro.to(heroStage, { "--hero-glow-opacity": 0.5, duration: 0.6 }, 0.12);
+      if (logoImg) intro.to(logoImg, { opacity: 1, duration: 0.55 }, 0.16);
+      if (tagline) intro.to(tagline, { opacity: 1, duration: 0.45 }, 0.3);
+      if (divider) intro.to(divider, { opacity: 1, scaleX: 1, duration: 0.4 }, 0.4);
+      if (ctaBtns.length) {
+        intro.to(
+          ctaBtns,
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, clearProps: "transform" },
+          0.48
+        );
+      }
+      if (scrollHint) intro.to(scrollHint, { opacity: 1, duration: 0.35 }, 0.58);
+      if (meta.length) intro.to(meta, { opacity: 1, duration: 0.35 }, 0.58);
     } else {
       const drawDots = qa("[data-draw-dot]");
       const useFilterFx = !!perf.allowFilterFx;
@@ -540,35 +605,46 @@
         if (useFilterFx) svgFrom.filter = "blur(14px)";
         gsap.set(logoSvg, svgFrom);
       }
-      gsap.set(logoImg, {
-        opacity: 0,
-        filter: useFilterFx
-          ? "blur(20px) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))"
-          : "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
-      });
-      gsap.set(divider, { scaleX: 0, opacity: 0 });
-      gsap.set(ctaBtns, { opacity: 0, y: 18 });
-      gsap.set(cta, { opacity: 1 });
-      gsap.set(scrollHint, { opacity: 0 });
-      gsap.set(meta, { opacity: 0 });
-      gsap.set(guides, { opacity: 0 });
-      gsap.set(mesh, { opacity: 0 });
-      gsap.set(grid, { opacity: 0 });
-      gsap.set(spotlight, { opacity: 0 });
+      if (logoImg) {
+        gsap.set(logoImg, {
+          opacity: 0,
+          filter: useFilterFx
+            ? "blur(20px) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))"
+            : "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
+        });
+      }
+      if (divider) gsap.set(divider, { scaleX: 0, opacity: 0 });
+      if (ctaBtns.length) gsap.set(ctaBtns, { opacity: 0, y: 18 });
+      if (cta) gsap.set(cta, { opacity: 1 });
+      if (scrollHint) gsap.set(scrollHint, { opacity: 0 });
+      if (meta.length) gsap.set(meta, { opacity: 0 });
+      if (guides.length) gsap.set(guides, { opacity: 0 });
+      if (mesh) gsap.set(mesh, { opacity: 0 });
+      if (grid) gsap.set(grid, { opacity: 0 });
+      if (spotlight) gsap.set(spotlight, { opacity: 0 });
+      if (heroMedia) gsap.set(heroMedia, { opacity: 0 });
 
       const intro = gsap.timeline({
         defaults: { ease: "power2.out" },
         delay: 0,
       });
 
-      intro.to(mesh, { opacity: 1, duration: 1.15, ease: "power1.out" }, 0);
-      intro.to(grid, { opacity: 0.085, duration: 1.05, ease: "power1.inOut" }, 0.1);
-      intro.to(guides, { opacity: 1, duration: 0.75, stagger: 0.06, ease: "power1.out" }, 0.2);
-      intro.to(spotlight, { opacity: 1, duration: 0.9 }, 0.3);
+      if (heroMedia) {
+        intro.to(heroMedia, {
+          opacity: 1,
+          duration: 1.35,
+          ease: "power1.out",
+          onStart: () => heroMedia.classList.add("is-ready"),
+        }, 0);
+      }
+      if (mesh) intro.to(mesh, { opacity: 1, duration: 1.15, ease: "power1.out" }, 0.08);
+      if (grid) intro.to(grid, { opacity: 0.085, duration: 1.05, ease: "power1.inOut" }, 0.15);
+      if (guides.length) intro.to(guides, { opacity: 1, duration: 0.75, stagger: 0.06, ease: "power1.out" }, 0.25);
+      if (spotlight) intro.to(spotlight, { opacity: 1, duration: 0.9 }, 0.35);
       intro.to(
         heroStage,
         { "--hero-glow-opacity": 0.72, duration: 1.45, ease: "sine.inOut" },
-        0.35
+        0.4
       );
 
       if (logoSvg && drawPaths.length && perf.allowHeroDraw) {
@@ -583,24 +659,28 @@
           },
           0.45
         );
-        intro.to(
-          drawDots,
-          { opacity: 1, duration: 0.35, stagger: 0.09, ease: "power1.out" },
-          1.55
-        );
+        if (drawDots.length) {
+          intro.to(
+            drawDots,
+            { opacity: 1, duration: 0.35, stagger: 0.09, ease: "power1.out" },
+            1.55
+          );
+        }
         if (useFilterFx) {
           intro.to(logoSvg, { filter: "blur(0px)", duration: 0.85, ease: "power2.out" }, 1.5);
         }
-        intro.to(
-          logoImg,
-          {
-            opacity: 1,
-            filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
-            duration: 1.05,
-            ease: "power2.out",
-          },
-          1.6
-        );
+        if (logoImg) {
+          intro.to(
+            logoImg,
+            {
+              opacity: 1,
+              filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
+              duration: 1.05,
+              ease: "power2.out",
+            },
+            1.6
+          );
+        }
         intro.to(logoSvg, { opacity: 0, duration: 0.5, ease: "power1.out" }, 2.0);
       } else if (logoImg) {
         if (logoSvg) gsap.set(logoSvg, { display: "none" });
@@ -628,25 +708,33 @@
         intro.to(tagline, tagTo, perf.allowHeroDraw ? 1.4 : 1.0);
       }
 
-      intro.to(
-        divider,
-        { scaleX: 1, opacity: 1, duration: 0.75, ease: "power3.inOut" },
-        perf.allowHeroDraw ? 2.25 : 1.6
-      );
-      intro.to(
-        ctaBtns,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          stagger: 0.09,
-          ease: "power3.out",
-          clearProps: "transform",
-        },
-        perf.allowHeroDraw ? 2.45 : 1.8
-      );
-      intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, perf.allowHeroDraw ? 2.9 : 2.2);
-      intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, perf.allowHeroDraw ? 3.0 : 2.3);
+      if (divider) {
+        intro.to(
+          divider,
+          { scaleX: 1, opacity: 1, duration: 0.75, ease: "power3.inOut" },
+          perf.allowHeroDraw ? 2.25 : 1.6
+        );
+      }
+      if (ctaBtns.length) {
+        intro.to(
+          ctaBtns,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            stagger: 0.09,
+            ease: "power3.out",
+            clearProps: "transform",
+          },
+          perf.allowHeroDraw ? 2.45 : 1.8
+        );
+      }
+      if (scrollHint) {
+        intro.to(scrollHint, { opacity: 1, duration: 0.8, ease: "power1.out" }, perf.allowHeroDraw ? 2.9 : 2.2);
+      }
+      if (meta.length) {
+        intro.to(meta, { opacity: 1, duration: 0.95, stagger: 0.1 }, perf.allowHeroDraw ? 3.0 : 2.3);
+      }
     }
 
     /* Mouse parallax — full tier only */
@@ -744,7 +832,7 @@
       if (lockup) {
         scrollTl.to(
           lockup,
-          { scale: 0.9, y: -36, autoAlpha: 0.35, ease: "none" },
+          { scale: 0.92, y: -24, autoAlpha: 0.35, ease: "none" },
           0
         );
       }
@@ -800,6 +888,29 @@
     );
     counters.forEach((el) => cio.observe(el));
   }
+
+  /* ── Active nav indicator ── */
+  (() => {
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
+    const hash = window.location.hash;
+    document.querySelectorAll(".nav-link[href]").forEach((link) => {
+      try {
+        const url = new URL(link.href, window.location.origin);
+        const linkPath = url.pathname.replace(/\/$/, "") || "/";
+        const linkHash = url.hash;
+        let active = false;
+        if (linkHash && path === "/" && hash === linkHash) active = true;
+        else if (!linkHash && linkPath !== "/" && path.startsWith(linkPath)) active = true;
+        else if (!linkHash && linkPath === "/" && path === "/" && !hash) active = false;
+        if (active) {
+          link.classList.add("is-active");
+          link.setAttribute("aria-current", "page");
+        }
+      } catch {
+        /* ignore bad URLs */
+      }
+    });
+  })();
 
   /* ── Magnetic buttons — soft premium pull ── */
   if (perf.allowMagnetic && !reduceMotion && window.matchMedia("(pointer: fine)").matches) {

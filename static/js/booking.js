@@ -139,6 +139,13 @@
     const stepper = qs("[data-booking-stepper]");
     if (stepper) {
       stepper.classList.toggle("is-gate", state.step === "consult");
+      stepper.hidden = state.step === "success";
+      stepper.setAttribute("aria-hidden", state.step === "success" ? "true" : "false");
+    }
+
+    const intro = qs(".booking-intro");
+    if (intro) {
+      intro.hidden = state.step === "success";
     }
   }
 
@@ -296,23 +303,24 @@
     state.services.forEach((svc, i) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "booking-service-card";
-      btn.style.animationDelay = `${i * 0.08}s`;
+      btn.className = "booking-service-row";
+      btn.style.animationDelay = `${i * 0.05}s`;
       const img = svc.image_webp || svc.image_jpg;
       const jpg = svc.image_jpg || svc.image_webp;
       btn.innerHTML = `
-        <picture>
-          ${svc.image_webp ? `<source srcset="${escapeHtml(staticUrl(svc.image_webp))}" type="image/webp">` : ""}
-          <img src="${escapeHtml(staticUrl(jpg || img))}" alt="" loading="${i ? "lazy" : "eager"}" decoding="async">
-        </picture>
-        <div class="svc-veil" aria-hidden="true"></div>
-        <div class="svc-body">
-          <p class="svc-meta">${escapeHtml(svc.card_label || svc.name)}</p>
+        <div class="booking-service-thumb">
+          <picture>
+            ${svc.image_webp ? `<source srcset="${escapeHtml(staticUrl(svc.image_webp))}" type="image/webp">` : ""}
+            <img src="${escapeHtml(staticUrl(jpg || img))}" alt="${escapeHtml(svc.name || "")}" width="120" height="160" loading="${i ? "lazy" : "eager"}" decoding="async">
+          </picture>
+        </div>
+        <div class="booking-service-copy">
+          <p class="svc-meta"><span class="svc-index">${String(i + 1).padStart(2, "0")}</span> · ${escapeHtml(svc.card_label || svc.name)}</p>
           <h3>${escapeHtml(svc.name)}</h3>
           <p class="svc-desc">${escapeHtml(svc.description || "")}</p>
           <p class="svc-duration">حدود ${escapeHtml(svc.duration_display || svc.duration_minutes)} دقیقه</p>
-          <span class="svc-cta">رزرو این سرویس <span aria-hidden="true">←</span></span>
         </div>
+        <span class="svc-cta">انتخاب <span aria-hidden="true">←</span></span>
       `;
       btn.addEventListener("click", () => selectService(svc));
       grid.appendChild(btn);
@@ -359,6 +367,7 @@
     state.calendar = null;
     state.consultGate = null;
     state.consultGateSkipped = !!skipGate;
+    updateAsideSummary();
 
     if (!skipGate) {
       try {
@@ -454,6 +463,7 @@
     state.selectedDate = day.date;
     state.selectedDateMeta = day;
     state.selectedSlot = null;
+    updateAsideSummary();
     renderCalendar();
 
     const sub = qs("[data-step3-sub]");
@@ -548,6 +558,7 @@
 
   function selectSlot(slot) {
     state.selectedSlot = slot;
+    updateAsideSummary();
     renderSlots();
     // Soft delay for selection animation, then advance
     setTimeout(() => showStep(4), 220);
@@ -620,6 +631,7 @@
 
   function renderSummary() {
     const box = qs("[data-summary]");
+    updateAsideSummary();
     if (!box || !state.service || !state.selectedSlot) return;
 
     const dateLabel =
@@ -649,6 +661,44 @@
       .join("")}</dl>`;
 
     loadGuideSummary();
+  }
+
+  function updateAsideSummary() {
+    const box = qs("[data-booking-summary]");
+    if (!box) return;
+    if (!state.service) {
+      box.innerHTML = `<p class="booking-summary-empty">هنوز سرویسی انتخاب نشده است.</p>`;
+      return;
+    }
+    const rows = [["سرویس", state.service.name]];
+    if (state.service.duration_display || state.service.duration_minutes) {
+      rows.push([
+        "مدت",
+        state.service.duration_display || `${state.service.duration_minutes} دقیقه`,
+      ]);
+    }
+    if (state.selectedDate) {
+      const dateLabel =
+        state.slotsMeta?.date_display ||
+        state.selectedDateMeta?.jalali_day_display ||
+        state.selectedDate;
+      rows.push([
+        "تاریخ",
+        `${state.slotsMeta?.weekday_label || state.selectedDateMeta?.weekday_label || ""} ${dateLabel}`.trim(),
+      ]);
+    }
+    if (state.selectedSlot) {
+      rows.push([
+        "ساعت",
+        `${state.selectedSlot.start_display} تا ${state.selectedSlot.end_display}`,
+      ]);
+    }
+    box.innerHTML = `<dl>${rows
+      .map(
+        ([k, v]) =>
+          `<div class="booking-summary-row"><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd></div>`
+      )
+      .join("")}</dl>`;
   }
 
   async function loadGuideSummary() {
@@ -841,6 +891,7 @@
     state.guideSummary = null;
     state.guideAck = false;
     restoreForm();
+    updateAsideSummary();
     showStep(1);
     renderServices();
   }

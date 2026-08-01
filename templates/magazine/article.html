@@ -3,18 +3,24 @@
 
 {% block title %}{{ seo.meta_title }} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{{ seo.meta_description }}{% endblock %}
+{% block meta_robots %}{{ seo.robots }}{% endblock %}
+{% block canonical %}{% if seo.canonical_url %}{{ seo.canonical_url }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}
 
-{% block extra_head %}
-<meta name="robots" content="{{ seo.robots }}">
-<meta name="keywords" content="{{ seo.meta_keywords }}">
-<link rel="canonical" href="{% if seo.canonical_url %}{{ seo.canonical_url }}{% else %}{{ request.build_absolute_uri }}{% endif %}">
+{% block social_meta %}
 <meta property="og:type" content="article">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="{{ SITE_NAME }}">
 <meta property="og:title" content="{{ seo.og_title }}">
 <meta property="og:description" content="{{ seo.og_description }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
 {% if seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ seo.twitter_title }}">
 <meta name="twitter:description" content="{{ seo.twitter_description }}">
+{% endblock %}
+
+{% block extra_head %}
+<meta name="keywords" content="{{ seo.meta_keywords }}">
 <script type="application/ld+json">{{ schema_json|safe }}</script>
 {% endblock %}
 
@@ -26,7 +32,7 @@
 
 {% block content %}
 <div
-  class="mag-article-stage relative min-h-[100svh] overflow-x-hidden bg-court-950 text-ivory"
+  class="mag-article-stage relative overflow-x-hidden bg-court-950 text-ivory"
   data-magazine-article
   data-api-base="/magazine/api"
   data-slug="{{ slug }}"
@@ -36,11 +42,10 @@
 >
   {# Reading progress #}
   <div class="mag-read-progress" aria-hidden="true"><span data-read-progress></span></div>
-  <div class="noise-layer opacity-[0.07]" aria-hidden="true"></div>
 
   <article class="relative">
     {# Typography-first opening — no forced full-bleed crop #}
-    <nav class="mag-breadcrumb mx-auto max-w-[720px] px-5 pt-28 sm:px-8" aria-label="مسیر صفحه">
+    <nav class="mag-breadcrumb mx-auto max-w-[720px] px-5 pt-20 sm:px-8 sm:pt-[5.5rem]" aria-label="مسیر صفحه">
       <ol class="flex flex-wrap items-center gap-2 text-[0.7rem] tracking-wide text-ivory/40">
         <li><a href="{% url 'core:home' %}" class="transition hover:text-ivory">خانه</a></li>
         <li aria-hidden="true">/</li>
@@ -50,7 +55,7 @@
       </ol>
     </nav>
 
-    <div class="mag-article-layout mx-auto max-w-[1200px] px-5 pb-24 pt-8 sm:px-8 lg:px-12">
+    <div class="mag-article-layout mx-auto max-w-[1200px] px-5 pb-16 pt-6 sm:px-8 lg:px-12">
       <div class="mag-article-grid">
         {# Sticky TOC #}
         <aside class="mag-toc-col" data-toc-col {% if not article.toc %}hidden{% endif %}>
@@ -80,7 +85,7 @@
             <div class="mag-article-meta">
               <div class="mag-author-chip">
                 {% if article.author.avatar %}
-                <img src="{{ article.author.avatar }}" alt="" class="mag-author-avatar" width="40" height="40" loading="lazy">
+                <img src="{{ article.author.avatar }}" alt="{{ article.author.name }}" class="mag-author-avatar" width="40" height="40" loading="lazy">
                 {% else %}
                 <span class="mag-author-fallback" aria-hidden="true">{{ article.author.name|truncatechars:1 }}</span>
                 {% endif %}
@@ -100,7 +105,7 @@
               </div>
             </div>
 
-            {# Quiet actions #}
+            {# Quiet actions — primary only; rest in disclosure #}
             <div class="mag-actions">
               <button type="button" class="mag-action-btn" data-like-btn aria-pressed="{{ engagement.liked|yesno:'true,false' }}">
                 <span data-like-label>{% if engagement.liked %}پسندیده‌اید{% else %}پسندیدن{% endif %}</span>
@@ -108,17 +113,22 @@
               <button type="button" class="mag-action-btn" data-bookmark-btn aria-pressed="{{ engagement.bookmarked|yesno:'true,false' }}">
                 <span data-bookmark-label>{% if engagement.bookmarked %}ذخیره شد{% else %}ذخیره{% endif %}</span>
               </button>
-              <button type="button" class="mag-action-btn" data-print-btn>چاپ</button>
-              {% if article.pdf_url %}
-              <a href="{{ article.pdf_url }}" class="mag-action-btn" download>دانلود PDF</a>
-              {% endif %}
-              <div class="mag-share" data-share>
-                <span class="mag-share-label">اشتراک</span>
-                <a href="{{ share.telegram }}" target="_blank" rel="noopener noreferrer" data-share-ch="telegram">تلگرام</a>
-                <a href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer" data-share-ch="whatsapp">واتساپ</a>
-                <a href="{{ share.twitter }}" target="_blank" rel="noopener noreferrer" data-share-ch="twitter">ایکس</a>
-                <button type="button" data-copy-link data-url="{{ share.url }}">کپی لینک</button>
-              </div>
+              <details class="mag-more">
+                <summary class="mag-action-btn">بیشتر</summary>
+                <div class="mag-more-panel">
+                  <button type="button" class="mag-action-btn" data-print-btn>چاپ</button>
+                  {% if article.pdf_url %}
+                  <a href="{{ article.pdf_url }}" class="mag-action-btn" download>دانلود PDF</a>
+                  {% endif %}
+                  <div class="mag-share" data-share>
+                    <span class="mag-share-label">اشتراک</span>
+                    <a href="{{ share.telegram }}" target="_blank" rel="noopener noreferrer" data-share-ch="telegram">تلگرام</a>
+                    <a href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer" data-share-ch="whatsapp">واتساپ</a>
+                    <a href="{{ share.twitter }}" target="_blank" rel="noopener noreferrer" data-share-ch="twitter">ایکس</a>
+                    <button type="button" data-copy-link data-url="{{ share.url }}">کپی لینک</button>
+                  </div>
+                </div>
+              </details>
             </div>
 
             {% if article.tags %}
@@ -204,7 +214,7 @@
           <aside class="mag-author-box">
             <div class="mag-author-chip">
               {% if article.author.avatar %}
-              <img src="{{ article.author.avatar }}" alt="" class="mag-author-avatar" width="48" height="48" loading="lazy">
+              <img src="{{ article.author.avatar }}" alt="{{ article.author.name }}" class="mag-author-avatar" width="48" height="48" loading="lazy">
               {% endif %}
               <div>
                 <p class="mag-author-name">{{ article.author.name }}</p>
@@ -221,8 +231,15 @@
             <h2 class="mag-conversion-title">{{ conversion.title }}</h2>
             <p class="mag-conversion-desc">مطالعه درباره «{{ conversion.category_title }}» را به اقدام تبدیل کنید.</p>
             <div class="mag-conversion-actions">
-              <a href="{{ conversion.consultation_url }}" class="btn-court-fill">{{ conversion.consultation_label }}</a>
-              <a href="{{ conversion.booking_url }}" class="btn-court">{{ conversion.booking_label }}</a>
+              <a href="{{ conversion.booking_url }}" class="btn-draw">
+                <span class="btn-draw-border" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+                  </svg>
+                </span>
+                <span class="btn-draw-label relative z-10">{{ conversion.booking_label }}</span>
+              </a>
+              <a href="{{ conversion.consultation_url }}" class="btn-court">{{ conversion.consultation_label }}</a>
               <a href="{{ conversion.ticket_url }}" class="mag-link-quiet">گفتگو با کارشناسان</a>
             </div>
           </aside>
@@ -233,7 +250,7 @@
 
   {# Related #}
   {% if related %}
-  <section class="mag-related border-t border-ivory/10 py-16 sm:py-20">
+  <section class="mag-related border-t border-ivory/10 py-10 sm:py-12">
     <div class="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
       <header class="mag-section-head">
         <p class="section-label">ادامه مطالعه</p>

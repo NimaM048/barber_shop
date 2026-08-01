@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}راهنما | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}راهنمای تخصصی قبل از مراجعه — نکات مراقبت، روز مراجعه و پرسش‌های متداول در {{ SITE_NAME }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -11,7 +12,7 @@
 
 {% block content %}
 <section
-  class="consult-stage relative min-h-[100svh] overflow-hidden bg-court-950 pt-28 pb-24"
+  class="consult-stage page-stage relative overflow-hidden"
   data-consult-detail
   data-category-key="{{ category_key }}"
   data-api-detail="{% url 'consultations:api-detail' category_key %}"
@@ -22,31 +23,25 @@
   data-static="{% get_static_prefix %}"
 >
   <div class="consult-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
-    <div class="consult-orb consult-orb-a"></div>
-    <div class="consult-orb consult-orb-b"></div>
-  </div>
-  <div class="noise-layer opacity-[0.1]" aria-hidden="true"></div>
-
-  {# Reading progress #}
-  <div class="consult-progress" data-read-progress aria-hidden="true">
-    <div class="consult-progress-bar" data-read-progress-bar></div>
+    <span class="consult-atmosphere-rail"></span>
   </div>
 
-  <div class="relative z-10 mx-auto w-full max-w-[960px] px-5 sm:px-8 lg:px-10">
+  <div class="consult-shell relative z-10">
     <div class="consult-toast-host" data-toast-host aria-live="polite"></div>
 
     <div class="consult-loading" data-detail-loading>
       <div class="consult-skeleton-detail"></div>
+      <p class="consult-loading-copy">در حال آماده‌سازی راهنما…</p>
     </div>
 
-    <div data-detail-root hidden>
-      <a href="{% url 'consultations:hub' %}" class="booking-back mb-6 inline-flex">
+    <div class="consult-detail" data-detail-root hidden>
+      <a href="{% url 'consultations:hub' %}" class="consult-back">
         <span aria-hidden="true">→</span> همه راهنماها
       </a>
 
-      <header class="consult-detail-hero mb-10" data-detail-hero></header>
+      <header class="consult-detail-hero" data-detail-hero></header>
 
-      <div class="consult-toolbar mb-8" data-detail-toolbar>
+      <div class="consult-toolbar" data-detail-toolbar>
         <div class="consult-search">
           <label class="sr-only" for="consult-tips-search">جستجو در نکات</label>
           <input
@@ -58,11 +53,16 @@
             autocomplete="off"
           >
         </div>
-        <div class="consult-filters" data-group-filters></div>
-        <label class="consult-check">
-          <input type="checkbox" data-highlights-only>
-          <span>فقط نکات مهم</span>
-        </label>
+        <details class="consult-tools-more">
+          <summary>فیلتر و نمایش</summary>
+          <div class="consult-tools-panel">
+            <div class="consult-filters" data-group-filters></div>
+            <label class="consult-check">
+              <input type="checkbox" data-highlights-only>
+              <span>فقط نکات مهم</span>
+            </label>
+          </div>
+        </details>
       </div>
 
       <div class="consult-alerts" data-alerts></div>
@@ -70,89 +70,124 @@
       <div class="consult-groups" data-groups></div>
 
       <div class="consult-empty" data-tips-empty hidden>
-        <p class="text-lg font-light text-ivory/70">نتیجه‌ای یافت نشد.</p>
+        <p class="consult-empty-title">نتیجه‌ای یافت نشد.</p>
         <button type="button" class="btn-court mt-6" data-clear-filters>پاک کردن فیلترها</button>
       </div>
 
-      <section class="consult-faq mt-16" data-faq-section hidden>
-        <h2 class="text-xl font-light text-ivory sm:text-2xl">سوالات متداول</h2>
-        <div class="consult-accordion mt-6" data-faq-list></div>
+      <section class="consult-faq" data-faq-section hidden>
+        <header class="consult-section-head">
+          <p class="section-label">پرسش‌ها</p>
+          <h2 class="type-title">سوالات متداول</h2>
+        </header>
+        <div class="consult-accordion" data-faq-list></div>
       </section>
 
-      <div class="consult-detail-actions mt-14 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+      <div class="consult-detail-actions">
         <a
           href="{% url 'appointments:create' %}?service={{ booking_service|default:category_key }}&resume=1"
-          class="btn-light-sweep booking-primary-btn"
+          class="btn-draw booking-primary-btn"
           data-continue-booking
-          {% if not from_booking %}hidden{% endif %}
+          hidden
         >
-          <span class="relative z-10">ادامه فرآیند رزرو</span>
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">ادامه فرآیند رزرو</span>
         </a>
         <a
           href="{% url 'appointments:create' %}?service={{ booking_service|default:'' }}"
-          class="btn-light-sweep booking-primary-btn"
+          class="btn-draw booking-primary-btn"
           data-book-direct
           {% if from_booking %}hidden{% endif %}
         >
-          <span class="relative z-10">رزرو نوبت</span>
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">رزرو نوبت</span>
         </a>
-        <button type="button" class="btn-court" data-open-ticket>ثبت تیکت مشاوره</button>
-        <button type="button" class="btn-court" data-share-guide>اشتراک‌گذاری راهنما</button>
-        <button type="button" class="booking-back-btn" data-print-guide>چاپ / PDF</button>
+        <details class="consult-more-actions">
+          <summary>اقدامات بیشتر</summary>
+          <div class="consult-more-panel">
+            <button type="button" class="btn-court" data-open-ticket>ثبت تیکت مشاوره</button>
+            <button type="button" class="btn-court" data-share-guide>اشتراک‌گذاری راهنما</button>
+            <button type="button" class="btn-quiet" data-print-guide>چاپ / PDF</button>
+          </div>
+        </details>
       </div>
 
-      {# Sticky continue when coming from booking #}
       <div class="consult-resume-bar" data-resume-bar {% if not from_booking %}hidden{% endif %}>
         <p>آماده ادامه رزرو هستید؟</p>
         <a
           href="{% url 'appointments:create' %}?service={{ booking_service|default:category_key }}&resume=1"
-          class="btn-light-sweep booking-primary-btn"
+          class="btn-draw booking-primary-btn"
         >
-          <span class="relative z-10">ادامه فرآیند رزرو</span>
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">ادامه فرآیند رزرو</span>
         </a>
       </div>
+      {% if from_booking %}
+      <script>
+        document.documentElement.classList.add("has-bottom-bar");
+      </script>
+      {% endif %}
 
-      <section class="consult-ticket mt-16" data-ticket-section hidden>
-        <h2 class="text-xl font-light text-ivory sm:text-2xl">ثبت تیکت برای کارشناسان</h2>
-        <p class="mt-2 text-sm text-ivory/45">سوال یا تصویر خود را بفرستید؛ پاسخ تخصصی دریافت می‌کنید.</p>
-        <form class="consult-ticket-form mt-6" data-ticket-form novalidate>
+      <section class="consult-ticket" data-ticket-section hidden>
+        <header class="consult-section-head">
+          <p class="section-label">ارتباط</p>
+          <h2 class="type-title">ثبت تیکت برای کارشناسان</h2>
+          <p class="consult-section-lede">سوال یا تصویر خود را بفرستید؛ پاسخ تخصصی دریافت می‌کنید.</p>
+        </header>
+        <form class="consult-ticket-form" data-ticket-form novalidate>
           <input type="hidden" name="category_key" value="{{ category_key }}">
           <input type="hidden" name="booking_service_key" value="{{ booking_service }}">
           <input type="hidden" name="source" value="{% if from_booking %}booking{% else %}direct{% endif %}">
-          <div class="grid gap-5 sm:grid-cols-2">
-            <div>
+          <div class="consult-ticket-grid">
+            <div class="booking-field">
               <label class="booking-label" for="tk-first">نام</label>
               <input id="tk-first" name="first_name" required autocomplete="given-name" class="field-court">
             </div>
-            <div>
+            <div class="booking-field">
               <label class="booking-label" for="tk-last">نام خانوادگی</label>
               <input id="tk-last" name="last_name" required autocomplete="family-name" class="field-court">
             </div>
           </div>
-          <div class="mt-5">
+          <div class="booking-field">
             <label class="booking-label" for="tk-phone">شماره تماس</label>
-            <input id="tk-phone" name="phone" type="tel" required dir="ltr" inputmode="tel" autocomplete="tel" class="field-court text-left" placeholder="0913xxxxxxx">
+            <input id="tk-phone" name="phone" type="tel" required dir="ltr" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" autocomplete="tel" class="field-court text-left" placeholder="09131234567" title="۱۱ رقم، شروع با ۰۹">
           </div>
-          <div class="mt-5">
+          <div class="booking-field">
             <label class="booking-label" for="tk-msg">پیام / سوال</label>
             <textarea id="tk-msg" name="message" rows="4" required class="field-court resize-none" placeholder="مثلاً نوع پوست، حساسیت، یا سوال درباره مدل…"></textarea>
           </div>
-          <div class="mt-5">
-            <label class="booking-label" for="tk-file">فایل پیوست <span class="text-ivory/30">(اختیاری)</span></label>
+          <div class="booking-field">
+            <label class="booking-label" for="tk-file">فایل پیوست <span class="booking-label-optional">(اختیاری)</span></label>
             <input id="tk-file" name="attachment" type="file" accept="image/*,.pdf" class="field-court">
           </div>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <button type="submit" class="btn-light-sweep booking-primary-btn">
-              <span class="relative z-10" data-ticket-submit-label>ارسال تیکت</span>
+          <div class="consult-ticket-actions">
+            <button type="submit" class="btn-draw booking-primary-btn">
+              <span class="btn-draw-border" aria-hidden="true">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+                </svg>
+              </span>
+              <span class="btn-draw-label relative z-10" data-ticket-submit-label>ارسال تیکت</span>
             </button>
-            <button type="button" class="booking-back-btn" data-close-ticket>انصراف</button>
+            <button type="button" class="btn-quiet" data-close-ticket>انصراف</button>
           </div>
         </form>
       </section>
     </div>
 
     <div class="consult-error" data-detail-error hidden>
-      <p data-detail-error-text>خطا در دریافت محتوا</p>
+      <p class="consult-empty-title" data-detail-error-text>خطا در دریافت محتوا</p>
       <a href="{% url 'consultations:hub' %}" class="btn-court mt-6 inline-flex">بازگشت</a>
     </div>
   </div>

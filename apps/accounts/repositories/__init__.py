@@ -1,3 +1,3 @@
-from .user_repository import UserRepository
+"""Customer auth repositories removed — guest booking only."""
 
-__all__ = ["UserRepository"]
+__all__: list[str] = []

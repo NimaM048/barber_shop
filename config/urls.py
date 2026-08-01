@@ -6,9 +6,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.core.urls")),
-    # Auth disabled — guest booking only
-    # path("accounts/", include("apps.accounts.urls")),
-    path("barbers/", include("apps.barbers.urls")),
     path("services/", include("apps.catalog.urls")),
     path("appointments/", include("apps.appointments.urls")),
     path("consultations/", include("apps.consultations.urls")),

@@ -142,27 +142,61 @@
     function renderHub(cats, hub) {
       if (!grid) return;
       const cta = hub?.card_cta_label || "مشاهده راهنما";
-      grid.innerHTML = cats
-        .map((c, i) => {
+      const [featured, ...rest] = cats;
+      let html = "";
+      if (featured) {
+        const jpg = featured.image_jpg || featured.image_webp;
+        const webp = featured.image_webp;
+        const stats = formatCardStats(hub, featured);
+        html += `
+          <a href="/consultations/${escapeHtml(featured.key)}/" class="consult-feature">
+            <div class="consult-feature-media">
+              <picture>
+                ${webp ? `<source srcset="${escapeHtml(staticUrl(staticBase, webp))}" type="image/webp">` : ""}
+                <img src="${escapeHtml(staticUrl(staticBase, jpg))}" alt="${escapeHtml(featured.title || "")}" width="960" height="600" loading="eager" decoding="async">
+              </picture>
+              <span class="consult-feature-veil" aria-hidden="true"></span>
+            </div>
+            <div class="consult-feature-copy">
+              <p class="consult-hub-meta">${escapeHtml(featured.card_label || featured.icon || "")}</p>
+              <h2 class="consult-feature-title">${escapeHtml(featured.title)}</h2>
+              <p class="consult-hub-desc">${escapeHtml(featured.short_description || "")}</p>
+              <div class="consult-feature-meta-row">
+                ${stats ? `<span class="consult-feature-chip">${escapeHtml(stats)}</span>` : ""}
+                <span class="consult-hub-cta">${escapeHtml(cta)} <span aria-hidden="true">←</span></span>
+              </div>
+            </div>
+          </a>`;
+      }
+      if (rest.length) {
+        html += `
+          <div class="consult-index-wrap">
+            <p class="consult-index-label">سایر راهنماها</p>
+            <ul class="editorial-index consult-index">` + rest.map((c) => {
           const jpg = c.image_jpg || c.image_webp;
           const webp = c.image_webp;
           return `
-          <a href="/consultations/${escapeHtml(c.key)}/" class="consult-hub-card" style="animation-delay:${i * 0.08}s">
-            <picture>
-              ${webp ? `<source srcset="${escapeHtml(staticUrl(staticBase, webp))}" type="image/webp">` : ""}
-              <img src="${escapeHtml(staticUrl(staticBase, jpg))}" alt="" loading="${i ? "lazy" : "eager"}" decoding="async">
-            </picture>
-            <div class="consult-hub-veil" aria-hidden="true"></div>
-            <div class="consult-hub-body">
-              <p class="consult-hub-meta">${escapeHtml(c.card_label || c.icon || "")}</p>
-              <h2>${escapeHtml(c.title)}</h2>
-              <p class="consult-hub-desc">${escapeHtml(c.short_description || "")}</p>
-              <p class="consult-hub-stats">${escapeHtml(formatCardStats(hub, c))}</p>
-              <span class="consult-hub-cta">${escapeHtml(cta)} <span aria-hidden="true">←</span></span>
-            </div>
-          </a>`;
-        })
-        .join("");
+            <li>
+              <a href="/consultations/${escapeHtml(c.key)}/" class="editorial-index-row consult-index-row">
+                <div class="editorial-index-thumb">
+                  <picture>
+                    ${webp ? `<source srcset="${escapeHtml(staticUrl(staticBase, webp))}" type="image/webp">` : ""}
+                    <img src="${escapeHtml(staticUrl(staticBase, jpg))}" alt="${escapeHtml(c.title || "")}" width="200" height="267" loading="lazy" decoding="async">
+                  </picture>
+                </div>
+                <div class="editorial-index-copy">
+                  <p class="editorial-index-meta">${escapeHtml(c.card_label || c.icon || "")}</p>
+                  <h3 class="editorial-index-title">${escapeHtml(c.title)}</h3>
+                  <p class="editorial-index-desc">${escapeHtml(c.short_description || "")}</p>
+                </div>
+                <span class="editorial-index-action" aria-hidden="true">←</span>
+              </a>
+            </li>`;
+        }).join("") + `</ul>
+          </div>`;
+      }
+      grid.innerHTML = html;
+      grid.className = "consult-hub-editorial";
     }
 
     qs("[data-hub-retry]", root)?.addEventListener("click", load);
@@ -246,15 +280,14 @@
       const hero = qs("[data-detail-hero]", root);
       if (!hero || !cat) return;
       document.title = `${cat.title} | مشاوره`;
+      const lede = cat.description || cat.short_description || "";
       hero.innerHTML = `
         <p class="section-label">${escapeHtml(cat.card_label || cat.icon || "راهنما")}</p>
-        <h1 class="mt-3 text-3xl font-light text-ivory sm:text-4xl">${escapeHtml(cat.title)}</h1>
-        <p class="mt-4 max-w-2xl text-sm font-light leading-8 text-ivory/50">${escapeHtml(cat.description || cat.short_description || "")}</p>
-        <div class="mt-5 flex flex-wrap gap-4 text-xs text-ivory/35">
-          <span>${escapeHtml(cat.tip_count_display)} نکته</span>
-          <span>حدود ${escapeHtml(cat.estimated_read_display)} دقیقه مطالعه</span>
-          <span>نسخه ${escapeHtml(cat.content_version)}</span>
-          ${cat.updated_at_display ? `<span>آخرین بروزرسانی: ${escapeHtml(cat.updated_at_display)}</span>` : ""}
+        <h1 class="consult-detail-title type-chapter">${escapeHtml(cat.title)}</h1>
+        ${lede ? `<p class="consult-detail-lede">${escapeHtml(lede)}</p>` : ""}
+        <div class="consult-detail-meta">
+          <span class="consult-detail-chip">${escapeHtml(cat.tip_count_display || "۰")} نکته</span>
+          <span class="consult-detail-chip">حدود ${escapeHtml(cat.estimated_read_display || "۰")} دقیقه</span>
         </div>
       `;
     }
@@ -368,20 +401,21 @@
       }
 
       const img = tip.image
-        ? `<div class="consult-tip-media"><img src="${escapeHtml(staticUrl(staticBase, tip.image))}" alt="" loading="lazy" decoding="async"></div>`
+        ? `<div class="consult-tip-media media-frame media-frame--landscape"><img src="${escapeHtml(staticUrl(staticBase, tip.image))}" alt="${escapeHtml(tip.title || "")}" width="960" height="600" loading="lazy" decoding="async"></div>`
         : "";
 
       return `
         <article class="consult-tip${tip.is_highlight ? " is-highlight" : ""}" data-tip-id="${tip.id}" style="animation-delay:${Math.min(index, 8) * 0.05}s">
           <div class="consult-tip-top">
-            <span class="consult-tip-icon" aria-hidden="true">${escapeHtml(tip.icon || "·")}</span>
+            <span class="consult-tip-index" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
             <div class="consult-tip-actions">
-              <button type="button" class="consult-icon-btn${bookmarked ? " is-on" : ""}" data-bookmark="${tip.id}" aria-label="نشان‌گذاری">★</button>
+              ${tip.is_highlight ? `<span class="consult-tip-badge">مهم</span>` : ""}
+              <button type="button" class="consult-icon-btn${bookmarked ? " is-on" : ""}" data-bookmark="${tip.id}" aria-label="نشان‌گذاری" aria-pressed="${bookmarked ? "true" : "false"}">★</button>
               <button type="button" class="consult-icon-btn" data-share-tip="${tip.id}" aria-label="اشتراک">↗</button>
             </div>
           </div>
-          <h3>${escapeHtml(tip.title)}</h3>
-          <p>${escapeHtml(tip.description)}</p>
+          <h3 class="consult-tip-title">${escapeHtml(tip.title)}</h3>
+          <p class="consult-tip-body">${escapeHtml(tip.description)}</p>
           ${img}
           ${media.length ? `<div class="consult-tip-links">${media.join("")}</div>` : ""}
         </article>`;
@@ -398,7 +432,7 @@
           <section class="consult-group" id="consult-group-${escapeHtml(g.key)}" data-group-key="${escapeHtml(g.key)}" data-phase="${escapeHtml(g.phase)}">
             <div class="consult-group-head">
               <p class="section-label">${escapeHtml(g.phase_label || "")}</p>
-              <h2>${escapeHtml(g.title)}</h2>
+              <h2 class="consult-group-title">${escapeHtml(g.title)}</h2>
               ${g.description ? `<p class="consult-group-desc">${escapeHtml(g.description)}</p>` : ""}
             </div>
             <div class="consult-tip-grid">
@@ -409,7 +443,10 @@
       if (ungrouped.length) {
         html += `
           <section class="consult-group">
-            <div class="consult-group-head"><h2>سایر نکات</h2></div>
+            <div class="consult-group-head">
+              <p class="section-label">مکمل</p>
+              <h2 class="consult-group-title">سایر نکات</h2>
+            </div>
             <div class="consult-tip-grid">
               ${ungrouped.map((t) => tipCard(t, idx++)).join("")}
             </div>
@@ -492,8 +529,8 @@
       const shareTip = e.target.closest("[data-share-tip]");
       if (shareTip) {
         const card = shareTip.closest("[data-tip-id]");
-        const title = card?.querySelector("h3")?.textContent || "";
-        const desc = card?.querySelector("p")?.textContent || "";
+        const title = card?.querySelector(".consult-tip-title")?.textContent || "";
+        const desc = card?.querySelector(".consult-tip-body")?.textContent || "";
         const text = `${title}\n${desc}\n${location.href}`;
         if (navigator.share) {
           navigator.share({ title, text }).catch(() => {});

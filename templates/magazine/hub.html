@@ -3,13 +3,11 @@
 
 {% block title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}دانشنامه تخصصی داماد، پوست، مو و استایل — مقالات فاخر و آموزشی {{ SITE_NAME }}{% endblock %}
+{% block og_title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
+{% block og_description %}دانشنامه تخصصی داماد، پوست و مو و استایل{% endblock %}
 
 {% block extra_head %}
 <link rel="alternate" type="application/rss+xml" title="مجله {{ SITE_NAME }}" href="{% url 'magazine:rss' %}">
-<meta property="og:type" content="website">
-<meta property="og:title" content="مجله زیبایی | {{ SITE_NAME }}">
-<meta property="og:description" content="دانشنامه تخصصی داماد، پوست و مو و استایل">
-<link rel="canonical" href="{{ request.build_absolute_uri }}">
 {% if hub.hero.cover %}
 <link rel="preload" as="image" href="{{ hub.hero.cover }}"{% if hub.hero.cover_webp %} type="image/webp"{% endif %} fetchpriority="high">
 {% endif %}
@@ -23,7 +21,7 @@
 
 {% block content %}
 <div
-  class="mag-stage relative min-h-[100svh] overflow-x-hidden bg-court-950 text-ivory"
+  class="mag-stage"
   data-magazine-hub
   data-ssr="1"
   data-api-base="/magazine/api"
@@ -36,81 +34,31 @@
   data-filter-page="{{ filters.page }}"
 >
   <div class="mag-page-progress" aria-hidden="true"><span data-hub-progress></span></div>
-  <div class="noise-layer opacity-[0.07]" aria-hidden="true"></div>
 
-  {# ── 1. Cover story — asymmetric editorial (SSR) ── #}
-  <section class="mag-cover" data-mag-cover aria-label="جلد مجله">
-    {% if hub.hero %}
-    <div class="mag-cover-mount" data-cover-mount>
-      <a href="{{ hub.hero.url }}" class="mag-cover-link">
-        <div class="mag-cover-copy">
-          <p class="mag-masthead">
-            <span class="mag-masthead-en">{{ hub.masthead.label_en|default:"Magazine" }}</span>
-            <span class="mag-masthead-fa">{{ hub.masthead.label_fa }}</span>
-          </p>
-          {% if hub.hero.category.title %}
-          <p class="mag-cover-cat">{{ hub.hero.category.title }}</p>
-          {% endif %}
-          <h1 class="mag-cover-title">{{ hub.hero.title }}</h1>
-          {% if hub.hero.excerpt %}
-          <p class="mag-cover-dek">{{ hub.hero.excerpt }}</p>
-          {% endif %}
-          <span class="mag-cover-cta">
-            <span>مطالعه مقاله</span>
-            <span aria-hidden="true">←</span>
-          </span>
-        </div>
-        <div class="mag-cover-visual" data-lqip-frame>
-          {% if hub.hero.cover %}
-          <div class="mag-cover-plate">
-            {% if hub.hero.cover_lqip %}
-            <img
-              src="{{ hub.hero.cover_lqip }}"
-              alt=""
-              class="mag-cover-lqip"
-              width="24"
-              height="32"
-              aria-hidden="true"
-              decoding="async"
-            >
-            {% endif %}
-            <picture>
-              {% if hub.hero.cover_webp %}<source srcset="{{ hub.hero.cover_webp }}" type="image/webp">{% endif %}
-              <img
-                src="{{ hub.hero.cover }}"
-                alt="{{ hub.hero.cover_alt }}"
-                class="mag-cover-img"
-                width="960"
-                height="1200"
-                fetchpriority="high"
-                decoding="async"
-                data-lqip-full
-              >
-            </picture>
-          </div>
-          {% else %}
-          <div class="mag-cover-fallback" aria-hidden="true"></div>
-          {% endif %}
-        </div>
-      </a>
-    </div>
-    {% else %}
-    <div class="mag-cover-mount" data-cover-mount>
-      <div class="mag-cover-empty">
-        <p class="mag-masthead">
-          <span class="mag-masthead-en">Magazine</span>
-          <span class="mag-masthead-fa">مجله {{ SITE_NAME }}</span>
-        </p>
-        <h1 class="mag-cover-title">دانشنامه زیبایی</h1>
-        <p class="mag-cover-dek">به‌زودی مقالات فاخر منتشر می‌شود.</p>
-      </div>
-    </div>
-    {% endif %}
-  </section>
+  <div class="mag-atmosphere" aria-hidden="true">
+    <span class="mag-atmosphere-rail"></span>
+  </div>
 
-  {# ── 2. Issue rail — categories + search ── #}
+  {# ── 1. Masthead ── #}
+  <header class="mag-mast mag-shell" data-reveal>
+    <div class="mag-mast-copy">
+      <p class="section-label">
+        <span lang="en" class="font-latin">{{ hub.masthead.label_en|default:"Magazine" }}</span>
+        <span class="mag-mast-sep" aria-hidden="true">·</span>
+        <span>{{ hub.masthead.label_fa|default:"مجله" }}</span>
+      </p>
+      <h1 class="mag-mast-title">مجله</h1>
+      <p class="mag-mast-lede">دانشنامه تخصصی داماد، پوست، مو و استایل — با استاندارد برند.</p>
+    </div>
+    <a href="{% url 'magazine:rss' %}" class="mag-mast-action">
+      <span>RSS</span>
+      <span aria-hidden="true">←</span>
+    </a>
+  </header>
+
+  {# ── 2. Sticky toolbar ── #}
   <section class="mag-rail" data-mag-rail aria-label="ناوبری مجله">
-    <div class="mag-rail-inner">
+    <div class="mag-rail-inner mag-shell">
       <nav class="mag-topics" data-cat-rail aria-label="موضوعات">
         <div class="mag-topics-track" data-cat-track>
           <button
@@ -137,8 +85,8 @@
         <input
           id="mag-search"
           type="search"
-          class="mag-search-input"
-          placeholder="جستجو…"
+          class="mag-search-input field-court"
+          placeholder="جستجو در مقالات…"
           autocomplete="off"
           value="{{ filters.q }}"
           data-search-input
@@ -155,7 +103,7 @@
         ></div>
       </div>
     </div>
-    <div class="mag-filter-status" data-filter-status {% if not filters.category and not filters.tag and not filters.q %}hidden{% endif %}>
+    <div class="mag-filter-status mag-shell" data-filter-status {% if not filters.category and not filters.tag and not filters.q %}hidden{% endif %}>
       {% if filters.category or filters.tag or filters.q %}
       <span>
         {% if filters.category %}موضوع: {{ filters.category }}{% endif %}
@@ -167,192 +115,248 @@
     </div>
   </section>
 
-  {# ── 3. Spread — asymmetric featured ── #}
-  <section class="mag-spread" data-section-featured aria-labelledby="mag-spread-title">
-    <div class="mag-container">
-      <header class="mag-head" data-reveal>
-        <p class="mag-kicker">پرونده ویژه</p>
-        <h2 id="mag-spread-title" class="mag-heading">در این شماره</h2>
-      </header>
-      <div class="mag-spread-grid" data-featured-grid>
-        {% if hub.featured %}
-          {% with lead=hub.featured.0 %}
-          <div class="mag-spread-lead">
-            <a href="{{ lead.url }}" class="mag-entry mag-entry-lead" data-reveal>
-              <div class="mag-media mag-media-portrait" data-lqip-frame>
-                {% if lead.cover_lqip %}
-                <img src="{{ lead.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">
-                {% endif %}
-                {% if lead.cover %}
-                <img src="{{ lead.cover }}" alt="{{ lead.cover_alt }}" class="mag-media-img" width="1200" height="1500" loading="lazy" decoding="async" data-lqip-full>
-                {% else %}
-                <div class="mag-media-empty" aria-hidden="true"></div>
-                {% endif %}
-              </div>
-              <div class="mag-entry-body">
-                <p class="mag-entry-cat">{{ lead.category.title }}</p>
-                <h3 class="mag-entry-title">{{ lead.title }}</h3>
-                {% if lead.excerpt %}<p class="mag-entry-excerpt">{{ lead.excerpt }}</p>{% endif %}
-                <p class="mag-entry-meta">{{ lead.category.title }} · {{ lead.reading_minutes_fa }} دقیقه · {{ lead.published_at_fa }}</p>
-                <span class="mag-entry-cta">مطالعه <span aria-hidden="true">←</span></span>
-              </div>
-            </a>
-          </div>
-          {% endwith %}
-          <div class="mag-spread-stack">
-            {% for item in hub.featured|slice:"1:4" %}
-            <a href="{{ item.url }}" class="mag-entry mag-entry-stack" data-reveal>
-              <div class="mag-media" data-lqip-frame>
-                {% if item.cover_lqip %}
-                <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="16" aria-hidden="true" decoding="async">
-                {% endif %}
-                {% if item.cover %}
-                <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" class="mag-media-img" width="400" height="400" loading="lazy" decoding="async" data-lqip-full>
-                {% else %}
-                <div class="mag-media-empty" aria-hidden="true"></div>
-                {% endif %}
-              </div>
-              <div class="mag-entry-body">
-                <p class="mag-entry-cat">{{ item.category.title }}</p>
-                <h3 class="mag-entry-title">{{ item.title }}</h3>
-                <p class="mag-entry-meta">{{ item.reading_minutes_fa }} دقیقه · {{ item.published_at_fa }}</p>
-              </div>
-            </a>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p class="mag-muted">مقاله ویژه‌ای برای نمایش نیست.</p>
-        {% endif %}
-      </div>
-    </div>
-  </section>
+  {# ── 3. Featured horizontal story ── #}
+  <section class="mag-feature mag-shell" data-section-featured aria-labelledby="mag-feature-title">
+    <header class="mag-head" data-reveal>
+      <p class="section-label">پرونده ویژه</p>
+      <h2 id="mag-feature-title" class="mag-heading">در این شماره</h2>
+    </header>
 
-  {# ── 4. Archive ── #}
-  <section class="mag-archive" data-section-latest aria-labelledby="mag-archive-title">
-    <div class="mag-container">
-      <header class="mag-head mag-head-row" data-reveal>
-        <div>
-          <p class="mag-kicker">آرشیو</p>
-          <h2 id="mag-archive-title" class="mag-heading">همه مقالات</h2>
-        </div>
-        <div class="mag-sort" data-filters role="group" aria-label="مرتب‌سازی">
-          <button type="button" class="mag-sort-btn {% if filters.sort == 'newest' %}is-active{% endif %}" data-filter-sort="newest" aria-pressed="{% if filters.sort == 'newest' %}true{% else %}false{% endif %}">جدیدترین</button>
-          <button type="button" class="mag-sort-btn {% if filters.sort == 'popular' %}is-active{% endif %}" data-filter-sort="popular" aria-pressed="{% if filters.sort == 'popular' %}true{% else %}false{% endif %}">محبوب</button>
-          <button type="button" class="mag-sort-btn {% if filters.sort == 'reads' %}is-active{% endif %}" data-filter-sort="reads" aria-pressed="{% if filters.sort == 'reads' %}true{% else %}false{% endif %}">پرخوانده</button>
-          <button type="button" class="mag-sort-btn {% if filters.sort == 'reading_asc' %}is-active{% endif %}" data-filter-sort="reading_asc" aria-pressed="{% if filters.sort == 'reading_asc' %}true{% else %}false{% endif %}">کوتاه</button>
-        </div>
-      </header>
-      <div class="mag-archive-grid" data-latest-grid>
-        {% for item in listing.articles %}
-        <a href="{{ item.url }}" class="mag-entry mag-entry-archive" data-reveal>
-          <div class="mag-media mag-media-landscape" data-lqip-frame>
-            {% if item.cover_lqip %}
-            <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="10" aria-hidden="true" decoding="async">
+    <div class="mag-feature-grid" data-featured-grid data-cover-mount>
+      {% if hub.featured %}
+        {% with lead=hub.featured.0 %}
+        <a href="{{ lead.url }}" class="mag-feature-lead" data-reveal>
+          <div class="mag-feature-media" data-lqip-frame>
+            {% if lead.cover_lqip %}
+            <img src="{{ lead.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">
             {% endif %}
-            {% if item.cover %}
-            <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" class="mag-media-img" width="1200" height="750" loading="lazy" decoding="async" data-lqip-full>
+            {% if lead.cover %}
+            <img
+              src="{{ lead.cover }}"
+              alt="{{ lead.cover_alt }}"
+              class="mag-media-img"
+              width="480"
+              height="600"
+              fetchpriority="high"
+              decoding="async"
+              data-lqip-full
+            >
             {% else %}
             <div class="mag-media-empty" aria-hidden="true"></div>
             {% endif %}
           </div>
-          <div class="mag-entry-body">
-            <p class="mag-entry-cat">{{ item.category.title }}</p>
-            <h3 class="mag-entry-title">{{ item.title }}</h3>
-            {% if item.excerpt %}<p class="mag-entry-excerpt">{{ item.excerpt }}</p>{% endif %}
-            <p class="mag-entry-meta">{{ item.reading_minutes_fa }} دقیقه · {{ item.published_at_fa }}</p>
+          <div class="mag-feature-copy">
+            <p class="mag-entry-meta">
+              <span>{{ lead.category.title }}</span>
+              <span aria-hidden="true">·</span>
+              <span>{{ lead.reading_minutes_fa }} دقیقه</span>
+              {% if lead.published_at_fa %}
+              <span aria-hidden="true">·</span>
+              <span>{{ lead.published_at_fa }}</span>
+              {% endif %}
+            </p>
+            <h3 class="mag-feature-title">{{ lead.title }}</h3>
+            {% if lead.excerpt %}
+            <p class="mag-feature-excerpt">{{ lead.excerpt }}</p>
+            {% endif %}
+            <span class="mag-entry-cta">مطالعه <span aria-hidden="true">←</span></span>
           </div>
         </a>
-        {% empty %}
-        {% endfor %}
-      </div>
-      <div class="mag-pagination" data-pagination {% if listing.pagination.pages <= 1 %}hidden{% endif %}>
-        {% if listing.pagination.pages > 1 %}
-        <button type="button" class="mag-page-btn" data-prev {% if not listing.pagination.has_prev %}disabled{% endif %} aria-label="صفحه قبل">قبلی</button>
-        <span class="mag-page-info" aria-live="polite" data-page-info>{{ listing.pagination.page }} / {{ listing.pagination.pages }}</span>
-        <button type="button" class="mag-page-btn" data-next {% if not listing.pagination.has_next %}disabled{% endif %} aria-label="صفحه بعد">بعدی</button>
+        {% endwith %}
+
+        {% if hub.featured|length > 1 %}
+        <ul class="mag-feature-side">
+          {% for item in hub.featured|slice:"1:4" %}
+          <li>
+            <a href="{{ item.url }}" class="mag-desk-row" data-reveal>
+              <div class="mag-desk-thumb" data-lqip-frame>
+                {% if item.cover_lqip %}
+                <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="16" aria-hidden="true" decoding="async">
+                {% endif %}
+                {% if item.cover %}
+                <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" class="mag-media-img" width="160" height="200" loading="lazy" decoding="async" data-lqip-full>
+                {% else %}
+                <div class="mag-media-empty" aria-hidden="true"></div>
+                {% endif %}
+              </div>
+              <div class="mag-desk-copy">
+                <p class="mag-entry-meta">{{ item.category.title }} · {{ item.reading_minutes_fa }} دقیقه</p>
+                <h3 class="mag-desk-title">{{ item.title }}</h3>
+              </div>
+              <span class="mag-desk-action" aria-hidden="true">←</span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
         {% endif %}
+      {% elif hub.hero %}
+        <a href="{{ hub.hero.url }}" class="mag-feature-lead" data-reveal>
+          <div class="mag-feature-media" data-lqip-frame>
+            {% if hub.hero.cover_lqip %}
+            <img src="{{ hub.hero.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">
+            {% endif %}
+            {% if hub.hero.cover %}
+            <img src="{{ hub.hero.cover }}" alt="{{ hub.hero.cover_alt }}" class="mag-media-img" width="480" height="600" fetchpriority="high" decoding="async" data-lqip-full>
+            {% else %}
+            <div class="mag-media-empty" aria-hidden="true"></div>
+            {% endif %}
+          </div>
+          <div class="mag-feature-copy">
+            {% if hub.hero.category.title %}
+            <p class="mag-entry-meta">{{ hub.hero.category.title }}</p>
+            {% endif %}
+            <h3 class="mag-feature-title">{{ hub.hero.title }}</h3>
+            {% if hub.hero.excerpt %}
+            <p class="mag-feature-excerpt">{{ hub.hero.excerpt }}</p>
+            {% endif %}
+            <span class="mag-entry-cta">مطالعه <span aria-hidden="true">←</span></span>
+          </div>
+        </a>
+      {% else %}
+        <p class="mag-muted">مقاله ویژه‌ای برای نمایش نیست.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  {# ── 4. Archive desk list ── #}
+  <section class="mag-archive mag-shell" data-section-latest aria-labelledby="mag-archive-title">
+    <header class="mag-head mag-head-row" data-reveal>
+      <div>
+        <p class="section-label">آرشیو</p>
+        <h2 id="mag-archive-title" class="mag-heading">همه مقالات</h2>
       </div>
-      <div class="mag-empty" data-latest-empty {% if listing.articles %}hidden{% endif %}>
-        <p>مقاله‌ای با این فیلتر یافت نشد.</p>
-        <button type="button" class="mag-text-btn" data-clear-filters>پاک کردن فیلترها</button>
+      <div class="mag-sort" data-filters role="group" aria-label="مرتب‌سازی">
+        <button type="button" class="mag-sort-btn {% if filters.sort == 'newest' %}is-active{% endif %}" data-filter-sort="newest" aria-pressed="{% if filters.sort == 'newest' %}true{% else %}false{% endif %}">جدیدترین</button>
+        <button type="button" class="mag-sort-btn {% if filters.sort == 'popular' %}is-active{% endif %}" data-filter-sort="popular" aria-pressed="{% if filters.sort == 'popular' %}true{% else %}false{% endif %}">محبوب</button>
+        <button type="button" class="mag-sort-btn {% if filters.sort == 'reads' %}is-active{% endif %}" data-filter-sort="reads" aria-pressed="{% if filters.sort == 'reads' %}true{% else %}false{% endif %}">پرخوانده</button>
+        <button type="button" class="mag-sort-btn {% if filters.sort == 'reading_asc' %}is-active{% endif %}" data-filter-sort="reading_asc" aria-pressed="{% if filters.sort == 'reading_asc' %}true{% else %}false{% endif %}">کوتاه</button>
+      </div>
+    </header>
+
+    <ul class="mag-desk-list" data-latest-grid>
+      {% for item in listing.articles %}
+      <li>
+        <a href="{{ item.url }}" class="mag-desk-row" data-reveal>
+          <div class="mag-desk-thumb" data-lqip-frame>
+            {% if item.cover_lqip %}
+            <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">
+            {% endif %}
+            {% if item.cover %}
+            <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" class="mag-media-img" width="160" height="200" loading="lazy" decoding="async" data-lqip-full>
+            {% else %}
+            <div class="mag-media-empty" aria-hidden="true"></div>
+            {% endif %}
+          </div>
+          <div class="mag-desk-copy">
+            <p class="mag-entry-meta">
+              {{ item.category.title }}
+              <span aria-hidden="true">·</span>
+              {{ item.reading_minutes_fa }} دقیقه
+              {% if item.published_at_fa %}
+              <span aria-hidden="true">·</span>
+              {{ item.published_at_fa }}
+              {% endif %}
+            </p>
+            <h3 class="mag-desk-title">{{ item.title }}</h3>
+            {% if item.excerpt %}
+            <p class="mag-desk-excerpt">{{ item.excerpt }}</p>
+            {% endif %}
+          </div>
+          <span class="mag-desk-action" aria-hidden="true">←</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="mag-pagination" data-pagination {% if listing.pagination.pages <= 1 %}hidden{% endif %}>
+      {% if listing.pagination.pages > 1 %}
+      <button type="button" class="mag-page-btn" data-prev {% if not listing.pagination.has_prev %}disabled{% endif %} aria-label="صفحه قبل">قبلی</button>
+      <span class="mag-page-info" aria-live="polite" data-page-info>{{ listing.pagination.page }} / {{ listing.pagination.pages }}</span>
+      <button type="button" class="mag-page-btn" data-next {% if not listing.pagination.has_next %}disabled{% endif %} aria-label="صفحه بعد">بعدی</button>
+      {% endif %}
+    </div>
+
+    <div class="mag-empty" data-latest-empty {% if listing.articles %}hidden{% endif %}>
+      <p>مقاله‌ای با این فیلتر یافت نشد.</p>
+      <button type="button" class="mag-text-btn" data-clear-filters>پاک کردن فیلترها</button>
+    </div>
+  </section>
+
+  {# ── 5. Popular TOC ── #}
+  <section class="mag-index mag-shell" data-section-popular aria-labelledby="mag-index-title">
+    <header class="mag-head" data-reveal>
+      <p class="section-label">فهرست</p>
+      <h2 id="mag-index-title" class="mag-heading">پرخواننده‌ها</h2>
+    </header>
+    <ol class="mag-index-list" data-popular-list>
+      {% for item in hub.popular %}
+      <li>
+        <a href="{{ item.url }}" class="mag-index-item" data-reveal>
+          <span class="mag-index-rank" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+          <span class="mag-index-copy">
+            <span class="mag-index-cat">{{ item.category.title }}</span>
+            <span class="mag-index-title">{{ item.title }}</span>
+            <span class="mag-index-meta">{{ item.view_count_fa }} بازدید · {{ item.reading_minutes_fa }} دقیقه</span>
+          </span>
+        </a>
+      </li>
+      {% empty %}
+      <li class="mag-index-empty">هنوز مطلب پرخواننده‌ای ثبت نشده است.</li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  {# ── 6. Journey CTA ── #}
+  <section class="mag-journey mag-shell" data-section-journey aria-labelledby="mag-journey-title">
+    <div class="mag-journey-inner" data-reveal>
+      <p class="section-label">گام بعدی</p>
+      <h2 id="mag-journey-title" class="mag-heading" data-journey-title>
+        {{ hub.conversion.title }}
+      </h2>
+      <p class="mag-journey-copy" data-journey-copy>
+        دانشنامه را به مشاوره و خدمت تبدیل کنید — با استاندارد همان برندی که می‌خوانید.
+      </p>
+      <div class="mag-journey-actions">
+        <a href="{{ hub.conversion.booking_url }}" class="btn-draw" data-journey-book>
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">{{ hub.conversion.booking_label }}</span>
+        </a>
+        <a href="{{ hub.conversion.consultation_url }}" class="btn-court" data-journey-consult>{{ hub.conversion.consultation_label }}</a>
+        <a href="{{ hub.conversion.services_url }}" class="mag-text-link" data-journey-services>مشاهده خدمات</a>
       </div>
     </div>
   </section>
 
-  {# ── 5. Index — popular ── #}
-  <section class="mag-index" data-section-popular aria-labelledby="mag-index-title">
-    <div class="mag-container mag-container-narrow">
-      <header class="mag-head" data-reveal>
-        <p class="mag-kicker">فهرست</p>
-        <h2 id="mag-index-title" class="mag-heading">پرخواننده‌ها</h2>
-      </header>
-      <ol class="mag-index-list" data-popular-list>
-        {% for item in hub.popular %}
-        <li>
-          <a href="{{ item.url }}" class="mag-index-item" data-reveal>
-            <span class="mag-index-rank" aria-hidden="true">{{ forloop.counter }}</span>
-            <span class="mag-index-copy">
-              <span class="mag-index-cat">{{ item.category.title }}</span>
-              <span class="mag-index-title">{{ item.title }}</span>
-              <span class="mag-index-meta">{{ item.view_count_fa }} بازدید · {{ item.reading_minutes_fa }} دقیقه</span>
-            </span>
-          </a>
-        </li>
-        {% empty %}
-        <li class="mag-index-empty text-sm font-light text-ivory/40">هنوز مطلب پرخواننده‌ای ثبت نشده است.</li>
-        {% endfor %}
-      </ol>
+  {# ── 7. Tags ── #}
+  <section class="mag-topics-foot mag-shell" data-section-topics aria-labelledby="mag-topics-title">
+    <header class="mag-head" data-reveal>
+      <p class="section-label">موضوعات</p>
+      <h2 id="mag-topics-title" class="mag-heading mag-heading-sm">کاوش بر اساس برچسب</h2>
+    </header>
+    <div class="mag-tag-cloud" data-tag-cloud>
+      {% for t in hub.tags %}
+      <button
+        type="button"
+        class="mag-tag-btn {% if filters.tag == t.slug %}is-active{% endif %}"
+        data-tag="{{ t.slug }}"
+        aria-pressed="{% if filters.tag == t.slug %}true{% else %}false{% endif %}"
+      >{{ t.title }}</button>
+      {% endfor %}
+    </div>
+    <div class="mag-meta-links">
+      <a href="{% url 'magazine:rss' %}">RSS</a>
+      <span aria-hidden="true">·</span>
+      <a href="{% url 'magazine:sitemap' %}">Sitemap</a>
     </div>
   </section>
 
-  {# ── 6. Journey — conversion ── #}
-  <section class="mag-journey" data-section-journey aria-labelledby="mag-journey-title">
-    <div class="mag-container">
-      <div class="mag-journey-inner" data-reveal>
-        <p class="mag-kicker">گام بعدی</p>
-        <h2 id="mag-journey-title" class="mag-heading mag-heading-lg" data-journey-title>
-          {{ hub.conversion.title }}
-        </h2>
-        <p class="mag-journey-copy" data-journey-copy>
-          دانشنامه را به مشاوره و خدمت تبدیل کنید — با استاندارد همان برندی که می‌خوانید.
-        </p>
-        <div class="mag-journey-actions">
-          <a href="{{ hub.conversion.booking_url }}" class="btn-court-fill" data-journey-book>{{ hub.conversion.booking_label }}</a>
-          <a href="{{ hub.conversion.consultation_url }}" class="btn-court" data-journey-consult>{{ hub.conversion.consultation_label }}</a>
-          <a href="{{ hub.conversion.services_url }}" class="mag-text-link" data-journey-services>مشاهده خدمات</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {# ── 7. Topics + meta ── #}
-  <section class="mag-topics-foot" data-section-topics aria-labelledby="mag-topics-title">
-    <div class="mag-container">
-      <header class="mag-head" data-reveal>
-        <p class="mag-kicker">موضوعات</p>
-        <h2 id="mag-topics-title" class="mag-heading mag-heading-sm">کاوش بر اساس برچسب</h2>
-      </header>
-      <div class="mag-tag-cloud" data-tag-cloud>
-        {% for t in hub.tags %}
-        <button
-          type="button"
-          class="mag-tag-btn {% if filters.tag == t.slug %}is-active{% endif %}"
-          data-tag="{{ t.slug }}"
-          aria-pressed="{% if filters.tag == t.slug %}true{% else %}false{% endif %}"
-        >{{ t.title }}</button>
-        {% endfor %}
-      </div>
-      <div class="mag-meta-links">
-        <a href="{% url 'magazine:rss' %}">RSS</a>
-        <span aria-hidden="true">·</span>
-        <a href="{% url 'magazine:sitemap' %}">Sitemap</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="mag-error" data-hub-error hidden role="alert">
+  <div class="mag-error mag-shell" data-hub-error hidden role="alert">
     <p data-hub-error-text>خطا در بارگذاری مجله</p>
-    <button type="button" class="btn-court mt-3 w-full text-xs" data-hub-retry>تلاش مجدد</button>
+    <button type="button" class="btn-court mt-4" data-hub-retry>تلاش مجدد</button>
   </div>
 </div>
 {% endblock %}

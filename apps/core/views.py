@@ -1,7 +1,6 @@
 from django.views.generic import TemplateView
 
 from apps.catalog.services import CatalogService
-from apps.core.services.brand_story_service import BrandStoryService
 from apps.portfolio.services import PortfolioService
 
 SERVICE_IMAGES = [
@@ -15,25 +14,34 @@ FALLBACK_SERVICES = [
         "name": "آرایش و استایل عروسی",
         "description": "آماده‌سازی کامل داماد برای روز مهم",
         "label": "۰۱ — داماد",
+        "index": "۰۱",
+        "category": "داماد",
         "image_webp": SERVICE_IMAGES[0][0],
         "image_jpg": SERVICE_IMAGES[0][1],
         "slug": "groom",
+        "duration": 90,
     },
     {
         "name": "مراقبت تخصصی پوست",
         "description": "پروتکل‌های اختصاصی برای پوست سالم و درخشان",
         "label": "۰۲ — پوست",
+        "index": "۰۲",
+        "category": "پوست",
         "image_webp": SERVICE_IMAGES[1][0],
         "image_jpg": SERVICE_IMAGES[1][1],
         "slug": "skin",
+        "duration": 60,
     },
     {
         "name": "طراحی تخصصی مو",
         "description": "استایل و فرم‌دهی با استاندارد برند",
         "label": "۰۳ — مو",
+        "index": "۰۳",
+        "category": "مو",
         "image_webp": SERVICE_IMAGES[2][0],
         "image_jpg": SERVICE_IMAGES[2][1],
         "slug": "hair",
+        "duration": 45,
     },
 ]
 
@@ -59,6 +67,8 @@ class HomeView(TemplateView):
                         "description": service.description
                         or "رزرو آنلاین با استاندارد برند",
                         "label": f"{idx} — {category}",
+                        "index": idx,
+                        "category": category,
                         "image_webp": webp,
                         "image_jpg": jpg,
                         "slug": service.slug,
@@ -67,11 +77,16 @@ class HomeView(TemplateView):
                     }
                 )
             ctx["showcase_services"] = showcase
+            ctx["showcase_count_display"] = (
+                PERSIAN_INDEX[len(showcase) - 1]
+                if 1 <= len(showcase) <= len(PERSIAN_INDEX)
+                else str(len(showcase))
+            )
         else:
             ctx["showcase_services"] = FALLBACK_SERVICES
+            ctx["showcase_count_display"] = PERSIAN_INDEX[len(FALLBACK_SERVICES) - 1]
 
         gallery = PortfolioService().homepage_payload()
         ctx["gallery_categories"] = gallery["categories"]
         ctx["gallery_items"] = gallery["items"]
-        ctx["brand_story"] = BrandStoryService().homepage_payload()
         return ctx

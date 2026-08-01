@@ -1,47 +1,24 @@
 @keyframes reveal {
-
-  0% { opacity: 0; transform: translateY(36px); }
-
-  100% { opacity: 1; transform: translateY(0); }
-
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes marquee {
-
   0% { transform: translateX(0); }
-
   100% { transform: translateX(-50%); }
-
 }
 
 @keyframes bookingFadeIn {
-
-  0% { opacity: 0; transform: translateY(14px); }
-
-  100% { opacity: 1; transform: translateY(0); }
-
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes bookingShimmer {
-
   0% { background-position: 200% 0; }
-
   100% { background-position: -200% 0; }
-
 }
 
 @keyframes bookingSuccessPop {
-
-  0% { opacity: 0; transform: scale(0.72); }
-
+  0% { opacity: 0; transform: scale(0.96); }
   100% { opacity: 1; transform: scale(1); }
-
-}
-
-@keyframes consultGroupPulse {
-
-  0% { background-color: rgba(247, 244, 239, 0.08); }
-
-  100% { background-color: rgba(247, 244, 239, 0.035); }
-
 }

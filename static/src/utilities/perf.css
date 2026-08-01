@@ -136,7 +136,7 @@ html.is-balanced-motion .gallery-swiper .swiper-slide-next {
 
 html.is-lite-motion .gallery-swiper .swiper-slide-active,
 html.is-balanced-motion .gallery-swiper .swiper-slide-active {
-  transform: scale(1.03) translateY(-4px);
+  transform: scale(1.03);
 }
 
 /* Footer glow — no live blur */

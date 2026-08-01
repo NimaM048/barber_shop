@@ -1,33 +1,20 @@
 @layer utilities {
+  /* Editorial reveal — opacity only (no translate bounce) */
   .reveal-prep {
-
     opacity: 0;
-
-    transform: translateY(18px);
-
   }
 
   .is-inview {
-
-    animation: reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-
-  }
-
-  html.is-full-motion .reveal-prep {
-    transform: translateY(36px);
+    animation: reveal 0.65s var(--ease-editorial) forwards;
   }
 
   html.is-full-motion .is-inview {
-    animation-duration: 1.15s;
+    animation-duration: 0.9s;
   }
 
-  .delay-1 { animation-delay: 0.1s; }
-
-  .delay-2 { animation-delay: 0.2s; }
-
-  .delay-3 { animation-delay: 0.3s; }
-
-  .delay-4 { animation-delay: 0.4s; }
-
-  .delay-5 { animation-delay: 0.5s; }
+  .delay-1 { animation-delay: 0.08s; }
+  .delay-2 { animation-delay: 0.16s; }
+  .delay-3 { animation-delay: 0.24s; }
+  .delay-4 { animation-delay: 0.32s; }
+  .delay-5 { animation-delay: 0.4s; }
 }

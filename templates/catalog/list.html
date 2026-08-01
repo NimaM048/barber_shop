@@ -3,53 +3,80 @@
 
 {% block title %}خدمات | {{ SITE_NAME }}{% endblock %}
 
-{% block content %}
-<section class="relative min-h-[100svh] bg-court-900 pt-28 pb-20">
-  <div class="noise-layer" aria-hidden="true"></div>
+{% block meta_description %}کاتالوگ خدمات {{ SITE_NAME }} — داماد، پوست، مو و VIP{% endblock %}
 
-  <div class="relative mx-auto max-w-[1100px] px-5 lg:px-10">
-    <div class="max-w-xl" data-reveal>
-      <p class="section-label">کاتالوگ</p>
-      <h1 class="mt-5 font-display text-3xl font-normal sm:text-5xl">خدمات</h1>
-      <p class="mt-4 text-sm font-light leading-8 text-ivory/50">
-        قیمت و مدت زمان هر خدمت را ببینید و مستقیم رزرو کنید.
-      </p>
-    </div>
+{% block content %}
+<section class="page-stage catalog-stage" aria-labelledby="catalog-heading">
+  <div class="page-shell page-shell--narrow">
+    <header class="page-header" data-reveal>
+      <h1 id="catalog-heading" class="page-title type-display">خدمات</h1>
+      <a href="{% url 'appointments:create' %}" class="page-header-action">
+        <span>رزرو</span>
+        <span aria-hidden="true">←</span>
+      </a>
+    </header>
 
     {% if services %}
-    <ul class="mt-14 divide-y divide-ivory/10 border-y border-ivory/10" data-reveal data-delay="1">
-      {% for service in services %}
-      <li class="flex flex-wrap items-center justify-between gap-4 py-7">
-        <div class="min-w-0 flex-1">
-          <h2 class="font-display text-xl font-normal text-ivory">{{ service.name }}</h2>
-          {% if service.description %}
-          <p class="mt-2 text-sm font-light leading-7 text-ivory/45">{{ service.description }}</p>
-          {% endif %}
-          {% if service.category %}
-          <p class="mt-2 text-[0.65rem] tracking-[0.18em] text-ivory/30">{{ service.category.name }}</p>
-          {% endif %}
-        </div>
-        <div class="flex flex-col items-end gap-3 text-sm text-ivory/55">
-          <p dir="ltr">
-            <span class="text-ivory">{{ service.price }}</span> تومان
-            <span class="mx-2 text-ivory/20">|</span>
-            {{ service.duration_minutes }} دقیقه
-          </p>
-          <a
-            href="{% url 'appointments:create' %}?service={{ service.slug }}"
-            class="border border-ivory/30 px-5 py-2 text-xs tracking-wide text-ivory transition hover:bg-ivory hover:text-court-900"
-          >
-            رزرو
+    <div class="service-menu" data-reveal>
+      <div class="service-menu-head" aria-hidden="true">
+        <span>خدمت</span>
+        <span>مدت</span>
+        <span>قیمت</span>
+        <span></span>
+      </div>
+      <ul class="service-menu-list">
+        {% for service in services %}
+        <li class="service-menu-row">
+          <div class="service-menu-main">
+            {% if service.image_jpg %}
+            <div class="service-menu-thumb">
+              <picture>
+                <source srcset="{% static service.image_webp %}" type="image/webp">
+                <img
+                  src="{% static service.image_jpg %}"
+                  alt="{{ service.name }}"
+                  width="120"
+                  height="160"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  decoding="async"
+                >
+              </picture>
+            </div>
+            {% endif %}
+            <div class="service-menu-copy">
+              <p class="service-menu-label">{{ service.label }}</p>
+              <h2 class="service-menu-name">{{ service.name }}</h2>
+              {% if service.description %}
+              <p class="service-menu-desc">{{ service.description|truncatewords:18 }}</p>
+              {% endif %}
+            </div>
+          </div>
+          <span class="service-menu-duration">{{ service.duration }} دقیقه</span>
+          <span class="service-menu-price" dir="ltr"><strong>{{ service.price }}</strong> تومان</span>
+          <a href="{% url 'appointments:create' %}?service={{ service.slug }}" class="service-menu-cta">
+            رزرو <span aria-hidden="true">←</span>
           </a>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
+        </li>
+        {% endfor %}
+      </ul>
+      <p class="service-menu-note">
+        برای راهنمایی قبل از رزرو،
+        <a href="{% url 'consultations:hub' %}">مشاوره تخصصی</a>
+        را ببینید.
+      </p>
+    </div>
     {% else %}
-    <div class="mt-14 border border-ivory/10 px-6 py-12 text-center" data-reveal>
-      <p class="text-ivory/50">هنوز خدمتی ثبت نشده است.</p>
-      <p class="mt-4 text-sm text-ivory/35">سه تخصص اصلی ما: داماد، پوست و مو</p>
-      <a href="{% url 'appointments:create' %}" class="btn-court mt-8 inline-flex">رزرو نوبت</a>
+    <div class="page-empty" data-reveal>
+      <p class="page-empty-title">هنوز خدمتی ثبت نشده است</p>
+      <p class="page-empty-copy">سه تخصص اصلی ما: داماد، پوست و مو</p>
+      <a href="{% url 'appointments:create' %}" class="btn-draw mt-8 inline-flex">
+        <span class="btn-draw-border" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+          </svg>
+        </span>
+        <span class="btn-draw-label relative z-10">رزرو نوبت</span>
+      </a>
     </div>
     {% endif %}
   </div>

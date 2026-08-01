@@ -26,11 +26,11 @@ def _fallback_payload() -> dict:
     site = getattr(settings, "SITE_NAME", "صالح ایوبی")
     return {
         "key": "home",
-        "edition_label": "Edition 01",
-        "section_label": "فلسفه برند",
+        "edition_label": "",
+        "section_label": "",
         "headline": "زیبایی نباید\nتصادفی باشد.",
         "headline_lines": ["زیبایی نباید", "تصادفی باشد."],
-        "subtitle": "زیبایی باید طراحی شود — مو، ریش، پوست، داماد.",
+        "subtitle": "",
         "story_body": (
             f"{site} یک استودیوی معماری زیبایی است؛ "
             "جایی که ظاهر تصادفی نیست، طراحی می‌شود."
@@ -38,67 +38,28 @@ def _fallback_payload() -> dict:
         "quote_text": "هر جزئیات با قصد آغاز می‌شود؛ نه با شانس.",
         "founder_name": "صالح ایوبی",
         "founder_title": "بنیان‌گذار",
-        "quote_signature": "Architecture of Beauty",
+        "quote_signature": "",
+        "bg_words": [],
         "portrait": {
             "src": static("images/brand/hero-groom-2-hd.jpg"),
             "webp": static("images/brand/hero-groom-2-hd.webp"),
             "lqip": static("images/brand/hero-groom-2-lqip.jpg"),
             "alt": site,
-            "caption": "Studio Portrait — Isfahan",
-            "index": "01",
+            "caption": "Isfahan",
+            "index": "",
         },
-        "timeline_label": "مسیر معماری زیبایی",
-        "values_label": "اصول برند",
-        "timeline": [
-            {
-                "number": "۰۱",
-                "title": "مشاوره",
-                "description": "گفت‌وگو درباره فرم، مناسبت و استانداردی که می‌خواهید.",
-                "effect": "focus",
-            },
-            {
-                "number": "۰۲",
-                "title": "تحلیل",
-                "description": "خوانش چهره، بافت پوست و تعادل بصری — پیش از هر تصمیم.",
-                "effect": "light",
-            },
-            {
-                "number": "۰۳",
-                "title": "طراحی",
-                "description": "طراحی استایل به‌عنوان هویت؛ نه یک انتخاب لحظه‌ای.",
-                "effect": "hair",
-            },
-            {
-                "number": "۰۴",
-                "title": "اجرا",
-                "description": "اجرای دقیق با ریتم آرام و استاندارد برند.",
-                "effect": "soft",
-            },
-            {
-                "number": "۰۵",
-                "title": "دگرگونی",
-                "description": "نتیجه‌ای که دیده می‌شود و احساس می‌شود.",
-                "effect": "bright",
-            },
-            {
-                "number": "۰۶",
-                "title": "اعتماد",
-                "description": "حضوری که پیش از حرف، اعتبار می‌سازد.",
-                "effect": "bright",
-            },
-        ],
+        "timeline_label": "",
+        "values_label": "",
+        "timeline": [],
         "values": [
-            {"title": "دقت", "subtitle": "Precision"},
-            {"title": "مهارت", "subtitle": "Craft"},
-            {"title": "ظرافت", "subtitle": "Elegance"},
-            {"title": "اعتماد", "subtitle": "Confidence"},
-            {"title": "هویت", "subtitle": "Identity"},
-            {"title": "انضباط", "subtitle": "Discipline"},
+            {"title": "دقت", "subtitle": ""},
+            {"title": "مهارت", "subtitle": ""},
+            {"title": "ظرافت", "subtitle": ""},
         ],
-        "cta_primary_label": "رزرو مشاوره",
+        "cta_primary_label": "رزرو نوبت",
         "cta_primary_href": BrandStory.resolve_href("appointments:create"),
-        "cta_secondary_label": "مشاهده نمونه‌کارها",
-        "cta_secondary_href": "#gallery",
+        "cta_secondary_label": "",
+        "cta_secondary_href": "",
         "seo_title": "",
         "seo_description": "",
     }
@@ -119,6 +80,8 @@ class BrandStoryService:
         return self.serialize(story)
 
     def serialize(self, story: BrandStory) -> dict:
+        fallback = _fallback_payload()
+
         if story.portrait:
             src = story.portrait.url
         else:
@@ -142,12 +105,16 @@ class BrandStoryService:
                 "description": step.description,
                 "effect": step.portrait_effect or "none",
             }
-            for step in BrandTimelineStep.objects.filter(story=story, is_active=True)
+            for step in BrandTimelineStep.objects.filter(
+                story=story, is_active=True
+            ).order_by("sort_order", "id")
         ]
 
         values = [
-            {"title": value.title, "subtitle": value.subtitle}
-            for value in BrandValue.objects.filter(story=story, is_active=True)
+            {"title": value.title, "subtitle": value.subtitle or ""}
+            for value in BrandValue.objects.filter(
+                story=story, is_active=True
+            ).order_by("sort_order", "id")
         ]
 
         payload = {
@@ -170,7 +137,7 @@ class BrandStoryService:
                 "alt": story.portrait_alt
                 or getattr(settings, "SITE_NAME", "صالح ایوبی"),
                 "caption": story.portrait_caption,
-                "index": story.portrait_index or "01",
+                "index": story.portrait_index or "",
             },
             "timeline_label": story.timeline_label,
             "values_label": story.values_label,
@@ -180,32 +147,23 @@ class BrandStoryService:
             "cta_primary_href": BrandStory.resolve_href(story.cta_primary_href),
             "cta_secondary_label": story.cta_secondary_label,
             "cta_secondary_href": BrandStory.resolve_href(story.cta_secondary_href),
-            "seo_title": story.seo_title,
-            "seo_description": story.seo_description,
+            "seo_title": story.seo_title or "",
+            "seo_description": story.seo_description or "",
         }
 
-        # Merge missing essentials from fallback so the section never feels empty
-        fallback = _fallback_payload()
         if not payload["headline_lines"]:
             payload["headline"] = fallback["headline"]
             payload["headline_lines"] = fallback["headline_lines"]
         if not payload["portrait"]["src"]:
             payload["portrait"] = fallback["portrait"]
-        if not payload["timeline"]:
-            payload["timeline"] = fallback["timeline"]
+        if not payload["story_body"] and not payload["subtitle"]:
+            payload["story_body"] = fallback["story_body"]
         if not payload["values"]:
             payload["values"] = fallback["values"]
-        if not payload["bg_words"]:
-            payload["bg_words"] = fallback["bg_words"]
         if not payload["cta_primary_href"]:
             payload["cta_primary_href"] = fallback["cta_primary_href"]
             payload["cta_primary_label"] = (
                 payload["cta_primary_label"] or fallback["cta_primary_label"]
-            )
-        if not payload["cta_secondary_href"]:
-            payload["cta_secondary_href"] = fallback["cta_secondary_href"]
-            payload["cta_secondary_label"] = (
-                payload["cta_secondary_label"] or fallback["cta_secondary_label"]
             )
 
         return payload

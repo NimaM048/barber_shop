@@ -55,27 +55,21 @@
   /* ── Swiper ── */
   const gallerySwiper = new Swiper(swiperEl, {
     slidesPerView: "auto",
-    centeredSlides: true,
-    spaceBetween: 18,
-    loop: items.length > 3,
-    speed: reduceMotion ? 0 : fullMotion ? 900 : 420,
+    centeredSlides: false,
+    spaceBetween: 14,
+    loop: false,
+    speed: reduceMotion ? 0 : 520,
     grabCursor: true,
-    watchSlidesProgress: true,
-    observer: true,
-    observeParents: true,
-    resistanceRatio: 0.72,
-    freeMode: false,
+    freeMode: {
+      enabled: true,
+      sticky: true,
+      momentumRatio: 0.65,
+    },
     keyboard: {
       enabled: true,
       onlyInViewport: true,
     },
-    autoplay: fullMotion && !reduceMotion
-      ? {
-          delay: 4800,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }
-      : false,
+    autoplay: false,
     pagination: paginationEl
       ? {
           el: paginationEl,
@@ -90,9 +84,8 @@
           }
         : undefined,
     breakpoints: {
-      640: { spaceBetween: 22 },
-      1024: { spaceBetween: 28 },
-      1280: { spaceBetween: 32 },
+      640: { spaceBetween: 18 },
+      1024: { spaceBetween: 22 },
     },
     on: {
       init(sw) {

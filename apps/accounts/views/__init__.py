@@ -1,3 +1,3 @@
-from .auth_views import LoginView, LogoutView, RegisterView
+"""Customer-facing auth views removed — guest booking only."""
 
-__all__ = ["LoginView", "LogoutView", "RegisterView"]
+__all__: list[str] = []

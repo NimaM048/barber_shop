@@ -1,7 +1,11 @@
 @layer components {
-  /* Shared court buttons */
+  /* CTA system — 3 roles: primary (btn-draw), secondary (btn-court), quiet (btn-quiet) */
+
+  /* Secondary — outline court */
   .btn-court {
-    @apply relative inline-flex items-center justify-center gap-3 overflow-hidden border border-ivory/80 bg-transparent px-8 py-3.5 text-sm font-light tracking-wide text-ivory transition duration-500;
+    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden border border-ivory/80 bg-transparent px-6 py-2.5 text-sm font-light tracking-wide text-ivory transition duration-500;
+    min-height: var(--control-h);
+    font-family: var(--font-body);
   }
 
   .btn-court::before {
@@ -17,26 +21,77 @@
     @apply origin-left scale-x-100;
   }
 
-  .btn-court-solid {
-    @apply inline-flex items-center justify-center gap-3 border border-court-900 bg-court-900 px-8 py-3.5 text-sm font-light tracking-wide text-ivory transition duration-500 hover:bg-court-800;
+  .btn-court:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
-  .btn-court-fill {
-    @apply inline-flex items-center justify-center gap-3 border border-ivory bg-ivory px-8 py-3.5 text-sm font-medium tracking-wide text-court-900 transition duration-500 hover:bg-transparent hover:text-ivory;
-  }
-
+  /* Legacy aliases → secondary */
+  .btn-court-solid,
   .btn-court-light {
-    @apply inline-flex items-center justify-center gap-3 border border-court-900/20 bg-transparent px-8 py-3.5 text-sm font-light tracking-wide text-court-900 transition duration-500 hover:border-court-900 hover:bg-court-900 hover:text-ivory;
+    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden border border-ivory/80 bg-transparent px-6 py-2.5 text-sm font-light tracking-wide text-ivory transition duration-500;
+    min-height: var(--control-h);
+    font-family: var(--font-body);
   }
 
-  /* Architectural border-draw CTA */
+  .btn-court-solid::before,
+  .btn-court-light::before {
+    content: "";
+    @apply absolute inset-0 -z-10 origin-right scale-x-0 bg-ivory transition-transform duration-500 ease-out;
+  }
+
+  .btn-court-solid:hover,
+  .btn-court-light:hover {
+    @apply text-court-900;
+  }
+
+  .btn-court-solid:hover::before,
+  .btn-court-light:hover::before {
+    @apply origin-left scale-x-100;
+  }
+
+  /* Primary fill alias (maps to draw look without SVG border) */
+  .btn-court-fill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: var(--control-h);
+    padding: 0.75rem 2rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #071916;
+    background: #f7f4ef;
+    border: 1px solid #f7f4ef;
+    transition:
+      color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.7s ease;
+  }
+
+  .btn-court-fill:hover {
+    color: #f7f4ef;
+    background: transparent;
+  }
+
+  .btn-court-fill:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* Primary — architectural border-draw CTA */
   .btn-draw {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    padding: 1rem 2.75rem;
+    min-height: var(--control-h);
+    padding: 0.75rem 2rem;
+    font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 400;
     letter-spacing: 0.04em;
@@ -46,7 +101,6 @@
     transition:
       color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
       background-color 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
   }
 
   .btn-draw-border {
@@ -84,22 +138,70 @@
     stroke-dashoffset: 0;
   }
 
+  .btn-draw:disabled,
+  .btn-court-fill:disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* Quiet — tertiary text */
   .btn-quiet {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 1rem 1.25rem;
+    min-height: var(--control-h);
+    padding: 0.65rem 1rem;
+    font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 300;
     letter-spacing: 0.04em;
     color: rgba(247, 244, 239, 0.55);
     transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
   }
 
   .btn-quiet:hover {
     color: #f7f4ef;
+  }
+
+  .btn-quiet:focus-visible {
+    color: #f7f4ef;
+    outline: 1px solid rgba(247, 244, 239, 0.4);
+    outline-offset: 4px;
+  }
+
+  /* Legacy primary alias → draw fill */
+  .btn-light-sweep {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: var(--control-h);
+    padding: 0.75rem 2rem;
+    overflow: hidden;
+    isolation: isolate;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    border: 1px solid #f7f4ef;
+    background: #f7f4ef;
+    color: #071916;
+    transition:
+      color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.55s ease;
+  }
+
+  .btn-light-sweep:hover {
+    background: transparent;
+    color: #f7f4ef;
+  }
+
+  .btn-light-sweep:disabled {
+    opacity: 0.55;
+    pointer-events: none;
   }
 
   /* Magnetic micro-interaction */
@@ -108,6 +210,6 @@
   }
 
   .btn-magnetic:hover .btn-arrow {
-    transform: translateX(-0.35rem);
+    transform: translateX(-0.2rem);
   }
 }

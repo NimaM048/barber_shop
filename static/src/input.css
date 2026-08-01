@@ -1,4 +1,5 @@
-﻿@import "tailwindcss/base";
+﻿@import "./tokens.css";
+@import "tailwindcss/base";
 @import "./base/document.css";
 
 @import "tailwindcss/components";
@@ -9,6 +10,8 @@
 @import "./components/chrome.css";
 @import "./components/hero.css";
 @import "./components/brand-ribbon.css";
+@import "./components/home.css";
+@import "./components/pages.css";
 @import "./components/gallery.css";
 @import "./components/booking.css";
 @import "./components/consultations.css";

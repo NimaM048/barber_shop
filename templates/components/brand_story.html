@@ -1,5 +1,5 @@
 {% load static %}
-{# Brand Story — editorial scroll journey (fully data-driven) #}
+{# Brand Story — minimal editorial about #}
 {% with bs=brand_story %}
 <section
   id="about"
@@ -7,33 +7,10 @@
   data-brand-story
   aria-labelledby="brand-story-heading"
 >
-  <div class="noise-layer" aria-hidden="true"></div>
-
-  {# Architectural atmosphere — oversized background words #}
-  <div class="bs-atmosphere" aria-hidden="true" data-bs-atmosphere>
-    {% for word in bs.bg_words %}
-    <span class="bs-bg-word bs-bg-word-{{ forloop.counter }}" data-bs-bg-word>{{ word }}</span>
-    {% endfor %}
-    <div class="bs-grid-line bs-grid-line-v" data-bs-grid></div>
-    <div class="bs-grid-line bs-grid-line-h" data-bs-grid></div>
-  </div>
-
   <div class="bs-shell">
-    {# ── Act 1: Philosophy ── #}
-    <header class="bs-philosophy" data-bs-act="philosophy">
-      <div class="bs-meta">
-        {% if bs.edition_label %}
-        <p class="bs-edition" data-bs-reveal>{{ bs.edition_label }}</p>
-        {% endif %}
-        {% if bs.edition_label and bs.section_label %}
-        <span class="bs-meta-rule" aria-hidden="true" data-bs-reveal></span>
-        {% endif %}
-        {% if bs.section_label %}
-        <p class="bs-label" data-bs-reveal>{{ bs.section_label }}</p>
-        {% endif %}
-      </div>
-
-      <h2 id="brand-story-heading" class="bs-headline" data-bs-reveal>
+    <header class="bs-philosophy" data-bs-reveal>
+      <p class="section-label">درباره</p>
+      <h2 id="brand-story-heading" class="bs-headline">
         {% for line in bs.headline_lines %}
         <span class="bs-headline-line">{{ line }}</span>
         {% empty %}
@@ -41,187 +18,85 @@
         {% endfor %}
       </h2>
 
-      {% if bs.subtitle %}
-      <p class="bs-subtitle" data-bs-reveal>{{ bs.subtitle }}</p>
-      {% endif %}
-
       {% if bs.story_body %}
-      <p class="bs-body" data-bs-reveal>{{ bs.story_body }}</p>
+      <p class="bs-body">{{ bs.story_body }}</p>
+      {% elif bs.subtitle %}
+      <p class="bs-body">{{ bs.subtitle }}</p>
       {% endif %}
     </header>
 
-    {# ── Act 2–3: Portrait + Timeline ── #}
-    <div class="bs-composition" data-bs-act="composition">
-      <figure
-        class="bs-portrait"
-        data-bs-portrait
-        data-effect="none"
-      >
+    <div class="bs-composition">
+      <figure class="bs-portrait" data-bs-portrait>
         <div class="bs-portrait-frame">
-          <div class="bs-portrait-mask" data-bs-portrait-mask>
-            <div class="bs-portrait-media" data-bs-portrait-media>
-              {% if bs.portrait.lqip %}
-              <img
-                class="bs-portrait-lqip"
-                src="{{ bs.portrait.lqip }}"
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-              >
+          <div class="bs-portrait-media" data-bs-portrait-media>
+            {% if bs.portrait.lqip %}
+            <img
+              class="bs-portrait-lqip"
+              src="{{ bs.portrait.lqip }}"
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+            >
+            {% endif %}
+            <picture>
+              {% if bs.portrait.webp %}
+              <source srcset="{{ bs.portrait.webp }}" type="image/webp">
               {% endif %}
-              <picture>
-                {% if bs.portrait.webp %}
-                <source srcset="{{ bs.portrait.webp }}" type="image/webp">
-                {% endif %}
-                <img
-                  class="bs-portrait-img"
-                  src="{{ bs.portrait.src }}"
-                  alt="{{ bs.portrait.alt }}"
-                  width="900"
-                  height="1200"
-                  loading="lazy"
-                  decoding="async"
-                  data-bs-portrait-img
-                >
-              </picture>
-            </div>
+              <img
+                class="bs-portrait-img"
+                src="{{ bs.portrait.src }}"
+                alt="{{ bs.portrait.alt }}"
+                width="900"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+                data-bs-portrait-img
+              >
+            </picture>
           </div>
-
-          <span class="bs-frame-mark bs-frame-tl" aria-hidden="true"></span>
-          <span class="bs-frame-mark bs-frame-tr" aria-hidden="true"></span>
-          <span class="bs-frame-mark bs-frame-bl" aria-hidden="true"></span>
-          <span class="bs-frame-mark bs-frame-br" aria-hidden="true"></span>
-
-          <div class="bs-portrait-veil" data-bs-portrait-veil aria-hidden="true"></div>
-          <div class="bs-portrait-focus" data-bs-portrait-focus aria-hidden="true"></div>
         </div>
-
         {% if bs.portrait.caption %}
-        <figcaption class="bs-portrait-caption" data-bs-reveal>
-          {% if bs.portrait.index %}
-          <span class="bs-portrait-index">{{ bs.portrait.index }}</span>
-          {% endif %}
-          <span>{{ bs.portrait.caption }}</span>
-        </figcaption>
+        <figcaption class="bs-portrait-caption">{{ bs.portrait.caption }}</figcaption>
         {% endif %}
       </figure>
 
-      <div
-        class="bs-timeline"
-        id="process"
-        data-bs-timeline
-        aria-label="{{ bs.timeline_label|default:'مسیر' }}"
-      >
-        {% if bs.timeline_label %}
-        <p class="bs-timeline-label" data-bs-reveal>{{ bs.timeline_label }}</p>
-        {% endif %}
-
-        <div class="bs-timeline-track" aria-hidden="true">
-          <span class="bs-timeline-rail"></span>
-          <span class="bs-timeline-progress" data-bs-timeline-progress></span>
-        </div>
-
-        <ol class="bs-timeline-list">
-          {% for step in bs.timeline %}
-          <li
-            class="bs-step"
-            data-bs-step
-            data-effect="{{ step.effect }}"
-            data-index="{{ forloop.counter0 }}"
-          >
-            <button
-              type="button"
-              class="bs-step-trigger"
-              data-bs-step-trigger
-              aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
-              {% if step.description %}aria-controls="bs-step-desc-{{ forloop.counter }}"{% endif %}
-            >
-              <span class="bs-step-num" aria-hidden="true">{{ step.number }}</span>
-              <span class="bs-step-title">{{ step.title }}</span>
-            </button>
-            {% if step.description %}
-            <p
-              class="bs-step-desc"
-              id="bs-step-desc-{{ forloop.counter }}"
-              {% if not forloop.first %}hidden{% endif %}
-            >{{ step.description }}</p>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ol>
-      </div>
-    </div>
-
-    {# ── Act 4: Brand values ── #}
-    {% if bs.values %}
-    <div class="bs-values" data-bs-act="values" aria-label="{{ bs.values_label|default:'اصول برند' }}">
-      {% if bs.values_label %}
-      <p class="bs-values-label" data-bs-reveal>{{ bs.values_label }}</p>
-      {% endif %}
-      <ul class="bs-values-list">
+      {% if bs.values %}
+      <ul class="bs-values-list" aria-label="{{ bs.values_label|default:'اصول' }}">
         {% for value in bs.values %}
-        <li class="bs-value" data-bs-value data-bs-reveal>
+        <li class="bs-value" data-bs-reveal>
           <span class="bs-value-title">{{ value.title }}</span>
-          {% if value.subtitle %}
-          <span class="bs-value-sub" lang="en" dir="ltr">{{ value.subtitle }}</span>
-          {% endif %}
         </li>
         {% endfor %}
       </ul>
+      {% endif %}
     </div>
-    {% endif %}
 
-    {# ── Act 5: Signature quote + CTA ── #}
-    <footer class="bs-finale" data-bs-act="finale">
+    {% if bs.quote_text or bs.cta_primary_label %}
+    <footer class="bs-finale">
       {% if bs.quote_text %}
       <blockquote class="bs-quote" data-bs-reveal>
-        <span class="bs-quote-mark" aria-hidden="true">«</span>
         <p class="bs-quote-text">{{ bs.quote_text }}</p>
-        {% if bs.founder_name or bs.founder_title or bs.quote_signature %}
+        {% if bs.founder_name %}
         <footer class="bs-quote-sign">
-          {% if bs.founder_name %}
           <cite class="bs-founder">{{ bs.founder_name }}</cite>
-          {% endif %}
           {% if bs.founder_title %}
           <span class="bs-founder-title">{{ bs.founder_title }}</span>
-          {% endif %}
-          {% if bs.quote_signature %}
-          <span class="bs-quote-sig" lang="en" dir="ltr">{{ bs.quote_signature }}</span>
           {% endif %}
         </footer>
         {% endif %}
       </blockquote>
       {% endif %}
 
-      <div class="bs-cta" data-bs-reveal role="group" aria-label="اقدامات">
-        {% if bs.cta_primary_label and bs.cta_primary_href %}
-        <a
-          href="{{ bs.cta_primary_href }}"
-          class="btn-draw bs-cta-primary"
-          data-magnetic
-        >
-          <span class="btn-draw-border" aria-hidden="true">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
-            </svg>
-          </span>
-          <span class="btn-draw-label relative z-10">{{ bs.cta_primary_label }}</span>
-          <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+      {% if bs.cta_primary_label and bs.cta_primary_href %}
+      <div class="bs-cta" data-bs-reveal>
+        <a href="{{ bs.cta_primary_href }}" class="btn-quiet bs-cta-primary">
+          <span>{{ bs.cta_primary_label }}</span>
+          <span aria-hidden="true">←</span>
         </a>
-        {% endif %}
-
-        {% if bs.cta_secondary_label and bs.cta_secondary_href %}
-        <a
-          href="{{ bs.cta_secondary_href }}"
-          class="btn-quiet bs-cta-secondary"
-          data-magnetic
-        >
-          <span>{{ bs.cta_secondary_label }}</span>
-          <span aria-hidden="true">↓</span>
-        </a>
-        {% endif %}
       </div>
+      {% endif %}
     </footer>
+    {% endif %}
   </div>
 </section>
 {% endwith %}

@@ -1,30 +1,30 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}مقاله یافت نشد | {{ SITE_NAME }}{% endblock %}
+{% block title %}صفحه یافت نشد | {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="page-stage" aria-labelledby="mag-404-heading">
+<section class="page-stage" aria-labelledby="page-404-heading">
   <div class="page-atmosphere" aria-hidden="true">
     <span class="page-atmosphere-orb page-atmosphere-orb-a"></span>
   </div>
 
   <div class="page-shell page-shell--narrow text-center">
     <p class="section-label" data-reveal>۴۰۴</p>
-    <h1 id="mag-404-heading" class="page-title mx-auto mt-4" data-reveal>مقاله یافت نشد</h1>
+    <h1 id="page-404-heading" class="page-title mx-auto mt-4" data-reveal>صفحه یافت نشد</h1>
     <p class="page-lede mx-auto" data-reveal data-delay="1">
-      این مطلب حذف شده یا هنوز منتشر نشده است.
+      این مسیر وجود ندارد یا منتقل شده است.
     </p>
     <div class="mt-10 flex flex-wrap items-center justify-center gap-4" data-reveal data-delay="2">
-      <a href="{% url 'magazine:hub' %}" class="btn-draw">
+      <a href="{% url 'core:home' %}" class="btn-draw">
         <span class="btn-draw-border" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none">
             <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
           </svg>
         </span>
-        <span class="btn-draw-label relative z-10">بازگشت به مجله</span>
+        <span class="btn-draw-label relative z-10">بازگشت به خانه</span>
         <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
       </a>
-      <a href="{% url 'core:home' %}" class="btn-quiet">صفحه اصلی</a>
+      <a href="{% url 'appointments:create' %}" class="btn-quiet">رزرو نوبت</a>
     </div>
   </div>
 </section>

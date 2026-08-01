@@ -1,6 +1,78 @@
 @layer components {
-  /* Form fields */
+  /* Form fields — court editorial */
   .field-court {
-    @apply w-full border border-ivory/15 bg-transparent px-4 py-3 text-sm text-ivory outline-none transition focus:border-ivory/45;
+    @apply w-full border border-ivory/15 bg-transparent px-4 py-3 text-sm font-light text-ivory outline-none transition;
+    font-family: var(--font-body);
+    min-height: var(--control-h);
+  }
+
+  .field-court::placeholder {
+    color: rgba(247, 244, 239, 0.28);
+  }
+
+  .field-court:hover {
+    border-color: rgba(247, 244, 239, 0.28);
+  }
+
+  .field-court:focus,
+  .field-court:focus-visible {
+    border-color: rgba(247, 244, 239, 0.5);
+    box-shadow: 0 0 0 1px rgba(247, 244, 239, 0.08);
+  }
+
+  .field-court:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .field-court[aria-invalid="true"],
+  .field-court.is-invalid {
+    border-color: rgba(240, 180, 168, 0.55);
+  }
+
+  .field-court[aria-invalid="true"]:focus,
+  .field-court.is-invalid:focus {
+    border-color: rgba(240, 180, 168, 0.75);
+    box-shadow: 0 0 0 1px rgba(240, 180, 168, 0.15);
+  }
+
+  textarea.field-court {
+    min-height: 5.5rem;
+    resize: vertical;
+    line-height: 1.85;
+  }
+
+  .field-court[type="file"] {
+    padding-block: 0.65rem;
+    color: rgba(247, 244, 239, 0.55);
+  }
+
+  .field-court[type="file"]::file-selector-button {
+    margin-inline-end: 0.85rem;
+    border: 1px solid rgba(247, 244, 239, 0.25);
+    background: transparent;
+    color: #f7f4ef;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+
+  .field-error {
+    margin-top: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(252, 165, 165, 0.9);
+  }
+
+  /* Autofill — keep court look in Chromium/Safari */
+  .field-court:-webkit-autofill,
+  .field-court:-webkit-autofill:hover,
+  .field-court:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f7f4ef;
+    caret-color: #f7f4ef;
+    box-shadow: 0 0 0 1000px #0a221e inset;
+    transition: background-color 99999s ease-out;
   }
 }

@@ -134,7 +134,7 @@ ARTICLES = [
         "is_featured": True,
         "is_editors_pick": True,
         "display_priority": 100,
-        "cover_image_static": "images/brand/hero-cinematic.webp",
+        "cover_image_static": "images/brand/hero-cinematic.jpg",
         "cover_image_alt": "آماده‌سازی حرفه‌ای داماد — اصلاح نهایی پیش از مراسم",
         "body": """
 <p>روز مراسم، نقطه اوج ماه‌ها برنامه‌ریزی است. ظاهر داماد باید آرام، مرتب و هماهنگ با استایل مراسم باشد — نه عجولانه و نه تصادفی.</p>
@@ -170,7 +170,7 @@ ARTICLES = [
         "reading_minutes": 6,
         "is_featured": True,
         "display_priority": 80,
-        "cover_image_static": "images/brand/hero-groom-2-hd.webp",
+        "cover_image_static": "images/brand/hero-groom-2-hd.jpg",
         "body": """
 <p>پوست مردانه معمولاً ضخیم‌تر است و به دلیل اصلاح، بیشتر در معرض تحریک قرار می‌گیرد. روتین درست، التهاب را کم و بافت پوست را یکدست می‌کند.</p>
 <h2>۱. پاکسازی</h2>
@@ -195,7 +195,7 @@ ARTICLES = [
         "is_featured": True,
         "is_editors_pick": True,
         "display_priority": 70,
-        "cover_image_static": "images/brand/hero-cinematic.webp",
+        "cover_image_static": "images/brand/hero-cinematic.jpg",
         "body": """
 <p>ترندهای ۲۰۲۶ از افراط فاصله گرفته‌اند. تمرکز روی تناسب با فرم صورت، بافت مو و سبک زندگی است.</p>
 <h2>بافت کنترل‌شده</h2>
@@ -215,7 +215,7 @@ ARTICLES = [
         "reading_minutes": 4,
         "is_editors_pick": True,
         "display_priority": 60,
-        "cover_image_static": "images/brand/hero-groom-2-hd.webp",
+        "cover_image_static": "images/brand/hero-groom-2-hd.jpg",
         "body": """
 <p>پس از فیشیال، پوست در فاز بازسازی است. مراقبت اشتباه می‌تواند التهاب ایجاد کند.</p>
 <h2>۲۴ ساعت اول</h2>
@@ -237,7 +237,7 @@ ARTICLES = [
         "tags": ["haircut", "beard"],
         "reading_minutes": 5,
         "display_priority": 50,
-        "cover_image_static": "images/brand/hero-cinematic.webp",
+        "cover_image_static": "images/brand/hero-cinematic.jpg",
         "cover_image_alt": "فضای آرام سالن — انتخاب هوشمند خدمات زیبایی",
         "body": """
 <p>سرویس VIP برای کسانی طراحی شده که می‌خواهند در یک مراجعه، اصلاح، استایل و مراقبت را یکجا دریافت کنند.</p>
@@ -257,7 +257,7 @@ ARTICLES = [
         "reading_minutes": 7,
         "is_featured": True,
         "display_priority": 55,
-        "cover_image_static": "images/brand/hero-groom-3-hd.webp",
+        "cover_image_static": "images/brand/hero-groom-3-hd.jpg",
         "body": """
 <p>اصلاح خوب با آماده‌سازی پوست شروع می‌شود: گرم‌کردن، رطوبت و روغن مناسب.</p>
 <h2>اصول اصلاح بدون سوزش</h2>
@@ -283,6 +283,7 @@ class Command(BaseCommand):
                 "name": "هیئت تحریریه صالح ایوبی",
                 "role": "سردبیر دانشنامه زیبایی",
                 "bio": "محتوای این دانشنامه توسط تیم تخصصی مجموعه صالح ایوبی با تمرکز بر استانداردهای حرفه‌ای داماد، پوست و مو تدوین می‌شود.",
+                "avatar_static": "images/brand/hero-groom-1-hd.jpg",
                 "is_active": True,
             },
         )

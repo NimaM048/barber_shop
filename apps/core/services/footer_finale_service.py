@@ -67,11 +67,11 @@ def _fallback_payload() -> dict:
         "philosophy_caption": "Architecture of Beauty",
         "bg_word": "ARCHITECTURE",
         "cta_statement": "هر دگرگونی با یک تصمیم آغاز می‌شود.",
-        "cta_prompt": "سفر خود را آغاز کنید.",
-        "cta_primary_label": "دریافت مشاوره تخصصی",
-        "cta_primary_href": FooterFinale.resolve_href("consultations:hub"),
-        "cta_secondary_label": "رزرو نوبت",
-        "cta_secondary_href": FooterFinale.resolve_href("appointments:create"),
+        "cta_prompt": "",
+        "cta_primary_label": "رزرو نوبت",
+        "cta_primary_href": FooterFinale.resolve_href("appointments:create"),
+        "cta_secondary_label": "",
+        "cta_secondary_href": "",
         "contacts": [
             {
                 "key": "phone",
@@ -342,19 +342,10 @@ class FooterFinaleService:
             payload["philosophy_lines"] = fallback["philosophy_lines"]
         if not payload["cta_statement"]:
             payload["cta_statement"] = fallback["cta_statement"]
-        if not payload["cta_prompt"]:
-            payload["cta_prompt"] = fallback["cta_prompt"]
         if not payload["cta_primary_href"]:
             payload["cta_primary_href"] = fallback["cta_primary_href"]
             payload["cta_primary_label"] = (
                 payload["cta_primary_label"] or fallback["cta_primary_label"]
             )
-        if not payload["cta_secondary_href"]:
-            payload["cta_secondary_href"] = fallback["cta_secondary_href"]
-            payload["cta_secondary_label"] = (
-                payload["cta_secondary_label"] or fallback["cta_secondary_label"]
-            )
-        if not payload["philosophy_caption"]:
-            payload["philosophy_caption"] = fallback["philosophy_caption"]
 
         return payload

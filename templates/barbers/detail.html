@@ -1,17 +1,87 @@
 {% extends "layouts/base.html" %}
+{% load static %}
 
 {% block title %}{{ barber.display_name }} | {{ SITE_NAME }}{% endblock %}
 
+{% block meta_description %}{{ barber.display_name }} — {{ SITE_NAME }}{% endblock %}
+
 {% block content %}
-<section class="mx-auto max-w-3xl px-4 py-16">
-  <a href="{% url 'barbers:list' %}" class="text-sm text-amber-800 hover:underline">بازگشت به لیست</a>
-  <h1 class="mt-4 text-3xl font-bold text-stone-900">{{ barber.display_name }}</h1>
-  <p class="mt-2 text-sm text-stone-500">{{ barber.experience_years }} سال سابقه</p>
-  {% if barber.bio %}
-  <p class="mt-6 leading-relaxed text-stone-700">{{ barber.bio }}</p>
-  {% endif %}
-  <a href="{% url 'appointments:create' %}" class="mt-8 inline-flex rounded-xl bg-stone-900 px-5 py-3 text-sm font-semibold text-white hover:bg-stone-700">
-    رزرو با این آرایشگر
-  </a>
+<section class="page-stage barber-detail-stage" aria-labelledby="barber-detail-heading">
+  <div class="page-atmosphere" aria-hidden="true">
+    <span class="page-atmosphere-orb page-atmosphere-orb-b"></span>
+    <span class="page-rail"></span>
+  </div>
+
+  <div class="page-shell">
+    <a href="{% url 'barbers:list' %}" class="page-back" data-reveal>
+      <span aria-hidden="true">→</span>
+      <span>بازگشت به لیست آرایشگران</span>
+    </a>
+
+    <div class="barber-detail-layout">
+      {% if barber.avatar or barber.avatar_static %}
+      <div class="barber-detail-portrait" data-reveal>
+        <picture>
+          {% if barber.avatar_webp_static %}
+          <source srcset="{% static barber.avatar_webp_static %}" type="image/webp">
+          {% endif %}
+          <img
+            src="{% if barber.avatar %}{{ barber.avatar.url }}{% else %}{% static barber.avatar_static %}{% endif %}"
+            alt="{{ barber.display_name }}"
+            width="900"
+            height="1200"
+            fetchpriority="high"
+            decoding="async"
+          >
+        </picture>
+      </div>
+      {% else %}
+      <div class="barber-detail-portrait barber-detail-portrait--empty" data-reveal aria-hidden="true">
+        <span class="barber-card-initials">{{ barber.initials }}</span>
+      </div>
+      {% endif %}
+
+      <div>
+        <header class="barber-detail-header" data-reveal data-delay="1">
+          <p class="section-label">Artisan</p>
+          <h1 id="barber-detail-heading" class="page-title">{{ barber.display_name }}</h1>
+          <p class="barber-detail-years">{{ barber.experience_years }} سال سابقه در استاندارد برند</p>
+        </header>
+
+        {% if barber.bio %}
+        <p class="barber-detail-bio" data-reveal data-delay="2">{{ barber.bio }}</p>
+        {% endif %}
+
+        {% if barber.working_hours.all %}
+        <div class="barber-hours" data-reveal data-delay="3" aria-label="ساعات کاری">
+          <p class="barber-hours-label">ساعات کاری</p>
+          <ul class="barber-hours-list">
+            {% for hour in barber.working_hours.all %}
+            {% if hour.is_active %}
+            <li>
+              <span>{{ hour.get_weekday_display }}</span>
+              <span dir="ltr">{{ hour.start_time|time:"H:i" }} – {{ hour.end_time|time:"H:i" }}</span>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <div class="barber-detail-actions" data-reveal data-delay="4">
+          <a href="{% url 'appointments:create' %}" class="btn-draw">
+            <span class="btn-draw-border" aria-hidden="true">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+              </svg>
+            </span>
+            <span class="btn-draw-label relative z-10">رزرو نوبت</span>
+            <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+          </a>
+          <a href="{% url 'consultations:hub' %}" class="btn-quiet">مشاوره تخصصی</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}

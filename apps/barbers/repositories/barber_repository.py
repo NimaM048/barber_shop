@@ -7,7 +7,12 @@ class BarberRepository(BaseRepository[Barber]):
     model = Barber
 
     def get_queryset(self):
-        return super().get_queryset().select_related("user")
+        return (
+            super()
+            .get_queryset()
+            .select_related("user")
+            .prefetch_related("working_hours")
+        )
 
     def list_active(self):
         return self.get_queryset().filter(is_active=True)

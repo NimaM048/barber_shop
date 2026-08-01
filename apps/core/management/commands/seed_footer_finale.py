@@ -23,11 +23,11 @@ FINALE = {
     "philosophy_caption": "Architecture of Beauty",
     "bg_word": "ARCHITECTURE",
     "cta_statement": "هر دگرگونی با یک تصمیم آغاز می‌شود.",
-    "cta_prompt": "سفر خود را آغاز کنید.",
-    "cta_primary_label": "دریافت مشاوره تخصصی",
-    "cta_primary_href": "consultations:hub",
-    "cta_secondary_label": "رزرو نوبت",
-    "cta_secondary_href": "appointments:create",
+    "cta_prompt": "",
+    "cta_primary_label": "رزرو نوبت",
+    "cta_primary_href": "appointments:create",
+    "cta_secondary_label": "",
+    "cta_secondary_href": "",
     "show_phone": True,
     "phone": "",
     "phone_display": "",
@@ -70,8 +70,7 @@ FINALE = {
 NAV_LINKS = [
     {"label": "خدمات", "href": "/#services", "sort_order": 1},
     {"label": "نمونه‌کارها", "href": "/#gallery", "sort_order": 2},
-    {"label": "درباره", "href": "/#about", "sort_order": 3},
-    {"label": "مجله", "href": "magazine:hub", "sort_order": 4},
+    {"label": "مجله", "href": "magazine:hub", "sort_order": 3},
 ]
 
 

@@ -80,14 +80,14 @@
     });
   }
 
-  function mediaHTML(a, staticRoot, { eager = false, ratioClass = "" } = {}) {
+  function mediaHTML(a, staticRoot, { eager = false, mediaClass = "mag-media" } = {}) {
     const cover = staticUrl(staticRoot, a.cover);
     const lqip = staticUrl(staticRoot, a.cover_lqip);
     if (!cover) {
-      return `<div class="mag-media mag-media-empty ${ratioClass}" aria-hidden="true"></div>`;
+      return `<div class="${mediaClass} mag-media-empty" aria-hidden="true"></div>`;
     }
     return `
-      <div class="mag-media ${ratioClass}" data-lqip-frame>
+      <div class="${mediaClass}" data-lqip-frame>
         ${
           lqip
             ? `<img src="${lqip}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">`
@@ -97,8 +97,8 @@
           src="${cover}"
           alt="${escapeAttr(a.cover_alt || a.title)}"
           class="mag-media-img"
-          width="1200"
-          height="1500"
+          width="160"
+          height="200"
           ${eager ? 'fetchpriority="high"' : 'loading="lazy"'}
           decoding="async"
           data-lqip-full
@@ -107,36 +107,35 @@
   }
 
   function entryHTML(a, staticRoot, variant) {
-    const isLead = variant === "lead";
-    const isRow = variant === "row";
-    const classes = [
-      "mag-entry",
-      isLead ? "mag-entry-lead" : "",
-      isRow ? "mag-entry-row" : "",
-      variant === "stack" ? "mag-entry-stack" : "",
-      variant === "archive" ? "mag-entry-archive" : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    const ratio =
-      isLead ? "mag-media-portrait" : isRow ? "mag-media-square" : "mag-media-landscape";
-
-    return `
-      <a href="${a.url}" class="${classes}" data-reveal>
-        ${mediaHTML(a, staticRoot, { eager: isLead, ratioClass: ratio })}
-        <div class="mag-entry-body">
-          <p class="mag-entry-cat">${escapeHtml(a.category?.title || "")}</p>
-          <h3 class="mag-entry-title">${escapeHtml(a.title)}</h3>
-          ${
-            a.excerpt && (isLead || variant === "archive")
-              ? `<p class="mag-entry-excerpt">${escapeHtml(a.excerpt)}</p>`
-              : ""
-          }
+    if (variant === "lead") {
+      return `
+      <a href="${a.url}" class="mag-feature-lead" data-reveal>
+        ${mediaHTML(a, staticRoot, { eager: true, mediaClass: "mag-feature-media" })}
+        <div class="mag-feature-copy">
           <p class="mag-entry-meta">${metaLine(a)}</p>
-          ${isLead ? `<span class="mag-entry-cta">مطالعه <span aria-hidden="true">←</span></span>` : ""}
+          <h3 class="mag-feature-title">${escapeHtml(a.title)}</h3>
+          ${a.excerpt ? `<p class="mag-feature-excerpt">${escapeHtml(a.excerpt)}</p>` : ""}
+          <span class="mag-entry-cta">مطالعه <span aria-hidden="true">←</span></span>
         </div>
       </a>`;
+    }
+
+    const showExcerpt = variant === "archive" && a.excerpt;
+    const row = `
+      <a href="${a.url}" class="mag-desk-row" data-reveal>
+        ${mediaHTML(a, staticRoot, { mediaClass: "mag-desk-thumb" })}
+        <div class="mag-desk-copy">
+          <p class="mag-entry-meta">${metaLine(a)}</p>
+          <h3 class="mag-desk-title">${escapeHtml(a.title)}</h3>
+          ${showExcerpt ? `<p class="mag-desk-excerpt">${escapeHtml(a.excerpt)}</p>` : ""}
+        </div>
+        <span class="mag-desk-action" aria-hidden="true">←</span>
+      </a>`;
+
+    if (variant === "archive" || variant === "stack" || variant === "row") {
+      return `<li>${row}</li>`;
+    }
+    return row;
   }
 
   /* ═══════════════ HUB ═══════════════ */

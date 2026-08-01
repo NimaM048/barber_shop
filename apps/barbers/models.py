@@ -18,6 +18,17 @@ class Barber(TimeStampedModel, SoftDeleteModel):
     display_name = models.CharField("نام نمایشی", max_length=120)
     bio = models.TextField("بیوگرافی", blank=True)
     avatar = models.ImageField("تصویر", upload_to="barbers/", blank=True)
+    avatar_static = models.CharField(
+        "مسیر تصویر استاتیک",
+        max_length=255,
+        blank=True,
+        help_text="اگر ImageField خالی باشد از این مسیر static استفاده می‌شود",
+    )
+    avatar_webp_static = models.CharField(
+        "مسیر WebP استاتیک",
+        max_length=255,
+        blank=True,
+    )
     is_active = models.BooleanField("فعال", default=True)
     experience_years = models.PositiveSmallIntegerField("سابقه (سال)", default=0)
 
@@ -28,6 +39,25 @@ class Barber(TimeStampedModel, SoftDeleteModel):
 
     def __str__(self) -> str:
         return self.display_name
+
+    @property
+    def portrait_url(self) -> str:
+        if self.avatar:
+            return self.avatar.url
+        return self.avatar_static or ""
+
+    @property
+    def portrait_webp(self) -> str:
+        return self.avatar_webp_static or ""
+
+    @property
+    def initials(self) -> str:
+        parts = self.display_name.split()
+        if not parts:
+            return "—"
+        if len(parts) == 1:
+            return parts[0][:1]
+        return f"{parts[0][:1]}{parts[-1][:1]}"
 
 
 class WorkingHour(TimeStampedModel):

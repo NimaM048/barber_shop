@@ -6,27 +6,18 @@
   data-gallery-root
   aria-label="گالری آثار"
 >
-  <div class="gallery-atmosphere" aria-hidden="true">
-    <div class="gallery-glow gallery-glow-a"></div>
-    <div class="gallery-glow gallery-glow-b"></div>
-    <div class="gallery-grid-plane"></div>
-  </div>
-  <div class="noise-layer opacity-[0.07]" aria-hidden="true"></div>
-
-  <div class="relative mx-auto max-w-[1600px] px-5 pb-4 pt-16 sm:px-8 sm:pt-20 lg:px-12 lg:pt-24">
-    <header class="gallery-header mx-auto max-w-2xl text-center" data-reveal>
-      <p class="section-label">پورتفولیو</p>
-      <h2 class="gallery-heading mt-4 text-3xl font-light tracking-tight sm:text-5xl">
-        گالری آثار
-      </h2>
-      <p class="mx-auto mt-4 max-w-md text-sm font-light leading-8 text-ivory/45 sm:mt-5">
-        هر فریم، روایت یک نتیجه دقیق — انتخاب کنید، نزدیک شوید، جزئیات را ببینید.
-      </p>
+  <div class="site-shell site-shell--flush-y gallery-intro">
+    <header class="gallery-header" data-reveal>
+      <div class="gallery-header-copy">
+        <p class="section-label">نمونه کار</p>
+        <h2 class="gallery-heading">گالری</h2>
+        <p class="gallery-lede">منتخب آثار — قبل و بعد، استایل و پروتکل‌های تخصصی.</p>
+      </div>
     </header>
 
     {% if gallery_categories %}
     <div
-      class="gallery-filters mt-10 flex flex-wrap items-center justify-center gap-2 sm:mt-12 sm:gap-3"
+      class="gallery-filters"
       data-gallery-filters
       role="tablist"
       aria-label="فیلتر دسته‌بندی گالری"
@@ -75,12 +66,6 @@
               aria-label="مشاهده {{ item.title }}"
             >
               <div class="gallery-frame-shell">
-                <span class="gallery-corner gallery-corner-tl" aria-hidden="true"></span>
-                <span class="gallery-corner gallery-corner-tr" aria-hidden="true"></span>
-                <span class="gallery-corner gallery-corner-bl" aria-hidden="true"></span>
-                <span class="gallery-corner gallery-corner-br" aria-hidden="true"></span>
-                <span class="gallery-glass" aria-hidden="true"></span>
-
                 <div class="gallery-media" data-gallery-media>
                   {% if item.cover.lqip %}
                   <img
@@ -110,9 +95,6 @@
                     >
                   </picture>
 
-                  <div class="gallery-shade" aria-hidden="true"></div>
-                  <div class="gallery-depth" aria-hidden="true"></div>
-
                   {% if item.has_video %}
                   <span class="gallery-play" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
@@ -121,35 +103,24 @@
                     </svg>
                   </span>
                   {% endif %}
-
-                  {% if item.has_before_after %}
-                  <span class="gallery-ba-badge">قبل / بعد</span>
-                  {% endif %}
                 </div>
-
-                <div class="gallery-meta">
-                  {% if item.category_title %}
-                  <p class="gallery-cat">{{ item.category_title }}</p>
-                  {% endif %}
-                  <h3 class="gallery-title">{{ item.title }}</h3>
-                  {% if item.subtitle %}
-                  <p class="gallery-sub">{{ item.subtitle }}</p>
-                  {% endif %}
-                </div>
+              </div>
+              <div class="gallery-meta">
+                <h3 class="gallery-title">{{ item.title }}</h3>
               </div>
             </button>
           </article>
         </div>
         {% empty %}
         <div class="swiper-slide !w-full">
-          <p class="px-6 py-20 text-center text-sm text-ivory/40">هنوز اثری در گالری ثبت نشده است.</p>
+          <p class="px-6 py-12 text-center text-sm text-ivory/40">هنوز اثری در گالری ثبت نشده است.</p>
         </div>
         {% endfor %}
       </div>
     </div>
   </div>
 
-  <div class="gallery-controls relative z-10 mx-auto flex max-w-[1600px] items-center justify-center gap-5 px-5 pb-16 pt-8 sm:gap-7 sm:px-8 sm:pb-20 sm:pt-10 lg:px-12">
+  <div class="gallery-controls site-shell site-shell--flush-y gallery-controls-bar relative z-10 flex items-center justify-center gap-4">
     <button type="button" class="gallery-nav gallery-prev" aria-label="اسلاید قبلی" data-gallery-prev>
       <span aria-hidden="true">→</span>
     </button>

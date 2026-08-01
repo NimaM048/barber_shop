@@ -13,6 +13,16 @@ class BarberAdmin(admin.ModelAdmin):
     list_display = ("display_name", "user", "is_active", "experience_years")
     list_filter = ("is_active",)
     search_fields = ("display_name", "user__username")
+    fields = (
+        "user",
+        "display_name",
+        "bio",
+        "avatar",
+        "avatar_static",
+        "avatar_webp_static",
+        "experience_years",
+        "is_active",
+    )
     inlines = [WorkingHourInline]
 
 

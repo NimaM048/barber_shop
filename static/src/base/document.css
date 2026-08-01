@@ -1,55 +1,44 @@
 @layer base {
   html {
-
     scroll-behavior: auto;
-
-    background-color: #0d2d28;
-
+    background-color: var(--color-court-950);
   }
 
   html.lenis,
-
   html.lenis body {
-
     height: auto;
-
   }
 
   .lenis.lenis-smooth {
-
     scroll-behavior: auto !important;
-
   }
 
   body {
-
-    font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
-
-    background-color: #0d2d28;
-
-    color: #f7f4ef;
-
+    font-family: var(--font-body);
+    background-color: var(--color-court-950);
+    color: var(--color-ivory);
+    font-size: var(--text-body);
+    line-height: var(--leading-prose);
   }
 
   ::selection {
-
-    background-color: #f7f4ef;
-
-    color: #0d2d28;
-
+    background-color: var(--color-ivory);
+    color: var(--color-court);
   }
 
   :focus-visible {
-
-    outline: 1px solid #f7f4ef;
-
-    outline-offset: 4px;
-
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   img {
-
     max-width: 100%;
+    height: auto;
+  }
 
+  /* Latin accents only — Cormorant */
+  .font-latin,
+  [lang="en"] {
+    font-family: var(--font-display);
   }
 }

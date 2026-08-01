@@ -1,3 +1,3 @@
-from .auth_service import AuthService
+"""Customer auth services removed — guest booking only."""
 
-__all__ = ["AuthService"]
+__all__: list[str] = []
