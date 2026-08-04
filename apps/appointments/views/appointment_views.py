@@ -11,6 +11,7 @@ from django.views import View
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from apps.core.exceptions import ConflictError, DomainError, NotFoundError, ValidationError
+from apps.core.services import SeoService
 
 from apps.appointments.services import AppointmentService
 
@@ -39,13 +40,24 @@ class BookingPageView(View):
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
+        seo = SeoService()
         preselect = request.GET.get("service", "").strip()
+        page_seo = seo.booking_meta()
+        schema = seo.breadcrumb_schema(
+            [
+                {"name": "خانه", "path": "/"},
+                {"name": "رزرو نوبت", "path": "/appointments/new/"},
+            ],
+            request,
+        )
         return render(
             request,
             self.template_name,
             {
                 "preselect_service": preselect,
                 "api_base": "/appointments/api",
+                "page_seo": page_seo,
+                "schema_json": seo.dumps(schema),
             },
         )
 

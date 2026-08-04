@@ -7,7 +7,10 @@
   aria-label="{{ f.aria_label|default:'تماس' }}"
 >
   <div class="ff-inner">
+    {# Act I — Decision #}
     <section class="ff-act ff-act-decide" aria-labelledby="ff-cta-heading">
+      <p class="ff-act-label section-label" data-ff-reveal>دعوت</p>
+
       {% if f.cta_statement %}
       <p id="ff-cta-heading" class="ff-cta-statement" data-ff-reveal>{{ f.cta_statement }}</p>
       {% endif %}
@@ -23,17 +26,27 @@
           <span class="btn-draw-label relative z-10">{{ f.cta_primary_label }}</span>
           <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
         </a>
+        {% if f.cta_secondary_label and f.cta_secondary_href %}
+        <a href="{{ f.cta_secondary_href }}" class="btn-quiet ff-cta-secondary">
+          {{ f.cta_secondary_label }}
+        </a>
+        {% endif %}
       </div>
       {% endif %}
     </section>
 
+    {# Act II — Location #}
+    {% include "components/location.html" %}
+
+    {# Act III — Connection #}
     <section class="ff-act ff-act-connect" aria-labelledby="ff-contact-heading">
-      <p id="ff-contact-heading" class="ff-contact-caption" data-ff-reveal>
+      <p id="ff-contact-heading" class="ff-contact-caption section-label" data-ff-reveal>
         {{ f.contact_caption|default:"ارتباط" }}
       </p>
 
       <ul class="ff-contact-list" data-ff-reveal>
         {% for item in f.contacts %}
+        {% if not f.location.show or item.key != "address" and item.key != "hours" %}
         <li class="ff-contact-item">
           <span class="ff-contact-label">{{ item.label }}</span>
           {% if item.href %}
@@ -52,19 +65,37 @@
           >{{ item.value }}</span>
           {% endif %}
         </li>
+        {% endif %}
         {% endfor %}
       </ul>
     </section>
 
-    <div class="ff-signature ff-signature--minimal" data-ff-reveal>
-      <p class="ff-monogram" lang="en" dir="ltr">{{ SITE_NAME|default:"SA" }}</p>
-      {% if f.founded_year %}
-      <p class="ff-sig-meta" lang="en" dir="ltr">Est. {{ f.founded_year }}</p>
-      {% endif %}
-    </div>
+    {# Closing — signature + nav #}
+    <div class="ff-finale" data-ff-reveal>
+      <div class="ff-signature ff-signature--minimal">
+        <p class="ff-monogram" lang="en" dir="ltr">{{ SITE_NAME|default:"SA" }}</p>
+        {% if f.signature %}
+        <p class="ff-sig-tagline" lang="en" dir="ltr">{{ f.signature }}</p>
+        {% endif %}
+        {% if f.founded_year %}
+        <p class="ff-sig-meta" lang="en" dir="ltr">Est. {{ f.founded_year }}</p>
+        {% endif %}
+      </div>
 
-    <div class="ff-close" data-ff-reveal>
-      <p class="ff-copyright">{{ f.copyright }}</p>
+      <div class="ff-close">
+        {% if f.show_navigation and f.nav_links %}
+        <nav class="ff-nav" aria-label="دسترسی سریع">
+          {% for item in f.nav_links %}
+          <a
+            href="{{ item.href }}"
+            class="ff-nav-link"
+            {% if item.external %}target="_blank" rel="noopener noreferrer"{% endif %}
+          >{{ item.label }}</a>
+          {% endfor %}
+        </nav>
+        {% endif %}
+        <p class="ff-copyright">{{ f.copyright }}</p>
+      </div>
     </div>
   </div>
 </footer>

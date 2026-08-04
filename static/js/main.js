@@ -410,26 +410,84 @@
         );
       });
     } else if ("IntersectionObserver" in window) {
+      const revealNow = (el) => {
+        const delay = el.getAttribute("data-delay");
+        if (delay) el.classList.add(`delay-${delay}`);
+        el.classList.add("is-inview");
+        el.classList.remove("reveal-prep");
+      };
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
-            const el = entry.target;
-            const delay = el.getAttribute("data-delay");
-            if (delay) el.classList.add(`delay-${delay}`);
-            el.classList.add("is-inview");
-            el.classList.remove("reveal-prep");
-            io.unobserve(el);
+            revealNow(entry.target);
+            io.unobserve(entry.target);
           });
         },
-        { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
+        { threshold: 0.05, rootMargin: "0px 0px 12% 0px" }
       );
       revealEls.forEach((el) => {
         el.classList.add("reveal-prep");
         io.observe(el);
       });
+      /* Above-the-fold nodes must never stay faded */
+      requestAnimationFrame(() => {
+        revealEls.forEach((el) => {
+          if (el.classList.contains("is-inview")) return;
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+            revealNow(el);
+            io.unobserve(el);
+          }
+        });
+      });
     } else {
       revealEls.forEach((el) => el.classList.add("is-inview"));
+    }
+  }
+
+  /* ── Homepage mobile booking bar ──
+     Keep one clear booking action in view after the hero CTA has left view.
+     The bar lives outside the transformed page shell, so fixed positioning is
+     reliable during page transitions and on mobile browsers. */
+  const homeMobileBooking = document.querySelector("[data-home-mobile-booking]");
+  const heroBookingCta = document.querySelector("[data-hero-cta]");
+  if (homeMobileBooking) {
+    const mobileQuery = window.matchMedia("(max-width: 719px)");
+    let bookingObserver = null;
+
+    const setMobileBookingVisible = (visible) => {
+      homeMobileBooking.classList.toggle("is-visible", visible);
+    };
+
+    const syncMobileBooking = () => {
+      if (bookingObserver) {
+        bookingObserver.disconnect();
+        bookingObserver = null;
+      }
+
+      if (!mobileQuery.matches) {
+        setMobileBookingVisible(false);
+        return;
+      }
+
+      if (!heroBookingCta || !("IntersectionObserver" in window)) {
+        setMobileBookingVisible(true);
+        return;
+      }
+
+      bookingObserver = new IntersectionObserver(
+        ([entry]) => setMobileBookingVisible(!entry.isIntersecting),
+        { threshold: 0.12 }
+      );
+      bookingObserver.observe(heroBookingCta);
+    };
+
+    syncMobileBooking();
+    if (mobileQuery.addEventListener) {
+      mobileQuery.addEventListener("change", syncMobileBooking);
+    } else {
+      mobileQuery.addListener(syncMobileBooking);
     }
   }
 
@@ -537,14 +595,17 @@
       });
     };
 
+    // Core brand content is intentionally visible before animation setup.
+    // Motion may decorate the scene, but it must never gate the first action.
+    revealHeroMedia();
+
     if (reduceMotion || !useGsapHero || typeof gsap === "undefined") {
       showStaticHero();
       heroStage.classList.add("is-hero-ready");
     } else if (!fullMotion) {
       /* Balanced / lite: short opacity fade — no blur, clip-path, or stroke-draw */
       if (logoSvg) gsap.set(logoSvg, { display: "none" });
-      if (heroMedia) gsap.set(heroMedia, { opacity: 0 });
-      const fadeTargets = present(mesh, grid, spotlight, guides, logoImg, tagline, divider, ctaBtns, scrollHint, meta);
+      const fadeTargets = present(mesh, grid, spotlight, guides, scrollHint, meta);
       if (fadeTargets.length) gsap.set(fadeTargets, { opacity: 0 });
       if (cta) gsap.set(cta, { opacity: 1 });
       if (tagline) {
@@ -556,7 +617,6 @@
         });
       }
       if (logoImg) gsap.set(logoImg, { filter: "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))" });
-      if (ctaBtns.length) gsap.set(ctaBtns, { y: 10 });
       if (divider) gsap.set(divider, { scaleX: 0.4 });
 
       const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
@@ -588,16 +648,6 @@
       const drawDots = qa("[data-draw-dot]");
       const useFilterFx = !!perf.allowFilterFx;
 
-      if (tagline) {
-        const tagFrom = {
-          autoAlpha: 0,
-          clipPath: "inset(0 0 0 100%)",
-          webkitClipPath: "inset(0 0 0 100%)",
-        };
-        if (useFilterFx) tagFrom.filter = "blur(8px)";
-        gsap.set(tagline, tagFrom);
-      }
-
       if (drawPaths.length) gsap.set(drawPaths, { strokeDashoffset: 1 });
       if (drawDots.length) gsap.set(drawDots, { opacity: 0 });
       if (logoSvg) {
@@ -605,16 +655,7 @@
         if (useFilterFx) svgFrom.filter = "blur(14px)";
         gsap.set(logoSvg, svgFrom);
       }
-      if (logoImg) {
-        gsap.set(logoImg, {
-          opacity: 0,
-          filter: useFilterFx
-            ? "blur(20px) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))"
-            : "drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))",
-        });
-      }
       if (divider) gsap.set(divider, { scaleX: 0, opacity: 0 });
-      if (ctaBtns.length) gsap.set(ctaBtns, { opacity: 0, y: 18 });
       if (cta) gsap.set(cta, { opacity: 1 });
       if (scrollHint) gsap.set(scrollHint, { opacity: 0 });
       if (meta.length) gsap.set(meta, { opacity: 0 });
@@ -622,7 +663,6 @@
       if (mesh) gsap.set(mesh, { opacity: 0 });
       if (grid) gsap.set(grid, { opacity: 0 });
       if (spotlight) gsap.set(spotlight, { opacity: 0 });
-      if (heroMedia) gsap.set(heroMedia, { opacity: 0 });
 
       const intro = gsap.timeline({
         defaults: { ease: "power2.out" },

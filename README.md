@@ -83,6 +83,12 @@ python manage.py runserver
 
 سایت: http://127.0.0.1:8000/
 
+## SEO هنگام دیپلوی
+
+چک‌لیست اقدامات دستی (Search Console، Sitemap، Google Business، env پروداکشن):
+
+→ [`docs/seo-deploy-checklist.md`](docs/seo-deploy-checklist.md)
+
 ## اپ‌ها
 
 | اپ | URL | توضیح |

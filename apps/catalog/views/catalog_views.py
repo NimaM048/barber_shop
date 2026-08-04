@@ -1,5 +1,9 @@
+import re
+
 from django.shortcuts import render
 from django.views import View
+
+from apps.core.services import SeoService
 
 from ..services import CatalogService
 
@@ -10,12 +14,33 @@ FALLBACK_IMAGES = [
 ]
 
 PERSIAN_INDEX = ("۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶", "۰۷", "۰۸")
+EMOJI_RE = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"
+    "\U00002600-\U000027BF"
+    "\U0000FE0F"
+    "]+",
+    flags=re.UNICODE,
+)
+CATEGORY_LABELS = {
+    "vip": "تجربه اختصاصی",
+    "skin": "مراقبت تخصصی",
+    "groom": "تشریفات داماد",
+    "hair": "طراحی مو",
+}
+
+
+def _clean_label(raw: str, fallback: str) -> str:
+    text = EMOJI_RE.sub("", raw or "").strip(" ·-–—")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text or fallback
 
 
 class ServiceListView(View):
     template_name = "catalog/list.html"
 
     def get(self, request):
+        seo = SeoService()
         services = list(CatalogService().list_active_services())
         cards = []
         for i, service in enumerate(services):
@@ -27,19 +52,44 @@ class ServiceListView(View):
                 jpg = cfg.image_jpg
             idx = PERSIAN_INDEX[i] if i < len(PERSIAN_INDEX) else str(i + 1)
             category = service.category.name if service.category_id else "خدمت"
+            slug_key = (cfg.key if cfg else "") or service.slug
+            preferred = CATEGORY_LABELS.get(slug_key, category)
+            raw_label = preferred if slug_key in CATEGORY_LABELS else (
+                cfg.card_label if cfg and cfg.card_label else preferred
+            )
             cards.append(
                 {
                     "name": service.name,
                     "description": service.description
                     or (cfg.short_description if cfg else "")
                     or "رزرو آنلاین با استاندارد برند",
-                    "label": (cfg.card_label if cfg and cfg.card_label else f"{idx} — {category}"),
+                    "label": f"{idx} — {_clean_label(raw_label, preferred)}",
                     "slug": service.slug,
-                    "price": service.price,
+                    "price": f"{int(service.price):,}",
                     "duration": service.duration_minutes,
                     "image_webp": webp,
                     "image_jpg": jpg,
                     "category": category,
                 }
             )
-        return render(request, self.template_name, {"services": cards})
+        page_seo = seo.catalog_meta()
+        schemas = [
+            seo.breadcrumb_schema(
+                [
+                    {"name": "خانه", "path": "/"},
+                    {"name": "خدمات", "path": "/services/"},
+                ],
+                request,
+            ),
+        ]
+        if cards:
+            schemas.append(seo.service_catalog_schema(cards, request))
+        return render(
+            request,
+            self.template_name,
+            {
+                "services": cards,
+                "page_seo": page_seo,
+                "schema_json": seo.dumps(schemas),
+            },
+        )

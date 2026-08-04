@@ -1,0 +1,800 @@
+/* Location — luxury editorial chapter (Aesop / Aman / architecture portfolio) */
+
+.ff-act-locate {
+  --ff-loc-ease: var(--ease-out-expo);
+  --ff-loc-soft: var(--ease-editorial);
+  padding-block: 0;
+}
+
+.ff-locate {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  align-items: stretch;
+}
+
+@media (min-width: 960px) {
+  .ff-locate {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+}
+
+/* ── Editorial column ── */
+.ff-locate-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  min-height: 0;
+  max-width: 36rem;
+  padding-block: 0.5rem;
+  overflow: hidden;
+}
+
+.ff-locate-info:hover .ff-locate-rule span {
+  width: 100%;
+}
+
+.ff-locate-info:hover .ff-locate-word--us {
+  color: rgba(223, 196, 138, 0.98);
+}
+
+.ff-locate-info:hover .ff-locate-badge {
+  border-color: rgba(201, 170, 114, 0.45);
+  color: rgba(223, 196, 138, 0.95);
+}
+
+.ff-locate-info:hover .ff-locate-glow {
+  opacity: 1;
+}
+
+.ff-locate-glow {
+  position: absolute;
+  z-index: 0;
+  inset-inline: -10% 10%;
+  top: 0;
+  height: 48%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 70% 35%,
+    rgba(201, 170, 114, 0.07) 0%,
+    rgba(141, 168, 157, 0.04) 42%,
+    transparent 72%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  transition: opacity 0.8s var(--ff-loc-soft);
+}
+
+.ff-locate-head,
+.ff-locate-body,
+.ff-locate-actions,
+.ff-locate-rule,
+.ff-locate-live {
+  position: relative;
+  z-index: 1;
+}
+
+.ff-locate-meta-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.ff-locate-eyebrow {
+  margin: 0;
+}
+
+.ff-locate-lede {
+  margin: 0.85rem 0 0;
+  align-self: flex-start;
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  color: rgba(251, 248, 242, 0.55);
+}
+
+.ff-locate-badge {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.65rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid rgba(201, 170, 114, 0.28);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(201, 170, 114, 0.82);
+  transition:
+    color 0.55s var(--ff-loc-soft),
+    border-color 0.55s var(--ff-loc-soft);
+}
+
+.ff-locate-title {
+  margin: 0;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
+  font-family: "Cormorant Garamond", var(--font-display), Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  color: rgba(251, 248, 242, 0.96);
+}
+
+.ff-locate-rule {
+  align-self: flex-start;
+  width: 100%;
+  max-width: 8rem;
+  height: 1px;
+  margin: 1.25rem 0 1.15rem;
+  background: rgba(201, 170, 114, 0.12);
+}
+
+.ff-locate-word {
+  display: inline-block;
+}
+
+.ff-locate-word--find {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.01em;
+}
+
+.ff-locate-word--us {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: 0.02em;
+  color: rgba(201, 170, 114, 0.9);
+  transition: color 0.7s var(--ff-loc-soft);
+}
+
+.ff-locate-rule span {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 170, 114, 0.85),
+    rgba(201, 170, 114, 0.15)
+  );
+  transition: width 0.8s var(--ff-loc-ease);
+}
+
+.ff-locate-body {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.ff-locate-address {
+  margin: 0;
+}
+
+.ff-locate-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.5rem;
+  margin: 0;
+  font-style: normal;
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.9;
+  color: rgba(251, 248, 242, 0.78);
+}
+
+.ff-locate-city {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(201, 170, 114, 0.88);
+}
+
+.ff-locate-sep {
+  color: rgba(201, 170, 114, 0.5);
+  font-weight: 400;
+}
+
+.ff-locate-sep--em {
+  color: rgba(201, 170, 114, 0.4);
+}
+
+.ff-locate-facts {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .ff-locate-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+.ff-locate-fact {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(251, 248, 242, 0.08);
+}
+
+.ff-locate-fact dt {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: rgba(251, 248, 242, 0.4);
+}
+
+.ff-locate-fact dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(251, 248, 242, 0.78);
+}
+
+.ff-locate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.ff-locate-btn {
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  transition:
+    transform 0.55s var(--ff-loc-ease),
+    box-shadow 0.55s var(--ff-loc-soft);
+}
+
+.ff-locate-btn--primary {
+  min-width: 9.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ff-locate-btn:hover {
+    transform: translateY(-3px);
+  }
+}
+
+.ff-locate-copy-btn {
+  min-height: 3rem;
+  padding-inline: 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  transition:
+    color 0.45s var(--ff-loc-soft),
+    transform 0.55s var(--ff-loc-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ff-locate-copy-btn:hover {
+    transform: translateY(-2px);
+    color: rgba(223, 196, 138, 0.95);
+  }
+}
+
+.ff-locate-copy-btn.is-copied {
+  color: var(--color-brass);
+}
+
+.ff-locate-live {
+  margin: 0.75rem 0 0;
+  min-height: 1.25rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  color: var(--color-brass);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ff-loc-soft);
+}
+
+.ff-locate-live.is-visible {
+  opacity: 1;
+}
+
+/* ── Map vessel ── */
+.ff-locate-media {
+  width: 100%;
+  min-width: 0;
+  align-self: center;
+  display: flex;
+}
+
+.ff-locate-frame {
+  --ff-map-radius: clamp(1.25rem, 2.5vw, 1.75rem);
+  position: relative;
+  margin: 0;
+  isolation: isolate;
+  overflow: hidden;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 16rem;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--ff-map-radius);
+  border: 1px solid rgba(251, 248, 242, 0.12);
+  background:
+    radial-gradient(60% 50% at 50% 40%, rgba(141, 168, 157, 0.1), transparent 70%),
+    var(--color-court-900);
+  box-shadow:
+    0 1px 0 rgba(251, 248, 242, 0.04) inset,
+    0 28px 70px rgba(0, 0, 0, 0.34);
+  transition:
+    transform 0.7s var(--ff-loc-ease),
+    box-shadow 0.7s var(--ff-loc-ease),
+    border-color 0.7s var(--ff-loc-soft);
+}
+
+@media (min-width: 960px) {
+  .ff-locate-frame {
+    aspect-ratio: 5 / 4;
+    min-height: 0;
+    height: auto;
+    max-height: 22rem;
+  }
+}
+
+.ff-locate-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(201, 170, 114, 0.08),
+    inset 0 30px 60px rgba(6, 23, 19, 0.18);
+  opacity: 0.85;
+  transition: opacity 0.7s var(--ff-loc-soft);
+}
+
+.ff-locate-frame::after {
+  content: "";
+  position: absolute;
+  inset: auto 12% -18% 12%;
+  z-index: 0;
+  height: 42%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(201, 170, 114, 0.14),
+    transparent 70%
+  );
+  filter: blur(18px);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.7s var(--ff-loc-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ff-locate-frame:hover {
+    transform: translateY(-4px) scale(1.006);
+    border-color: rgba(201, 170, 114, 0.28);
+    box-shadow:
+      0 1px 0 rgba(251, 248, 242, 0.06) inset,
+      0 36px 90px rgba(0, 0, 0, 0.42),
+      0 0 0 1px rgba(201, 170, 114, 0.08);
+  }
+
+  .ff-locate-frame:hover::before {
+    opacity: 1;
+  }
+
+  .ff-locate-frame:hover::after {
+    opacity: 0.85;
+  }
+}
+
+.ff-locate-frame:focus-within {
+  outline: none;
+  box-shadow:
+    0 1px 0 rgba(251, 248, 242, 0.06) inset,
+    0 28px 70px rgba(0, 0, 0, 0.34),
+    var(--focus-ring);
+}
+
+.ff-locate-map,
+.ff-locate-embed {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+
+.ff-locate-map {
+  opacity: 0;
+  transition: opacity 0.8s var(--ff-loc-ease);
+}
+
+.ff-locate-frame.is-ready .ff-locate-map,
+.ff-locate-frame.is-ready .ff-locate-embed {
+  opacity: 1;
+}
+
+.ff-locate-embed {
+  opacity: 0;
+  transition: opacity 0.8s var(--ff-loc-ease);
+  filter:
+    invert(0.92)
+    hue-rotate(170deg)
+    saturate(0.35)
+    brightness(0.7)
+    contrast(1.08)
+    sepia(0.22);
+}
+
+.ff-locate-map:focus-visible {
+  outline: none;
+}
+
+.ff-locate-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: var(--color-court-900);
+  font: inherit;
+}
+
+.ff-locate-map .leaflet-tile-pane {
+  filter:
+    invert(0.9)
+    hue-rotate(165deg)
+    saturate(0.35)
+    brightness(0.78)
+    contrast(1.05)
+    sepia(0.18);
+}
+
+/* Native dark tiles (Carto) — no invert needed */
+.ff-locate-map[data-map-skin="native-dark"] .leaflet-tile-pane {
+  filter: none;
+}
+
+.ff-locate-embed {
+  filter:
+    invert(0.9)
+    hue-rotate(165deg)
+    saturate(0.4)
+    brightness(0.72)
+    contrast(1.05)
+    sepia(0.2);
+}
+
+.ff-locate-frame.is-embed-dark .ff-locate-embed {
+  filter:
+    invert(0.92)
+    hue-rotate(170deg)
+    saturate(0.35)
+    brightness(0.7)
+    contrast(1.08)
+    sepia(0.22);
+}
+
+.ff-locate-map .leaflet-control-attribution {
+  background: rgba(6, 23, 19, 0.72) !important;
+  color: rgba(251, 248, 242, 0.42);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  border: 0;
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+}
+
+.ff-locate-map .leaflet-control-attribution a {
+  color: rgba(251, 248, 242, 0.55);
+}
+
+.ff-locate-map .leaflet-control-zoom {
+  border: 1px solid rgba(251, 248, 242, 0.14) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28) !important;
+}
+
+.ff-locate-map .leaflet-control-zoom a {
+  width: 2.15rem !important;
+  height: 2.15rem !important;
+  line-height: 2.15rem !important;
+  background: rgba(6, 23, 19, 0.88) !important;
+  color: rgba(251, 248, 242, 0.78) !important;
+  border-bottom-color: rgba(251, 248, 242, 0.1) !important;
+  font-size: 1rem !important;
+  transition:
+    color 0.35s var(--ff-loc-soft),
+    background-color 0.35s var(--ff-loc-soft);
+}
+
+.ff-locate-map .leaflet-control-zoom a:hover,
+.ff-locate-map .leaflet-control-zoom a:focus-visible {
+  background: rgba(18, 54, 47, 0.96) !important;
+  color: var(--color-ivory) !important;
+}
+
+.ff-locate-map .leaflet-bar a:first-child,
+.ff-locate-map .leaflet-bar a:last-child {
+  border-radius: 0 !important;
+}
+
+.ff-map-marker {
+  position: relative;
+  width: 2.75rem;
+  height: 3.4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.4));
+}
+
+.ff-locate-map .leaflet-div-icon.ff-map-marker-wrap {
+  background: transparent;
+  border: 0;
+}
+
+.ff-map-popup-shell .leaflet-popup-content-wrapper {
+  background: rgba(6, 23, 19, 0.94);
+  color: rgba(251, 248, 242, 0.86);
+  border: 1px solid rgba(251, 248, 242, 0.12);
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.ff-map-popup-shell .leaflet-popup-tip {
+  background: rgba(6, 23, 19, 0.94);
+}
+
+.ff-map-popup-shell .leaflet-popup-content {
+  margin: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.ff-map-popup a {
+  color: var(--color-brass);
+  text-decoration: none;
+}
+
+.ff-map-popup a:hover,
+.ff-map-popup a:focus-visible {
+  color: var(--color-ivory);
+}
+
+.ff-map-marker-core {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: linear-gradient(145deg, #dfc48a 0%, var(--color-brass) 48%, #9d7f45 100%);
+  border: 1px solid rgba(251, 248, 242, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 6px rgba(201, 170, 114, 0.12);
+}
+
+.ff-map-marker-core::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: var(--color-court-950);
+  transform: rotate(45deg);
+}
+
+html.is-full-motion .ff-map-marker-core {
+  animation: ff-map-pulse 2.8s var(--ff-loc-soft) infinite;
+}
+
+@keyframes ff-map-pulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 0 0 6px rgba(201, 170, 114, 0.12);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 0 0 12px rgba(201, 170, 114, 0.05);
+  }
+}
+
+.ff-locate-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(251, 248, 242, 0.03), transparent 42%),
+    var(--color-court-900);
+  transition: opacity 0.55s var(--ff-loc-soft), visibility 0.55s;
+}
+
+.ff-locate-frame.is-ready .ff-locate-skeleton {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ff-locate-skeleton-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(251, 248, 242, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251, 248, 242, 0.04) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+}
+
+.ff-locate-skeleton-pulse {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(251, 248, 242, 0.06) 45%,
+    transparent 70%
+  );
+  transform: translateX(-40%);
+}
+
+html.is-full-motion .ff-locate-skeleton-pulse,
+html.is-balanced-motion .ff-locate-skeleton-pulse {
+  animation: ff-map-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes ff-map-shimmer {
+  0% {
+    transform: translateX(-45%);
+  }
+  100% {
+    transform: translateX(45%);
+  }
+}
+
+.ff-locate-skeleton-pin {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50% 50% 50% 0;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  background: rgba(201, 170, 114, 0.55);
+  box-shadow: 0 0 0 8px rgba(201, 170, 114, 0.08);
+}
+
+.ff-locate-open {
+  position: absolute;
+  z-index: 4;
+  inset-inline-start: 1rem;
+  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 248, 242, 0.14);
+  background: rgba(6, 23, 19, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(251, 248, 242, 0.78);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    color 0.4s var(--ff-loc-soft),
+    border-color 0.4s var(--ff-loc-soft),
+    background-color 0.4s var(--ff-loc-soft),
+    transform 0.4s var(--ff-loc-ease);
+}
+
+.ff-locate-open:hover,
+.ff-locate-open:focus-visible {
+  color: var(--color-ivory);
+  border-color: rgba(201, 170, 114, 0.45);
+  background: rgba(6, 23, 19, 0.88);
+  transform: translateY(-2px);
+}
+
+.ff-locate-open:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 959px) {
+  .ff-locate-info {
+    max-width: none;
+  }
+
+  .ff-locate-frame {
+    aspect-ratio: 4 / 5;
+    min-height: 20rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .ff-locate-meta-top {
+    margin-bottom: 1.25rem;
+  }
+
+  .ff-locate-lede {
+    max-width: 34ch;
+  }
+
+  .ff-locate-rule {
+    margin: 1.5rem 0;
+  }
+
+  .ff-locate-body {
+    margin-bottom: 1.5rem;
+  }
+
+  .ff-locate-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ff-locate-btn,
+  .ff-locate-copy-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ff-locate-frame {
+    aspect-ratio: 1 / 1.05;
+    min-height: 18rem;
+  }
+
+  .ff-locate-open {
+    inset-inline-start: 0.75rem;
+    bottom: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-locate-info:hover .ff-locate-title,
+  .ff-locate-info:hover .ff-locate-rule span,
+  .ff-locate-frame,
+  .ff-locate-map,
+  .ff-locate-open,
+  .ff-locate-live,
+  .ff-locate-btn,
+  .ff-locate-copy-btn,
+  .ff-map-marker-core {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .ff-locate-info:hover .ff-locate-rule span {
+    width: 4rem;
+  }
+}

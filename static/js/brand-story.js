@@ -35,8 +35,22 @@
         io.unobserve(entry.target);
       });
     },
-    { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+    { threshold: 0.05, rootMargin: "0px 0px 12% 0px" }
   );
 
-  nodes.forEach((el) => io.observe(el));
+  nodes.forEach((el, index) => {
+    el.style.transitionDelay = `${Math.min(index * 0.06, 0.3)}s`;
+    io.observe(el);
+  });
+
+  /* Ensure already-visible nodes never stay faded */
+  requestAnimationFrame(() => {
+    nodes.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+        el.classList.add("is-visible");
+        io.unobserve(el);
+      }
+    });
+  });
 })();

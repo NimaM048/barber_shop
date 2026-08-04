@@ -9,6 +9,11 @@
 
   const DRAFT_KEY = "sa_booking_draft_v1";
   const FIRST_VISIT_KEY = "sa_booking_seen_services";
+  const SERVICE_LABELS = {
+    vip: "تجربه اختصاصی",
+    skin: "مراقبت تخصصی",
+    groom: "تشریفات داماد",
+  };
 
   const state = {
     step: 1,
@@ -39,6 +44,10 @@
 
   function qsa(sel, root = document) {
     return [...root.querySelectorAll(sel)];
+  }
+
+  function toPersianDigits(value) {
+    return String(value).replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[digit]);
   }
 
   function csrfToken() {
@@ -93,7 +102,9 @@
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.ok === false) {
-      throw new Error(data.error || "خطا در ثبت رزرو");
+      const error = new Error(data.error || "خطا در ثبت رزرو");
+      error.status = res.status;
+      throw error;
     }
     return data;
   }
@@ -197,7 +208,11 @@
     const list = seenServices();
     if (!list.includes(key)) {
       list.push(key);
-      localStorage.setItem(FIRST_VISIT_KEY, JSON.stringify(list));
+      try {
+        localStorage.setItem(FIRST_VISIT_KEY, JSON.stringify(list));
+      } catch {
+        /* storage can be unavailable in private/restricted contexts */
+      }
     }
   }
 
@@ -265,15 +280,30 @@
     window.location.href = url;
   }
 
-  function showStep(step) {
+  function prefersReducedMotion() {
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function focusActiveStep(panel) {
+    if (!panel) return;
+    const target = panel.querySelector("h1, h2, [data-step-focus]");
+    if (!target) return;
+    target.setAttribute("tabindex", "-1");
+    requestAnimationFrame(() => target.focus({ preventScroll: true }));
+  }
+
+  function showStep(step, { focus = true } = {}) {
     state.step = step;
+    let activePanel = null;
     qsa("[data-booking-step]").forEach((panel) => {
       const id = panel.dataset.bookingStep;
       const match = String(id) === String(step);
       panel.hidden = !match;
+      if (match) activePanel = panel;
     });
     updateStepper();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    if (focus) focusActiveStep(activePanel);
   }
 
   function escapeHtml(str) {
@@ -304,9 +334,16 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "booking-service-row";
+      btn.dataset.serviceKey = svc.key || svc.slug || "";
+      btn.setAttribute("aria-pressed", "false");
       btn.style.animationDelay = `${i * 0.05}s`;
+      btn.setAttribute(
+        "aria-label",
+        `انتخاب ${svc.name}، حدود ${svc.duration_display || svc.duration_minutes} دقیقه`
+      );
       const img = svc.image_webp || svc.image_jpg;
       const jpg = svc.image_jpg || svc.image_webp;
+      const serviceLabel = SERVICE_LABELS[svc.key] || "خدمت تخصصی";
       btn.innerHTML = `
         <div class="booking-service-thumb">
           <picture>
@@ -315,7 +352,7 @@
           </picture>
         </div>
         <div class="booking-service-copy">
-          <p class="svc-meta"><span class="svc-index">${String(i + 1).padStart(2, "0")}</span> · ${escapeHtml(svc.card_label || svc.name)}</p>
+          <p class="svc-meta"><span class="svc-index">${toPersianDigits(String(i + 1).padStart(2, "0"))}</span> · ${escapeHtml(serviceLabel)}</p>
           <h3>${escapeHtml(svc.name)}</h3>
           <p class="svc-desc">${escapeHtml(svc.description || "")}</p>
           <p class="svc-duration">حدود ${escapeHtml(svc.duration_display || svc.duration_minutes)} دقیقه</p>
@@ -368,22 +405,32 @@
     state.consultGate = null;
     state.consultGateSkipped = !!skipGate;
     updateAsideSummary();
+    qsa(".booking-service-row").forEach((row) => {
+      const selected = row.dataset.serviceKey === (svc.key || svc.slug || "");
+      row.classList.toggle("is-selected", selected);
+      row.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+    setLoading(true);
 
-    if (!skipGate) {
-      try {
-        const summary = await fetchConsultGate(svc.key);
-        if (summary?.gate_required || summary?.gate) {
-          state.consultGate = summary;
-          renderConsultGate(summary);
-          showStep("consult");
-          return;
+    try {
+      if (!skipGate) {
+        try {
+          const summary = await fetchConsultGate(svc.key);
+          if (summary?.gate_required || summary?.gate) {
+            state.consultGate = summary;
+            renderConsultGate(summary);
+            showStep("consult");
+            return;
+          }
+        } catch {
+          /* if gate API fails, continue booking */
         }
-      } catch {
-        /* if gate API fails, continue booking */
       }
-    }
 
-    await proceedToCalendar();
+      await proceedToCalendar();
+    } finally {
+      setLoading(false);
+    }
   }
 
   /* ─── Step 2: Calendar ─── */
@@ -422,6 +469,11 @@
     const title = qs("[data-cal-title]");
     if (title) title.textContent = data.title;
 
+    const prev = qs("[data-cal-prev]");
+    const next = qs("[data-cal-next]");
+    if (prev) prev.disabled = !data.prev;
+    if (next) next.disabled = !data.next;
+
     const weekdays = qs("[data-cal-weekdays]");
     if (weekdays) {
       weekdays.innerHTML = (data.weekdays || [])
@@ -431,6 +483,7 @@
 
     const grid = qs("[data-cal-grid]");
     if (!grid) return;
+    grid.setAttribute("aria-label", `روزهای ${data.title || "تقویم"}`);
     grid.innerHTML = "";
 
     for (let i = 0; i < (data.offset || 0); i++) {
@@ -448,10 +501,18 @@
       if (state.selectedDate === day.date) btn.classList.add("is-selected");
       btn.textContent = day.jalali_day_display;
       btn.disabled = !day.selectable;
+      const availability = day.selectable
+        ? `${day.available_slots || 0} نوبت آزاد`
+        : day.state === "full"
+          ? "تکمیل"
+          : day.state === "closed"
+            ? "تعطیل"
+            : "غیرقابل انتخاب";
       btn.setAttribute(
         "aria-label",
-        `${day.weekday_label} ${day.jalali_day_display}`
+        `${day.weekday_label} ${day.jalali_day_display} ${data.month_label || ""} ${data.year_display || ""}، ${availability}`.trim()
       );
+      btn.setAttribute("aria-pressed", state.selectedDate === day.date ? "true" : "false");
       if (day.selectable) {
         btn.addEventListener("click", () => selectDate(day));
       }
@@ -544,6 +605,19 @@
 
       btn.innerHTML = `<span>${escapeHtml(slot.start_display)}</span>${remain}`;
       btn.disabled = slot.status !== "available";
+      const slotStatus =
+        slot.status === "available"
+          ? slot.capacity > 1
+            ? `${slot.remaining} ظرفیت باقی‌مانده`
+            : "آزاد"
+          : slot.status === "reserved"
+            ? "رزرو شده"
+            : "غیرفعال";
+      btn.setAttribute("aria-label", `${slot.start_display}، ${slotStatus}`);
+      btn.setAttribute(
+        "aria-pressed",
+        state.selectedSlot?.starts_at === slot.starts_at ? "true" : "false"
+      );
 
       if (slot.status === "available") {
         btn.addEventListener("click", () => selectSlot(slot));
@@ -591,14 +665,19 @@
       errors.phone = "شماره موبایل معتبر نیست (مثال: ۰۹۱۳xxxxxxx).";
     }
 
+    let firstInvalid = null;
     qsa("[data-error-for]").forEach((el) => {
       const key = el.dataset.errorFor;
+      const input = els.form?.elements?.[key];
       if (errors[key]) {
         el.textContent = errors[key];
         el.hidden = false;
+        input?.setAttribute("aria-invalid", "true");
+        if (!firstInvalid) firstInvalid = input;
       } else {
         el.hidden = true;
         el.textContent = "";
+        input?.removeAttribute("aria-invalid");
       }
     });
 
@@ -608,6 +687,7 @@
       state.form.last_name = last;
     }
 
+    if (firstInvalid) firstInvalid.focus();
     return Object.keys(errors).length === 0;
   }
 
@@ -821,9 +901,16 @@
       clearDraft();
       toast("رزرو با موفقیت ثبت شد", "success");
     } catch (e) {
-      toast(e.message, "error");
-      if (state.selectedDate) {
+      if (e.status === 409 && state.selectedDate) {
+        state.selectedSlot = null;
         await loadSlots(state.selectedDate);
+        showStep(3);
+        toast("ظرفیت این نوبت تغییر کرده است؛ لطفاً ساعت دیگری انتخاب کنید.", "error");
+      } else {
+        toast(e.message, "error");
+        if (state.selectedDate) {
+          await loadSlots(state.selectedDate);
+        }
       }
     } finally {
       state.submitting = false;
@@ -892,7 +979,7 @@
     state.guideAck = false;
     restoreForm();
     updateAsideSummary();
-    showStep(1);
+    showStep(1, { focus: false });
     renderServices();
   }
 
@@ -955,8 +1042,18 @@
       showStep(5);
     });
 
-    // Persist form fields as user types (survives back navigation)
-    els.form?.addEventListener("input", () => readForm());
+    // Persist form fields as user types and clear stale field errors as they are corrected.
+    els.form?.addEventListener("input", (event) => {
+      readForm();
+      const field = event.target;
+      if (!field?.name) return;
+      field.removeAttribute("aria-invalid");
+      const error = qs(`[data-error-for="${field.name}"]`, els.form);
+      if (error) {
+        error.hidden = true;
+        error.textContent = "";
+      }
+    });
 
     qs("[data-confirm-book]")?.addEventListener("click", confirmBooking);
     qs("[data-share-booking]")?.addEventListener("click", shareBooking);

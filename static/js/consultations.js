@@ -5,6 +5,12 @@
   "use strict";
 
   const BOOKMARK_KEY = "sa_consult_bookmarks";
+  const CATEGORY_LABELS = {
+    vip: "تجربه اختصاصی",
+    skin: "مراقبت تخصصی",
+    groom: "تشریفات داماد",
+    hair: "طراحی مو",
+  };
 
   function qs(sel, root = document) {
     return root.querySelector(sel);
@@ -20,6 +26,24 @@
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function stripEmoji(value) {
+    return String(value ?? "")
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function cleanLabel(category) {
+    if (!category) return "راهنما";
+    if (typeof category === "string") return stripEmoji(category) || "راهنما";
+    if (CATEGORY_LABELS[category.key]) return CATEGORY_LABELS[category.key];
+    return (
+      stripEmoji(category.card_label || category.title || "") ||
+      category.title ||
+      "راهنما"
+    );
   }
 
   function staticUrl(base, path) {
@@ -158,7 +182,7 @@
               <span class="consult-feature-veil" aria-hidden="true"></span>
             </div>
             <div class="consult-feature-copy">
-              <p class="consult-hub-meta">${escapeHtml(featured.card_label || featured.icon || "")}</p>
+              <p class="consult-hub-meta">${escapeHtml(cleanLabel(featured))}</p>
               <h2 class="consult-feature-title">${escapeHtml(featured.title)}</h2>
               <p class="consult-hub-desc">${escapeHtml(featured.short_description || "")}</p>
               <div class="consult-feature-meta-row">
@@ -185,7 +209,7 @@
                   </picture>
                 </div>
                 <div class="editorial-index-copy">
-                  <p class="editorial-index-meta">${escapeHtml(c.card_label || c.icon || "")}</p>
+                  <p class="editorial-index-meta">${escapeHtml(cleanLabel(c))}</p>
                   <h3 class="editorial-index-title">${escapeHtml(c.title)}</h3>
                   <p class="editorial-index-desc">${escapeHtml(c.short_description || "")}</p>
                 </div>
@@ -282,7 +306,7 @@
       document.title = `${cat.title} | مشاوره`;
       const lede = cat.description || cat.short_description || "";
       hero.innerHTML = `
-        <p class="section-label">${escapeHtml(cat.card_label || cat.icon || "راهنما")}</p>
+        <p class="section-label">${escapeHtml(cleanLabel(cat))}</p>
         <h1 class="consult-detail-title type-chapter">${escapeHtml(cat.title)}</h1>
         ${lede ? `<p class="consult-detail-lede">${escapeHtml(lede)}</p>` : ""}
         <div class="consult-detail-meta">

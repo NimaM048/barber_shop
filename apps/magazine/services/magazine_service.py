@@ -171,6 +171,7 @@ class MagazineService(BaseService[ArticleRepository]):
                 "page": page,
                 "page_size": page_size,
                 "total": total,
+                "total_fa": to_fa(total),
                 "pages": pages,
                 "has_next": page < pages,
                 "has_prev": page > 1,

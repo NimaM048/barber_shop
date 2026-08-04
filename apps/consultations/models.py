@@ -39,6 +39,11 @@ class ConsultationHubPage(TimeStampedModel, SoftDeleteModel):
         blank=True,
         help_text="از {tips} و {minutes} استفاده کنید",
     )
+    home_faq_enabled = models.BooleanField("نمایش پرسش‌های پرتکرار در خانه", default=True)
+    home_faq_label = models.CharField("برچسب FAQ خانه", max_length=80, blank=True)
+    home_faq_title = models.CharField("عنوان FAQ خانه", max_length=160, blank=True)
+    home_faq_description = models.TextField("توضیح FAQ خانه", blank=True)
+    home_faq_link_label = models.CharField("متن لینک FAQ خانه", max_length=120, blank=True)
 
     class Meta:
         verbose_name = "صفحه هاب مشاوره"

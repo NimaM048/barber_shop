@@ -1,23 +1,65 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}خدمات | {{ SITE_NAME }}{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
 
-{% block meta_description %}کاتالوگ خدمات {{ SITE_NAME }} — داماد، پوست، مو و VIP{% endblock %}
+{% block structured_data %}
+{% if schema_json %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endif %}
+{% endblock %}
 
 {% block content %}
-<section class="page-stage catalog-stage" aria-labelledby="catalog-heading">
-  <div class="page-shell page-shell--narrow">
-    <header class="page-header" data-reveal>
-      <h1 id="catalog-heading" class="page-title type-display">خدمات</h1>
-      <a href="{% url 'appointments:create' %}" class="page-header-action">
-        <span>رزرو</span>
-        <span aria-hidden="true">←</span>
-      </a>
+<section class="page-stage catalog-stage" aria-labelledby="catalog-heading" data-service-catalog>
+  <div class="catalog-atmosphere" aria-hidden="true">
+    <span class="catalog-atmosphere-rail"></span>
+    <span class="catalog-atmosphere-ring catalog-atmosphere-ring-a"></span>
+    <span class="catalog-atmosphere-ring catalog-atmosphere-ring-b"></span>
+  </div>
+
+  <div class="page-shell page-shell--narrow catalog-shell">
+    <header class="page-header catalog-header">
+      <div class="catalog-header-copy">
+        <p class="section-label">فهرست تخصص‌ها · اصفهان</p>
+        <h1 id="catalog-heading" class="page-title type-display">خدمات داماد، پوست و مو</h1>
+        <p class="page-lede">
+          کاتالوگ خدمات {{ SITE_NAME }} در اصفهان — زمان، جزئیات و مسیر مناسب را ببینید،
+          سپس نوبت را آنلاین رزرو کنید.
+        </p>
+        <div class="catalog-header-assurance" aria-label="ویژگی‌های رزرو">
+          <span>انتخاب آگاهانه</span>
+          <span>زمان‌بندی شفاف</span>
+          <span>رزرو آنلاین</span>
+        </div>
+      </div>
+      <div class="catalog-header-side">
+        <p class="catalog-header-side-kicker">مسیر اختصاصی شما</p>
+        <p class="catalog-header-side-copy">خدمت مناسب را انتخاب کنید؛ زمان دلخواهتان را در مرحلهٔ بعد می‌بینید.</p>
+        <a href="{% url 'appointments:create' %}" class="page-header-action catalog-header-action">
+          <span class="catalog-header-action-kicker">شروع در کمتر از یک دقیقه</span>
+          <span class="catalog-header-action-label">شروع رزرو <span aria-hidden="true">←</span></span>
+        </a>
+      </div>
     </header>
 
+    <div class="catalog-journey" aria-label="مراحل رزرو">
+      <span><b>۰۱</b> انتخاب خدمت</span>
+      <span><b>۰۲</b> انتخاب زمان</span>
+      <span><b>۰۳</b> تأیید نهایی</span>
+    </div>
+
     {% if services %}
-    <div class="service-menu" data-reveal>
+    <div class="service-menu catalog-service-menu" data-reveal>
+      <div class="service-menu-intro">
+        <div>
+          <p class="service-menu-eyebrow">منوی خدمات</p>
+          <p class="service-menu-intro-copy">هر مسیر با زمان، هزینه و امکان رزرو فوری در دسترس شماست.</p>
+        </div>
+        <p class="service-menu-intro-status"><span aria-hidden="true"></span> رزرو آنلاین فعال است</p>
+      </div>
       <div class="service-menu-head" aria-hidden="true">
         <span>خدمت</span>
         <span>مدت</span>
@@ -51,18 +93,23 @@
               {% endif %}
             </div>
           </div>
-          <span class="service-menu-duration">{{ service.duration }} دقیقه</span>
-          <span class="service-menu-price" dir="ltr"><strong>{{ service.price }}</strong> تومان</span>
+          <span class="service-menu-duration"><small>مدت جلسه</small><span>{{ service.duration }} دقیقه</span></span>
+          <span class="service-menu-price"><small>سرمایه‌گذاری</small><span dir="ltr"><strong>{{ service.price }}</strong> تومان</span></span>
           <a href="{% url 'appointments:create' %}?service={{ service.slug }}" class="service-menu-cta">
-            رزرو <span aria-hidden="true">←</span>
+            <span class="service-menu-cta-copy"><small>انتخاب و ادامه</small><span>رزرو</span></span>
+            <span aria-hidden="true">←</span>
           </a>
         </li>
         {% endfor %}
       </ul>
       <p class="service-menu-note">
-        برای راهنمایی قبل از رزرو،
-        <a href="{% url 'consultations:hub' %}">مشاوره تخصصی</a>
-        را ببینید.
+        برای آمادگی بهتر در اصفهان،
+        <a href="{% url 'consultations:hub' %}">مشاوره قبل از مراجعه</a>
+        یا
+        <a href="{% url 'magazine:hub' %}">مجله زیبایی</a>
+        را ببینید؛ سپس
+        <a href="{% url 'appointments:create' %}">نوبت آنلاین</a>
+        بگیرید.
       </p>
     </div>
     {% else %}

@@ -42,7 +42,8 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    opacity: 0;
+    /* The LCP image must remain visible before JavaScript is available. */
+    opacity: 1;
     overflow: hidden;
     will-change: auto;
   }
@@ -51,8 +52,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: var(--media-focus);
-    transform: scale(1.02);
+    object-position: 50% 45%;
+    transform: none;
     filter: saturate(0.82) contrast(1.05) brightness(0.72);
   }
 
@@ -83,8 +84,8 @@
   }
 
   @keyframes heroKenBurns {
-    0% { transform: scale(1.03); }
-    100% { transform: scale(1.01); }
+    0% { transform: scale(1); }
+    100% { transform: scale(1.02); }
   }
 
   .hero-mesh {
@@ -359,10 +360,9 @@
 
   .hero-logo-stage {
     position: relative;
-    width: min(52vw, 17.5rem);
-    aspect-ratio: 1600 / 982;
+    width: min(58vw, 22rem);
     display: grid;
-    place-items: center;
+    place-items: end start;
     will-change: auto;
   }
 
@@ -371,8 +371,9 @@
     grid-area: 1 / 1;
     width: 100%;
     height: auto;
-    max-height: min(24vh, 180px);
+    max-height: min(22vh, 180px);
     object-fit: contain;
+    object-position: start bottom;
   }
 
   .hero-logo-svg {
@@ -401,7 +402,8 @@
 
     z-index: 1;
 
-    opacity: 0;
+    /* The static brand asset remains visible without JavaScript. */
+    opacity: 1;
 
     will-change: auto;
 
@@ -432,7 +434,7 @@
   }
 
   .hero-tagline {
-    margin-top: var(--space-4);
+    margin-top: 0.7rem;
     max-width: 36ch;
     font-family: var(--font-body);
     font-size: var(--text-ui);
@@ -440,7 +442,7 @@
     line-height: 1.7;
     letter-spacing: 0.01em;
     color: rgba(247, 244, 239, 0.72);
-    opacity: 0;
+    opacity: 1;
     will-change: auto;
     unicode-bidi: plaintext;
   }
@@ -455,11 +457,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-4) var(--space-6);
-    opacity: 0;
+    opacity: 1;
   }
 
   .hero-cta [data-hero-btn] {
-    opacity: 0;
+    opacity: 1;
     transform: none;
     will-change: auto;
   }

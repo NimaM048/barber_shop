@@ -12,6 +12,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils import feedgenerator
 
 from apps.core.exceptions import DomainError, NotFoundError, ValidationError
+from apps.core.services import SeoService
 
 from apps.magazine.services import MagazineService
 
@@ -103,9 +104,26 @@ class MagazineArticleView(View):
             return render(request, "magazine/not_found.html", status=404)
 
         article = payload["article"]
-        seo = article.get("seo", {})
+        seo = dict(article.get("seo", {}))
+        seo_helper = SeoService()
+        if seo.get("og_image"):
+            seo["og_image"] = seo_helper.absolute_url(seo["og_image"], request)
+        if seo.get("canonical_url"):
+            seo["canonical_url"] = seo_helper.absolute_url(seo["canonical_url"], request)
+        else:
+            seo["canonical_url"] = seo_helper.canonical_url(request)
         schema = seo.get("schema") or {}
         if isinstance(schema, dict):
+            # Ensure absolute image/url in Article schema when present
+            if schema.get("image"):
+                schema = {**schema, "image": seo_helper.absolute_url(schema["image"], request)}
+            if schema.get("mainEntityOfPage"):
+                schema = {
+                    **schema,
+                    "mainEntityOfPage": seo_helper.absolute_url(
+                        schema["mainEntityOfPage"], request
+                    ),
+                }
             schema_json = json.dumps(schema, ensure_ascii=False)
         else:
             schema_json = str(schema)

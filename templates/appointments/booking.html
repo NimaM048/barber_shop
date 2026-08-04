@@ -1,8 +1,16 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}رزرو نوبت | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}رزرو آنلاین نوبت {{ SITE_NAME }} — VIP، پوست و مو، داماد{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
+
+{% block structured_data %}
+{% if schema_json %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endif %}
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -22,14 +30,23 @@
 >
   <div class="booking-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
     <span class="booking-atmosphere-rail"></span>
+    <span class="booking-atmosphere-ring booking-atmosphere-ring-a"></span>
+    <span class="booking-atmosphere-ring booking-atmosphere-ring-b"></span>
   </div>
 
   <div class="booking-shell relative z-10">
     <div class="booking-layout">
       <aside class="booking-aside" data-booking-aside aria-label="خلاصه رزرو">
-        <p class="section-label">رزرو نوبت</p>
-        <h1 class="booking-aside-title type-display">مسیر رزرو</h1>
-        <p class="booking-aside-lede type-lede">زمان شما، با استاندارد برند — چند قدم ساده.</p>
+        <p class="section-label">رزرو آنلاین · اصفهان</p>
+        <h1 class="booking-aside-title type-display">رزرو نوبت در {{ SITE_NAME }}</h1>
+        <p class="booking-aside-lede type-lede">
+          خدمت داماد، پوست، مو یا VIP را انتخاب کنید؛ روز و ساعت مناسب را ببینید و نوبت را بدون تماس ثبت کنید.
+        </p>
+        <div class="booking-assurance" aria-label="ویژگی‌های رزرو">
+          <span>تأیید آنی</span>
+          <span>بدون نیاز به تماس</span>
+        </div>
+        <p class="booking-aside-status"><span aria-hidden="true"></span> مسیر رزرو در هر مرحله قابل بازگشت است</p>
 
         <nav class="booking-phases" aria-label="مراحل رزرو" data-booking-stepper>
           <ol>
@@ -56,7 +73,7 @@
           </ol>
         </nav>
 
-        <div class="booking-summary" data-booking-summary>
+        <div class="booking-summary" data-booking-summary aria-live="polite" aria-atomic="true">
           <p class="booking-summary-empty">هنوز سرویسی انتخاب نشده است.</p>
         </div>
       </aside>
@@ -193,19 +210,19 @@
               <div class="booking-form-grid">
                 <div class="booking-field">
                   <label for="bk-first" class="booking-label">نام</label>
-                  <input id="bk-first" name="first_name" required autocomplete="given-name" class="field-court">
-                  <p class="booking-field-error" data-error-for="first_name" hidden></p>
+                  <input id="bk-first" name="first_name" required autocomplete="given-name" class="field-court" aria-describedby="bk-first-error">
+                  <p id="bk-first-error" class="booking-field-error" data-error-for="first_name" role="alert" hidden></p>
                 </div>
                 <div class="booking-field">
                   <label for="bk-last" class="booking-label">نام خانوادگی</label>
-                  <input id="bk-last" name="last_name" required autocomplete="family-name" class="field-court">
-                  <p class="booking-field-error" data-error-for="last_name" hidden></p>
+                  <input id="bk-last" name="last_name" required autocomplete="family-name" class="field-court" aria-describedby="bk-last-error">
+                  <p id="bk-last-error" class="booking-field-error" data-error-for="last_name" role="alert" hidden></p>
                 </div>
               </div>
               <div class="booking-field">
                 <label for="bk-phone" class="booking-label">شماره تماس</label>
-                <input id="bk-phone" name="phone" type="tel" required inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" dir="ltr" autocomplete="tel" class="field-court text-left" placeholder="09131234567" title="۱۱ رقم، شروع با ۰۹">
-                <p class="booking-field-error" data-error-for="phone" hidden></p>
+                <input id="bk-phone" name="phone" type="tel" required inputmode="tel" maxlength="16" pattern="09[0-9]{9}" dir="ltr" autocomplete="tel" class="field-court text-left" placeholder="09131234567" title="۱۱ رقم، شروع با ۰۹" aria-describedby="bk-phone-error">
+                <p id="bk-phone-error" class="booking-field-error" data-error-for="phone" role="alert" hidden></p>
               </div>
               <div class="booking-field">
                 <label for="bk-notes" class="booking-label">توضیحات <span class="booking-label-optional">(اختیاری)</span></label>
@@ -267,7 +284,7 @@
           </div>
 
           {# Success #}
-          <div data-booking-step="success" class="booking-step-panel" hidden>
+          <div data-booking-step="success" class="booking-step-panel" role="status" aria-live="polite" aria-atomic="true" hidden>
             <div class="booking-success" data-success>
               <div class="booking-success-icon" aria-hidden="true">
                 <svg viewBox="0 0 64 64" fill="none">

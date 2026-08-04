@@ -38,7 +38,7 @@
     {% endif %}
   </div>
 
-  <div class="gallery-shell relative mt-6 sm:mt-8">
+  <div class="gallery-shell relative mt-8 sm:mt-10">
     <div class="gallery-fade gallery-fade-start" aria-hidden="true"></div>
     <div class="gallery-fade gallery-fade-end" aria-hidden="true"></div>
 
@@ -113,13 +113,20 @@
         </div>
         {% empty %}
         <div class="swiper-slide !w-full">
-          <p class="px-6 py-12 text-center text-sm text-ivory/40">هنوز اثری در گالری ثبت نشده است.</p>
+          <div class="gallery-empty" role="status">
+            <span class="gallery-empty-index" aria-hidden="true">01</span>
+            <div>
+              <h3 class="gallery-empty-title">آرشیو منتخب در حال آماده‌سازی است</h3>
+              <p class="gallery-empty-copy">به‌زودی روایت تصویری دگرگونی‌ها و جزئیات اجرا اینجا منتشر می‌شود.</p>
+            </div>
+          </div>
         </div>
         {% endfor %}
       </div>
     </div>
   </div>
 
+  {% if gallery_items %}
   <div class="gallery-controls site-shell site-shell--flush-y gallery-controls-bar relative z-10 flex items-center justify-center gap-4">
     <button type="button" class="gallery-nav gallery-prev" aria-label="اسلاید قبلی" data-gallery-prev>
       <span aria-hidden="true">→</span>
@@ -129,6 +136,7 @@
       <span aria-hidden="true">←</span>
     </button>
   </div>
+  {% endif %}
 
   {# Fullscreen lightbox viewer #}
   <div

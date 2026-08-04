@@ -70,12 +70,21 @@
         frame.classList.add("is-loaded");
         return;
       }
-      const mark = () => frame.classList.add("is-loaded");
+      const hasLqip = !!frame.querySelector(".mag-media-lqip");
+      const mark = () => {
+        frame.classList.remove("is-loading");
+        frame.classList.add("is-loaded");
+      };
+      const fail = () => {
+        frame.classList.remove("is-loading");
+        frame.classList.add("is-error");
+      };
       if (full.complete && full.naturalWidth > 0) {
         mark();
       } else {
+        if (hasLqip) frame.classList.add("is-loading");
         full.addEventListener("load", mark, { once: true });
-        full.addEventListener("error", mark, { once: true });
+        full.addEventListener("error", fail, { once: true });
       }
     });
   }
@@ -166,7 +175,9 @@
       retry: root.querySelector("[data-hub-retry]"),
       searchInput: root.querySelector("[data-search-input]"),
       searchDrop: root.querySelector("[data-search-dropdown]"),
+      searchStatus: root.querySelector("[data-search-status]"),
       filterStatus: root.querySelector("[data-filter-status]"),
+      resultsStatus: root.querySelector("[data-results-status]"),
       clearFilters: root.querySelector("[data-clear-filters]"),
       progress: root.querySelector("[data-hub-progress]"),
       journeyTitle: root.querySelector("[data-journey-title]"),
@@ -175,6 +186,11 @@
       journeyBook: root.querySelector("[data-journey-book]"),
       sortBtns: root.querySelectorAll("[data-filter-sort]"),
     };
+
+    let articlesController = null;
+    let articlesRequestId = 0;
+    let searchController = null;
+    let searchRequestId = 0;
 
     function showError(msg) {
       if (!els.error) return;
@@ -186,11 +202,26 @@
       if (els.error) els.error.hidden = true;
     }
 
+    function selectedControlLabel(container, selector, attribute, value) {
+      if (!container || !value) return value;
+      const control = [...container.querySelectorAll(selector)].find(
+        (item) => (item.getAttribute(attribute) || "") === value
+      );
+      if (!control) return value;
+      const clone = control.cloneNode(true);
+      clone.querySelectorAll(".mag-topic-count").forEach((item) => item.remove());
+      return clone.textContent.trim() || value;
+    }
+
     function updateFilterStatus() {
       if (!els.filterStatus) return;
       const bits = [];
-      if (state.category) bits.push(`موضوع: ${state.category}`);
-      if (state.tag) bits.push(`برچسب: ${state.tag}`);
+      if (state.category) {
+        bits.push(`موضوع: ${selectedControlLabel(els.catTrack, "[data-cat]", "data-cat", state.category)}`);
+      }
+      if (state.tag) {
+        bits.push(`برچسب: ${selectedControlLabel(els.tags, "[data-tag]", "data-tag", state.tag)}`);
+      }
       if (state.q) bits.push(`جستجو: «${state.q}»`);
       if (!bits.length) {
         els.filterStatus.hidden = true;
@@ -224,6 +255,25 @@
       syncUrl();
     }
 
+    function syncFilterControls() {
+      if (els.searchInput) els.searchInput.value = state.q;
+      els.catTrack?.querySelectorAll(".mag-topic").forEach((button) => {
+        const active = (button.getAttribute("data-cat") || "") === state.category;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      els.tags?.querySelectorAll(".mag-tag-btn").forEach((button) => {
+        const active = (button.getAttribute("data-tag") || "") === state.tag;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      els.sortBtns?.forEach((button) => {
+        const active = (button.getAttribute("data-filter-sort") || "newest") === state.sort;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
     function bindCategoryClicks() {
       els.catTrack?.querySelectorAll("[data-cat]").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -253,7 +303,7 @@
             b.setAttribute("aria-pressed", on ? "true" : "false");
           });
           updateFilterStatus();
-          loadArticles();
+          loadArticles({ scroll: true });
           syncUrl();
         });
       });
@@ -267,6 +317,10 @@
       bindLqip(els.latest);
 
       const p = data.pagination || {};
+      if (els.resultsStatus) {
+        const total = Number.isFinite(Number(p.total)) ? Number(p.total) : list.length;
+        els.resultsStatus.textContent = `${toFa(total)} مقاله در آرشیو`;
+      }
       if (els.pagination) {
         if (p.pages > 1) {
           els.pagination.hidden = false;
@@ -292,7 +346,7 @@
       }
     }
 
-    function syncUrl() {
+    function syncUrl({ replace = false } = {}) {
       const u = new URL(location.href);
       ["category", "tag", "sort", "q"].forEach((k) => {
         if (state[k]) u.searchParams.set(k, state[k]);
@@ -300,10 +354,16 @@
       });
       if (state.page > 1) u.searchParams.set("page", String(state.page));
       else u.searchParams.delete("page");
-      history.replaceState(null, "", u);
+      const next = `${u.pathname}${u.search}${u.hash}`;
+      const current = `${location.pathname}${location.search}${location.hash}`;
+      if (next === current) return;
+      history[replace ? "replaceState" : "pushState"](null, "", u);
     }
 
-    async function loadArticles({ scroll = false } = {}) {
+    async function loadArticles({ scroll = false, updateUrl = true } = {}) {
+      const requestId = ++articlesRequestId;
+      articlesController?.abort();
+      articlesController = new AbortController();
       const params = new URLSearchParams({
         page: String(state.page),
         page_size: "9",
@@ -314,9 +374,11 @@
       if (state.q) params.set("q", state.q);
       els.latest?.setAttribute("aria-busy", "true");
       try {
-        const data = await api(`${apiBase}/articles/?${params}`);
+        const data = await api(`${apiBase}/articles/?${params}`, { signal: articlesController.signal });
+        if (requestId !== articlesRequestId) return;
         renderLatest(data);
-        syncUrl();
+        hideError();
+        if (updateUrl) syncUrl();
         if (scroll) {
           root.querySelector("[data-section-latest]")?.scrollIntoView({
             behavior: REDUCE ? "auto" : "smooth",
@@ -324,9 +386,14 @@
           });
         }
       } catch (err) {
-        showError(err.message || "خطا");
+        if (err?.name !== "AbortError" && requestId === articlesRequestId) {
+          showError(err.message || "خطا");
+        }
       } finally {
-        els.latest?.removeAttribute("aria-busy");
+        if (requestId === articlesRequestId) {
+          articlesController = null;
+          els.latest?.removeAttribute("aria-busy");
+        }
       }
     }
 
@@ -337,26 +404,43 @@
 
     function setSearchExpanded(open) {
       els.searchInput?.setAttribute("aria-expanded", open ? "true" : "false");
+      if (!open) els.searchInput?.removeAttribute("aria-activedescendant");
       if (els.searchDrop) els.searchDrop.hidden = !open;
     }
 
     function highlightSearch(i) {
-      searchItems.forEach((el, idx) => el.classList.toggle("is-focus", idx === i));
+      searchItems.forEach((el, idx) => {
+        const selected = idx === i;
+        el.classList.toggle("is-focus", selected);
+        el.setAttribute("aria-selected", selected ? "true" : "false");
+      });
+      const active = searchItems[i];
+      if (active) els.searchInput?.setAttribute("aria-activedescendant", active.id);
+      else els.searchInput?.removeAttribute("aria-activedescendant");
+      active?.scrollIntoView({ block: "nearest" });
     }
 
     els.searchInput?.addEventListener("input", () => {
       clearTimeout(searchTimer);
       const q = els.searchInput.value.trim();
+      const requestId = ++searchRequestId;
+      searchController?.abort();
+      searchController = null;
       searchTimer = setTimeout(async () => {
         if (q.length < 2) {
           setSearchExpanded(false);
           els.searchDrop.innerHTML = "";
           searchItems = [];
           searchIndex = -1;
+          if (els.searchStatus) els.searchStatus.textContent = "";
           return;
         }
+        searchController = new AbortController();
         try {
-          const data = await api(`${apiBase}/search/?q=${encodeURIComponent(q)}`);
+          const data = await api(`${apiBase}/search/?q=${encodeURIComponent(q)}`, {
+            signal: searchController.signal,
+          });
+          if (requestId !== searchRequestId) return;
           const parts = [];
           (data.articles || []).forEach((a) => {
             parts.push(
@@ -379,7 +463,17 @@
           els.searchDrop.innerHTML = parts.join("");
           setSearchExpanded(true);
           searchItems = [...els.searchDrop.querySelectorAll(".mag-search-item")];
+          searchItems.forEach((item, index) => {
+            item.id = `mag-search-option-${index}`;
+            item.setAttribute("aria-selected", "false");
+          });
           searchIndex = -1;
+          highlightSearch(searchIndex);
+          if (els.searchStatus) {
+            els.searchStatus.textContent = searchItems.length
+              ? `${toFa(searchItems.length)} پیشنهاد برای «${q}» پیدا شد`
+              : "نتیجه‌ای پیدا نشد";
+          }
 
           els.searchDrop.querySelectorAll("[data-pick-cat]").forEach((b) => {
             b.addEventListener("click", () => {
@@ -391,6 +485,7 @@
                 btn.classList.toggle("is-active", on);
                 btn.setAttribute("aria-pressed", on ? "true" : "false");
               });
+              syncFilterControls();
               updateFilterStatus();
               loadArticles();
               syncUrl();
@@ -401,13 +496,19 @@
               state.tag = b.getAttribute("data-pick-tag") || "";
               state.page = 1;
               setSearchExpanded(false);
+              syncFilterControls();
               updateFilterStatus();
               loadArticles();
               syncUrl();
             });
           });
-        } catch {
-          /* ignore */
+        } catch (err) {
+          if (err?.name !== "AbortError" && requestId === searchRequestId) {
+            if (els.searchStatus) els.searchStatus.textContent = "جستجو در حال حاضر در دسترس نیست";
+            setSearchExpanded(false);
+          }
+        } finally {
+          if (requestId === searchRequestId) searchController = null;
         }
       }, 220);
     });
@@ -482,6 +583,21 @@
     els.pagination?.querySelector("[data-next]")?.addEventListener("click", () => {
       state.page += 1;
       loadArticles({ scroll: true });
+    });
+
+    window.addEventListener("popstate", () => {
+      const params = new URLSearchParams(location.search);
+      state = {
+        category: params.get("category") || "",
+        tag: params.get("tag") || "",
+        sort: params.get("sort") || "newest",
+        page: Math.max(1, parseInt(params.get("page") || "1", 10) || 1),
+        q: params.get("q") || "",
+      };
+      syncFilterControls();
+      updateFilterStatus();
+      setSearchExpanded(false);
+      loadArticles({ updateUrl: false });
     });
 
     window.addEventListener(

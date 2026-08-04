@@ -68,16 +68,21 @@ def gate_copy(**overrides: str) -> dict[str, str]:
 
 HUB = {
     "key": "hub",
-    "section_label": "راهنمای تخصصی",
+    "home_faq_enabled": True,
+    "home_faq_label": "پرسش‌های پرتکرار",
+    "home_faq_title": "پیش از مراجعه، پاسخ‌ها روشن‌اند.",
+    "home_faq_description": "برای جزئیات هر مسیر، راهنمای مشاوره همیشه در دسترس است.",
+    "home_faq_link_label": "همهٔ راهنماهای پیش از مراجعه",
+    "section_label": "راهنمای تخصصی · اصفهان",
     "title": "مشاوره قبل از مراجعه",
     "subtitle": (
-        "نکات، مراقبت‌ها و آمادگی‌های لازم را بخوانید "
-        "تا بهترین نتیجه را از خدمات دریافت کنید."
+        "نکات، مراقبت‌ها و آمادگی‌های لازم برای داماد، پوست و VIP را بخوانید "
+        "تا بهترین نتیجه را از مراجعه در اصفهان دریافت کنید."
     ),
     "meta_description": (
-        "راهنمای تخصصی VIP، داماد و پوست و مو — آمادگی قبل از مراجعه"
+        "راهنمای تخصصی VIP، داماد و پوست و مو در اصفهان — آمادگی قبل از مراجعه به صالح ایوبی"
     ),
-    "document_title": "مشاوره قبل از مراجعه",
+    "document_title": "مشاوره قبل از مراجعه | اصفهان",
     "empty_message": "در حال حاضر راهنمایی فعال نیست.",
     "card_cta_label": "مشاهده راهنما",
     "card_stats_template": "{tips} نکته · حدود {minutes} دقیقه",
@@ -736,6 +741,11 @@ class Command(BaseCommand):
                 "empty_message": HUB["empty_message"],
                 "card_cta_label": HUB["card_cta_label"],
                 "card_stats_template": HUB["card_stats_template"],
+                "home_faq_enabled": HUB["home_faq_enabled"],
+                "home_faq_label": HUB["home_faq_label"],
+                "home_faq_title": HUB["home_faq_title"],
+                "home_faq_description": HUB["home_faq_description"],
+                "home_faq_link_label": HUB["home_faq_link_label"],
             },
         )
         self.stdout.write("  - seeded hub page")

@@ -105,7 +105,7 @@ html.is-tab-hidden .ff-cta-arrow {
 }
 
 /* Gallery: opacity/scale only — never animate filter while sliding */
-.gallery-slide-wrap {
+.gallery-swiper.swiper .swiper-slide.gallery-slide-wrap {
   filter: none !important;
   will-change: auto !important;
   transition:
@@ -120,10 +120,10 @@ html.is-tab-hidden .ff-cta-arrow {
   filter: none !important;
 }
 
-html.is-lite-motion .gallery-slide-wrap,
-html.is-balanced-motion .gallery-slide-wrap {
-  transform: scale(0.88);
-  opacity: 0.45;
+html.is-lite-motion .gallery-swiper.swiper .swiper-slide.gallery-slide-wrap,
+html.is-balanced-motion .gallery-swiper.swiper .swiper-slide.gallery-slide-wrap {
+  transform: scale(0.96);
+  opacity: 0.55;
 }
 
 html.is-lite-motion .gallery-swiper .swiper-slide-prev,
@@ -136,7 +136,7 @@ html.is-balanced-motion .gallery-swiper .swiper-slide-next {
 
 html.is-lite-motion .gallery-swiper .swiper-slide-active,
 html.is-balanced-motion .gallery-swiper .swiper-slide-active {
-  transform: scale(1.03);
+  transform: scale(1);
 }
 
 /* Footer glow — no live blur */
@@ -166,23 +166,22 @@ html.is-lite-motion .marquee-track {
 }
 
 /* Content-visibility for below-fold sections when present */
-[data-brand-story],
 [data-footer-finale],
 [data-gallery-root] {
   content-visibility: auto;
-  contain-intrinsic-size: 1px 800px;
+  contain-intrinsic-size: 1px 720px;
 }
 
 @media (max-width: 767px) {
-  .gallery-slide-wrap {
-    opacity: 0.42;
-    transform: scale(0.86);
+  .gallery-swiper.swiper .swiper-slide.gallery-slide-wrap {
+    opacity: 0.5;
+    transform: scale(0.94);
   }
 
   .gallery-swiper .swiper-slide-prev,
   .gallery-swiper .swiper-slide-next {
-    opacity: 0.65;
-    transform: scale(0.92);
+    opacity: 0.7;
+    transform: scale(0.97);
   }
 
   .hero-blueprint {

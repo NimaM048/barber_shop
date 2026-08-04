@@ -2,14 +2,20 @@
 {% load static %}
 
 {% block title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}دانشنامه تخصصی داماد، پوست، مو و استایل — مقالات فاخر و آموزشی {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}دانشنامه تخصصی داماد، پوست، مو و استایل — مقالات فاخر و آموزشی {{ SITE_NAME }} در اصفهان{% endblock %}
 {% block og_title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
-{% block og_description %}دانشنامه تخصصی داماد، پوست و مو و استایل{% endblock %}
+{% block og_description %}دانشنامه تخصصی داماد، پوست و مو و استایل — {{ SITE_NAME }}{% endblock %}
+{% block twitter_title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
+{% block twitter_description %}دانشنامه تخصصی داماد، پوست و مو و استایل — {{ SITE_NAME }}{% endblock %}
 
 {% block extra_head %}
 <link rel="alternate" type="application/rss+xml" title="مجله {{ SITE_NAME }}" href="{% url 'magazine:rss' %}">
-{% if hub.hero.cover %}
-<link rel="preload" as="image" href="{{ hub.hero.cover }}"{% if hub.hero.cover_webp %} type="image/webp"{% endif %} fetchpriority="high">
+{% if hub.featured %}
+{% with lead=hub.featured.0 %}
+{% if lead.cover %}<link rel="preload" as="image" href="{{ lead.cover }}" fetchpriority="high">{% endif %}
+{% endwith %}
+{% elif hub.hero.cover %}
+<link rel="preload" as="image" href="{{ hub.hero.cover }}" fetchpriority="high">
 {% endif %}
 {% endblock %}
 
@@ -37,22 +43,29 @@
 
   <div class="mag-atmosphere" aria-hidden="true">
     <span class="mag-atmosphere-rail"></span>
+    <span class="mag-atmosphere-ring mag-atmosphere-ring-a"></span>
+    <span class="mag-atmosphere-ring mag-atmosphere-ring-b"></span>
   </div>
 
   {# ── 1. Masthead ── #}
-  <header class="mag-mast mag-shell" data-reveal>
+  <header class="mag-mast mag-shell">
     <div class="mag-mast-copy">
       <p class="section-label">
         <span lang="en" class="font-latin">{{ hub.masthead.label_en|default:"Magazine" }}</span>
         <span class="mag-mast-sep" aria-hidden="true">·</span>
         <span>{{ hub.masthead.label_fa|default:"مجله" }}</span>
       </p>
-      <h1 class="mag-mast-title">مجله</h1>
-      <p class="mag-mast-lede">دانشنامه تخصصی داماد، پوست، مو و استایل — با استاندارد برند.</p>
+      <h1 class="mag-mast-title">مجله زیبایی</h1>
+      <p class="mag-mast-lede">دانشنامه تخصصی داماد، پوست، مو و استایل — خواندنی، کاربردی و هم‌تراز استاندارد برند.</p>
+      <ul class="mag-mast-signals" aria-label="ویژگی‌های مجله">
+        <li>دانش تخصصی</li>
+        <li>انتخاب تحریریه</li>
+        <li>رزرو آگاهانه</li>
+      </ul>
     </div>
     <a href="{% url 'magazine:rss' %}" class="mag-mast-action">
-      <span>RSS</span>
-      <span aria-hidden="true">←</span>
+      <span class="mag-mast-action-kicker">دریافت به‌روزرسانی‌ها</span>
+      <span class="mag-mast-action-label"><span lang="en">RSS</span><span aria-hidden="true">←</span></span>
     </a>
   </header>
 
@@ -68,6 +81,7 @@
             aria-pressed="{% if not filters.category %}true{% else %}false{% endif %}"
           >همه</button>
           {% for c in hub.categories %}
+          {% if c.article_count %}
           <button
             type="button"
             class="mag-topic {% if filters.category == c.slug %}is-active{% endif %}"
@@ -77,6 +91,7 @@
             {{ c.title }}
             {% if c.article_count_fa %}<span class="mag-topic-count">{{ c.article_count_fa }}</span>{% endif %}
           </button>
+          {% endif %}
           {% endfor %}
         </div>
       </nav>
@@ -90,6 +105,8 @@
           autocomplete="off"
           value="{{ filters.q }}"
           data-search-input
+          role="combobox"
+          aria-haspopup="listbox"
           aria-controls="mag-search-results"
           aria-expanded="false"
           aria-autocomplete="list"
@@ -99,8 +116,10 @@
           class="mag-search-dropdown"
           data-search-dropdown
           role="listbox"
+          aria-label="پیشنهادهای جستجو"
           hidden
         ></div>
+        <p class="sr-only" data-search-status aria-live="polite"></p>
       </div>
     </div>
     <div class="mag-filter-status mag-shell" data-filter-status {% if not filters.category and not filters.tag and not filters.q %}hidden{% endif %}>
@@ -224,6 +243,7 @@
       <div>
         <p class="section-label">آرشیو</p>
         <h2 id="mag-archive-title" class="mag-heading">همه مقالات</h2>
+        <p class="mag-results-status" data-results-status aria-live="polite">{{ listing.pagination.total_fa }} مقاله در آرشیو</p>
       </div>
       <div class="mag-sort" data-filters role="group" aria-label="مرتب‌سازی">
         <button type="button" class="mag-sort-btn {% if filters.sort == 'newest' %}is-active{% endif %}" data-filter-sort="newest" aria-pressed="{% if filters.sort == 'newest' %}true{% else %}false{% endif %}">جدیدترین</button>

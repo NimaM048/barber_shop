@@ -1,15 +1,17 @@
 {% extends "layouts/base.html" %}
 
 {% block title %}صفحه یافت نشد | {{ SITE_NAME }}{% endblock %}
+{% block meta_robots %}noindex,follow{% endblock %}
 
 {% block content %}
-<section class="page-stage" aria-labelledby="page-404-heading">
+<section class="page-stage page-not-found" aria-labelledby="page-404-heading">
   <div class="page-atmosphere" aria-hidden="true">
     <span class="page-atmosphere-orb page-atmosphere-orb-a"></span>
   </div>
 
   <div class="page-shell page-shell--narrow text-center">
-    <p class="section-label" data-reveal>۴۰۴</p>
+    <p class="page-not-found-code" aria-hidden="true">404</p>
+    <p class="section-label" data-reveal>مسیر نامعتبر</p>
     <h1 id="page-404-heading" class="page-title mx-auto mt-4" data-reveal>صفحه یافت نشد</h1>
     <p class="page-lede mx-auto" data-reveal data-delay="1">
       این مسیر وجود ندارد یا منتقل شده است.

@@ -8,7 +8,10 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
+from django.conf import settings
+
 from apps.core.exceptions import DomainError, NotFoundError, ValidationError
+from apps.core.services import SeoService
 
 from apps.consultations.services import ConsultationService
 
@@ -32,10 +35,25 @@ class ConsultationHubView(View):
     template_name = "consultations/hub.html"
 
     def get(self, request):
+        seo = SeoService()
+        payload = ConsultationService().list_categories()
+        hub = payload.get("hub") or {}
+        page_seo = seo.consultation_hub_meta(hub)
+        schema = seo.breadcrumb_schema(
+            [
+                {"name": "خانه", "path": "/"},
+                {"name": "مشاوره", "path": "/consultations/"},
+            ],
+            request,
+        )
         return render(
             request,
             self.template_name,
-            {"api_base": "/consultations/api"},
+            {
+                "api_base": "/consultations/api",
+                "page_seo": page_seo,
+                "schema_json": seo.dumps(schema),
+            },
         )
 
 
@@ -44,6 +62,38 @@ class ConsultationDetailView(View):
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, key):
+        seo = SeoService()
+        site = getattr(settings, "SITE_NAME", "صالح ایوبی")
+        try:
+            detail = ConsultationService().get_category_detail(key)
+            category = detail["category"]
+            page_seo = seo.consultation_detail_meta(category)
+            schemas = [
+                seo.breadcrumb_schema(
+                    [
+                        {"name": "خانه", "path": "/"},
+                        {"name": "مشاوره", "path": "/consultations/"},
+                        {
+                            "name": category.get("title") or "راهنما",
+                            "path": f"/consultations/{key}/",
+                        },
+                    ],
+                    request,
+                ),
+            ]
+            faq_schema = seo.faq_schema(detail.get("faqs") or [])
+            if faq_schema:
+                schemas.append(faq_schema)
+            schema_json = seo.dumps(schemas)
+        except DomainError:
+            page_seo = {
+                "title": f"راهنما | {site}",
+                "description": f"راهنمای تخصصی قبل از مراجعه در {site}",
+                "og_title": f"راهنما | {site}",
+                "og_description": f"راهنمای تخصصی قبل از مراجعه در {site}",
+            }
+            schema_json = ""
+
         return render(
             request,
             self.template_name,
@@ -53,6 +103,8 @@ class ConsultationDetailView(View):
                 "ticket_url": "/consultations/api/tickets/",
                 "from_booking": request.GET.get("from") == "booking",
                 "booking_service": request.GET.get("service", ""),
+                "page_seo": page_seo,
+                "schema_json": schema_json,
             },
         )
 

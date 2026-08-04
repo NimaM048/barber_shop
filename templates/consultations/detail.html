@@ -1,8 +1,16 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}راهنما | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}راهنمای تخصصی قبل از مراجعه — نکات مراقبت، روز مراجعه و پرسش‌های متداول در {{ SITE_NAME }}{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
+
+{% block structured_data %}
+{% if schema_json %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endif %}
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -24,6 +32,8 @@
 >
   <div class="consult-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
     <span class="consult-atmosphere-rail"></span>
+    <span class="consult-atmosphere-ring consult-atmosphere-ring-a"></span>
+    <span class="consult-atmosphere-ring consult-atmosphere-ring-b"></span>
   </div>
 
   <div class="consult-shell relative z-10">

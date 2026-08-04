@@ -126,5 +126,21 @@ SITE_ADDRESS = os.getenv(
     "SITE_ADDRESS",
     "اصفهان، مشتاق اول، خیابان ابوالحسن اصفهانی، بعد از کوچه ۲۶",
 )
+# Approximate pin for Abolhasan Esfahani St (after alley 26) — refine via env
+SITE_LAT = float(os.getenv("SITE_LAT", "32.6412"))
+SITE_LNG = float(os.getenv("SITE_LNG", "51.6902"))
+SITE_MAP_ZOOM = int(os.getenv("SITE_MAP_ZOOM", "16"))
 SITE_INSTAGRAM = os.getenv("SITE_INSTAGRAM", "saleh_ayoobi_academy")
 SITE_WEBSITE = os.getenv("SITE_WEBSITE", "salehayoubi.com")
+# Public origin for absolute SEO URLs (canonical / OG / sitemap). Prefer https://…
+SITE_PUBLIC_URL = os.getenv("SITE_PUBLIC_URL", "").strip()
+DEFAULT_OG_IMAGE = os.getenv(
+    "DEFAULT_OG_IMAGE",
+    "images/brand/hero-cinematic-frame.jpg",
+)
+GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "").strip()
+# Local SEO / Google Business Profile alignment
+SITE_HOURS_TEXT = os.getenv("SITE_HOURS_TEXT", "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱")
+# Optional deep links — paste from Google Maps / Business Profile when ready
+SITE_GOOGLE_MAPS_URL = os.getenv("SITE_GOOGLE_MAPS_URL", "").strip()
+SITE_GBP_URL = os.getenv("SITE_GBP_URL", "").strip()

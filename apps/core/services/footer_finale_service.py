@@ -5,6 +5,7 @@ from __future__ import annotations
 from django.conf import settings
 from django.templatetags.static import static
 from django.utils import timezone
+from urllib.parse import quote_plus
 
 from apps.core.footer_finale import FooterFinale, FooterNavLink
 
@@ -43,6 +44,68 @@ def _wa_digits(phone: str) -> str:
     if digits.startswith("0"):
         return f"98{digits[1:]}"
     return digits
+
+
+def _location_payload(address: str, hours: str = "") -> dict:
+    """Premium location block — Leaflet map + Google Maps deep links."""
+    lat = float(getattr(settings, "SITE_LAT", 32.6412) or 32.6412)
+    lng = float(getattr(settings, "SITE_LNG", 51.6902) or 51.6902)
+    zoom = int(getattr(settings, "SITE_MAP_ZOOM", 16) or 16)
+    query = f"{lat},{lng}"
+    maps_query = quote_plus(address) if address else query
+    hours_value = hours or _site("SITE_HOURS_TEXT", "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱")
+    site = _site("SITE_NAME", "صالح ایوبی")
+    maps_place = (_site("SITE_GOOGLE_MAPS_URL") or "").strip()
+    gbp_url = (_site("SITE_GBP_URL") or "").strip()
+    maps_url = maps_place or (
+        f"https://www.google.com/maps/search/?api=1&query={maps_query}"
+    )
+
+    return {
+        "show": bool(address),
+        "eyebrow": "موقعیت در اصفهان",
+        "title_find": "Find",
+        "title_us": "Us",
+        "title_fa": f"آدرس سالن {site} در اصفهان",
+        "badge": "سالن تخصصی",
+        "lede": (
+            f"استودیوی تخصصی داماد، پوست و مو {site} در مشتاق اول اصفهان — "
+            "رزرو قبلی، مسیریابی آسان."
+        ),
+        "city": "اصفهان",
+        "address": address,
+        "address_parts": [
+            {"role": "district", "text": "مشتاق اول"},
+            {"role": "street", "text": "خیابان ابوالحسن اصفهانی"},
+            {"role": "cue", "text": "بعد از کوچه ۲۶"},
+        ],
+        "address_lines": [
+            "مشتاق اول",
+            "خیابان ابوالحسن اصفهانی",
+            "بعد از کوچه ۲۶",
+        ],
+        "hours_label": "ساعات",
+        "hours": hours_value,
+        "availability_label": "نوبت",
+        "availability": "فقط با رزرو قبلی",
+        "cta_directions": "مسیریابی",
+        "cta_maps": "باز کردن در نقشه",
+        "cta_copy": "کپی آدرس",
+        "cta_gbp": "مشاهده در گوگل",
+        "gbp_url": gbp_url,
+        "lat": lat,
+        "lng": lng,
+        "zoom": zoom,
+        "marker_label": site,
+        "maps_url": maps_url,
+        "directions_url": (
+            f"https://www.google.com/maps/dir/?api=1&destination={query}"
+            f"&travelmode=driving"
+        ),
+        "embed_url": (
+            f"https://www.google.com/maps?q={query}&z={zoom}&hl=fa&output=embed"
+        ),
+    }
 
 
 def _fallback_payload() -> dict:
@@ -135,7 +198,7 @@ def _fallback_payload() -> dict:
         "nav_links": [
             {
                 "label": "خدمات",
-                "href": "/#services",
+                "href": FooterFinale.resolve_href("catalog:list"),
                 "external": False,
             },
             {
@@ -148,8 +211,14 @@ def _fallback_payload() -> dict:
                 "href": FooterFinale.resolve_href("magazine:hub"),
                 "external": False,
             },
+            {
+                "label": "مشاوره",
+                "href": FooterFinale.resolve_href("consultations:hub"),
+                "external": False,
+            },
         ],
         "website": website,
+        "location": _location_payload(address),
         "seo_title": "",
         "seo_description": "",
     }
@@ -333,6 +402,10 @@ class FooterFinaleService:
             "show_navigation": finale.show_navigation,
             "nav_links": nav_links or fallback["nav_links"],
             "website": finale.website or _site("SITE_WEBSITE"),
+            "location": _location_payload(
+                finale.address or _site("SITE_ADDRESS"),
+                finale.working_hours or "",
+            ),
             "seo_title": finale.seo_title,
             "seo_description": finale.seo_description,
         }

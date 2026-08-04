@@ -20,7 +20,7 @@
         class="site-nav-primary hidden items-center lg:flex"
         aria-label="منوی اصلی"
       >
-        <a href="{% url 'core:home' %}#services" class="nav-link">خدمات</a>
+        <a href="{% url 'catalog:list' %}" class="nav-link">خدمات</a>
         <a href="{% url 'core:home' %}#gallery" class="nav-link">گالری</a>
         <a href="{% url 'magazine:hub' %}" class="nav-link">مجله</a>
         <a href="{% url 'consultations:hub' %}" class="nav-link">مشاوره</a>
@@ -67,7 +67,7 @@
     <div class="mobile-nav-inner">
       <p class="mobile-nav-label">منو</p>
       <div class="mobile-nav-links">
-        <a href="{% url 'core:home' %}#services" class="nav-link">خدمات</a>
+        <a href="{% url 'catalog:list' %}" class="nav-link">خدمات</a>
         <a href="{% url 'core:home' %}#gallery" class="nav-link">گالری</a>
         <a href="{% url 'magazine:hub' %}" class="nav-link">مجله</a>
         <a href="{% url 'consultations:hub' %}" class="nav-link">مشاوره</a>

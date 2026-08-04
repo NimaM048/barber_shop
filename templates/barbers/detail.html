@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block title %}{{ barber.display_name }} | {{ SITE_NAME }}{% endblock %}
-
-{% block meta_description %}{{ barber.display_name }} — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ barber.display_name }} — آرایشگر {{ SITE_NAME }} در اصفهان{% endblock %}
+{% block og_title %}{{ barber.display_name }} | {{ SITE_NAME }}{% endblock %}
+{% block og_description %}{{ barber.display_name }} — آرایشگر {{ SITE_NAME }} در اصفهان{% endblock %}
 
 {% block content %}
 <section class="page-stage barber-detail-stage" aria-labelledby="barber-detail-heading">

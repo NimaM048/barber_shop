@@ -72,6 +72,19 @@ class ConsultationHubPageAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        (
+            "پرسش‌های پرتکرار صفحهٔ خانه",
+            {
+                "description": "سؤال‌ها و پاسخ‌ها از بخش «پرسش‌های متداول مشاوره» مدیریت می‌شوند.",
+                "fields": (
+                    "home_faq_enabled",
+                    "home_faq_label",
+                    "home_faq_title",
+                    "home_faq_description",
+                    "home_faq_link_label",
+                ),
+            },
+        ),
     )
 
 

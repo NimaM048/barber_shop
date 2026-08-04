@@ -1,0 +1,178 @@
+{% load static %}
+{% with loc=footer_finale.location %}
+{% if loc.show %}
+<section
+  class="ff-act ff-act-locate"
+  aria-labelledby="ff-locate-heading"
+  data-location-root
+  data-lat="{{ loc.lat }}"
+  data-lng="{{ loc.lng }}"
+  data-zoom="{{ loc.zoom }}"
+  data-marker-label="{{ loc.marker_label }}"
+  data-address="{{ loc.address }}"
+  data-maps-url="{{ loc.maps_url }}"
+  data-directions-url="{{ loc.directions_url }}"
+  data-embed-url="{{ loc.embed_url }}"
+  data-leaflet-css="{% static 'vendor/leaflet/leaflet.css' %}"
+  data-leaflet-js="{% static 'vendor/leaflet/leaflet.js' %}"
+>
+  <div class="ff-locate" data-ff-reveal>
+    <div class="ff-locate-info">
+      <div class="ff-locate-glow" aria-hidden="true"></div>
+
+      <header class="ff-locate-head">
+        <div class="ff-locate-meta-top">
+          <p class="ff-locate-eyebrow section-label">{{ loc.eyebrow }}</p>
+          {% if loc.badge %}
+          <p class="ff-locate-badge">{{ loc.badge }}</p>
+          {% endif %}
+        </div>
+
+        <h2 id="ff-locate-heading" class="ff-locate-title" lang="en" dir="ltr">
+          <span class="ff-locate-word ff-locate-word--find">{{ loc.title_find }}</span>
+          <span class="ff-locate-word ff-locate-word--us">{{ loc.title_us }}</span>
+        </h2>
+        {% if loc.title_fa %}
+        <p class="sr-only">{{ loc.title_fa }}</p>
+        {% endif %}
+
+        {% if loc.lede %}
+        <p class="ff-locate-lede">{{ loc.lede }}</p>
+        {% endif %}
+      </header>
+
+      <div class="ff-locate-rule" aria-hidden="true"><span></span></div>
+
+      <div class="ff-locate-body">
+        <div class="ff-locate-address" role="group" aria-label="آدرس سالن">
+          <address class="ff-locate-line">
+            {% if loc.city %}
+            <span class="ff-locate-city">{{ loc.city }}</span>
+            <span class="ff-locate-sep ff-locate-sep--em" aria-hidden="true">—</span>
+            {% endif %}
+            {% for part in loc.address_parts %}
+            {% if not forloop.first %}
+            <span class="ff-locate-sep" aria-hidden="true">·</span>
+            {% endif %}
+            <span class="ff-locate-part">{{ part.text }}</span>
+            {% empty %}
+            <span class="ff-locate-part">{{ loc.address }}</span>
+            {% endfor %}
+          </address>
+        </div>
+
+        <dl class="ff-locate-facts">
+          {% if loc.hours %}
+          <div class="ff-locate-fact">
+            <dt>{{ loc.hours_label }}</dt>
+            <dd>{{ loc.hours }}</dd>
+          </div>
+          {% endif %}
+          {% if loc.availability %}
+          <div class="ff-locate-fact">
+            <dt>{{ loc.availability_label }}</dt>
+            <dd>{{ loc.availability }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <div class="ff-locate-actions" role="group" aria-label="اقدام‌های موقعیت">
+        <a
+          href="{{ loc.directions_url }}"
+          class="btn-draw ff-locate-btn ff-locate-btn--primary"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ loc.cta_directions }}"
+        >
+          <span class="btn-draw-border" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+            </svg>
+          </span>
+          <span class="btn-draw-label relative z-10">{{ loc.cta_directions }}</span>
+          <span class="btn-draw-label relative z-10" aria-hidden="true">↗</span>
+        </a>
+
+        <a
+          href="{{ loc.maps_url }}"
+          class="btn-court ff-locate-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ loc.cta_maps }}"
+        >
+          {{ loc.cta_maps }}
+        </a>
+
+        {% if loc.gbp_url %}
+        <a
+          href="{{ loc.gbp_url }}"
+          class="btn-quiet ff-locate-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ loc.cta_gbp }}"
+        >
+          {{ loc.cta_gbp }}
+        </a>
+        {% endif %}
+
+        <button
+          type="button"
+          class="btn-quiet ff-locate-copy-btn"
+          data-location-copy
+          aria-label="{{ loc.cta_copy }}"
+        >
+          <span data-location-copy-label>{{ loc.cta_copy }}</span>
+        </button>
+      </div>
+
+      <p class="ff-locate-live" data-location-live aria-live="polite"></p>
+    </div>
+
+    <div class="ff-locate-media">
+      <figure
+        class="ff-locate-frame"
+        data-location-frame
+        aria-label="نقشه موقعیت سالن {{ loc.marker_label }}"
+      >
+        <div class="ff-locate-skeleton" data-location-skeleton aria-hidden="true">
+          <span class="ff-locate-skeleton-grid"></span>
+          <span class="ff-locate-skeleton-pulse"></span>
+          <span class="ff-locate-skeleton-pin"></span>
+        </div>
+
+        <div
+          class="ff-locate-map"
+          data-location-map
+          role="application"
+          aria-label="نقشه تعاملی موقعیت سالن"
+          tabindex="0"
+        ></div>
+
+        <noscript>
+          <iframe
+            class="ff-locate-embed"
+            title="نقشه موقعیت {{ loc.marker_label }}"
+            src="{{ loc.embed_url }}"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </noscript>
+
+        <a
+          class="ff-locate-open"
+          href="{{ loc.maps_url }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ loc.cta_maps }}"
+        >
+          <span>نقشه</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </figure>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endwith %}

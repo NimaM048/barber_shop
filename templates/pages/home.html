@@ -1,13 +1,23 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
+
+{% block structured_data %}
+{% if schema_json %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endif %}
+{% endblock %}
 
 {% block body_class %} is-home{% endblock %}
 
 {% block extra_head %}
-<link rel="preload" as="image" href="{% static 'images/brand/logo-signature.webp' %}" type="image/webp" fetchpriority="high" imagesrcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w" imagesizes="(max-width: 640px) 88vw, min(88vw, 560px)">
-<link rel="preload" as="image" href="{% static 'images/brand/hero-cinematic.webp' %}" type="image/webp" fetchpriority="high" imagesizes="100vw">
+<link rel="preload" as="image" href="{% static 'images/brand/hero-cinematic-frame.webp' %}" type="image/webp" fetchpriority="high" imagesrcset="{% static 'images/brand/hero-cinematic-frame-sm.webp' %} 768w, {% static 'images/brand/hero-cinematic-frame.webp' %} 2560w" imagesizes="100vw">
+<link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
 {% endblock %}
 
 {% block content %}
@@ -17,23 +27,23 @@
   class="hero-stage relative isolate flex min-h-[min(78svh,40rem)] items-end overflow-hidden bg-court-950"
   data-hero
   data-hero-stage
-  aria-label="{{ SITE_NAME }}"
+  aria-labelledby="hero-heading"
 >
-  {# Full-bleed photographic plane #}
+  {# Full-bleed photographic plane — same cinematic shot, framed for wide hero #}
   <div class="hero-media" aria-hidden="true" data-hero-media>
     <picture>
       <source
         media="(max-width: 768px)"
-        srcset="{% static 'images/brand/hero-cinematic-sm.webp' %}"
+        srcset="{% static 'images/brand/hero-cinematic-frame-sm.webp' %}"
         type="image/webp"
       >
-      <source srcset="{% static 'images/brand/hero-cinematic.webp' %}" type="image/webp">
+      <source srcset="{% static 'images/brand/hero-cinematic-frame.webp' %}" type="image/webp">
       <img
         class="hero-media-img"
-        src="{% static 'images/brand/hero-cinematic.jpg' %}"
+        src="{% static 'images/brand/hero-cinematic-frame.jpg' %}"
         alt=""
-        width="1920"
-        height="1080"
+        width="2560"
+        height="1440"
         fetchpriority="high"
         decoding="async"
         data-hero-media-img
@@ -49,7 +59,7 @@
 
   {# Brand lockup — bottom, inline-start (RTL asymmetric) #}
   <div class="hero-lockup" data-hero-lockup>
-    <h1 class="sr-only">{{ SITE_NAME }}</h1>
+    <p class="hero-eyebrow">استودیوی تخصصی داماد، پوست و مو در اصفهان</p>
     <div class="hero-logo-stage relative" data-parallax-target="logo">
       <svg
         class="hero-logo-svg"
@@ -87,20 +97,26 @@
       <img
         src="{% static 'images/brand/logo-signature.webp' %}"
         srcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w"
-        sizes="(max-width: 640px) 72vw, min(72vw, 26rem)"
+        sizes="(max-width: 640px) 78vw, min(56vw, 21rem)"
         alt="{{ SITE_NAME }}"
         class="hero-logo-img"
         data-hero-logo-img
         width="1600"
         height="982"
-        fetchpriority="high"
         decoding="async"
       >
     </div>
 
+    <h1 id="hero-heading" class="hero-title">تجربهٔ اختصاصیِ داماد، پوست و مو</h1>
     <p class="hero-tagline" data-hero-tagline>
-      {{ SITE_SUBTITLE }}
+      <span class="hero-tagline-signature">{{ SITE_SUBTITLE }}</span>
+      <span>از مشاوره تا اجرای نهایی؛ هر انتخاب با زمان، هدف و استایل شما هماهنگ می‌شود.</span>
     </p>
+    <ul class="hero-assurances" aria-label="ویژگی‌های تجربه">
+      <li>مشاوره پیش از مراجعه</li>
+      <li>انتخاب سرویس روشن</li>
+      <li>رزرو آنلاین</li>
+    </ul>
 
     <div class="hero-cta" data-hero-cta>
       <a
@@ -120,6 +136,35 @@
         مشاهده خدمات
       </a>
     </div>
+    <a href="{% url 'consultations:hub' %}" class="hero-consultation-link">
+      قبل از رزرو، مسیر مشاوره را ببینید <span aria-hidden="true">←</span>
+    </a>
+  </div>
+</section>
+
+<section class="home-signal" aria-labelledby="home-signal-heading">
+  <div class="home-signal-shell" data-reveal>
+    <div class="home-signal-intro">
+      <p class="section-label">شروع آگاهانه</p>
+      <h2 id="home-signal-heading">برای انتخابی که به نتیجه‌اش مطمئن هستید.</h2>
+    </div>
+    <ul class="home-signal-list">
+      <li>
+        <span class="home-signal-index" aria-hidden="true">۰۱</span>
+        <a href="#services">خدمت مناسب را پیدا کنید <span aria-hidden="true">←</span></a>
+        <p>جزئیات هر سرویس را پیش از شروع ببینید.</p>
+      </li>
+      <li>
+        <span class="home-signal-index" aria-hidden="true">۰۲</span>
+        <a href="{% url 'consultations:hub' %}">با آمادگی مراجعه کنید <span aria-hidden="true">←</span></a>
+        <p>راهنمای تخصصی و پاسخ پرسش‌های مهم پیش از مراجعه.</p>
+      </li>
+      <li>
+        <span class="home-signal-index" aria-hidden="true">۰۳</span>
+        <a href="{% url 'appointments:create' %}">زمان خودتان را رزرو کنید <span aria-hidden="true">←</span></a>
+        <p>مسیر رزرو آنلاین، ساده و مرحله‌به‌مرحله است.</p>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -131,9 +176,9 @@
   <div class="svc-shell">
     <header class="svc-header" data-reveal>
       <div class="svc-header-copy">
-        <p class="section-label">منتخب</p>
+        <p class="section-label">منتخب اصفهان</p>
         <h2 id="services-heading" class="svc-heading">خدمات</h2>
-        <p class="svc-lede">تخصص‌های منتخب — از پروتکل پوست تا استایل داماد.</p>
+        <p class="svc-lede">تخصص‌های داماد، پوست و مو در استودیوی {{ SITE_NAME }} — از پروتکل پوست تا استایل داماد.</p>
       </div>
       <a href="{% url 'catalog:list' %}" class="svc-header-action">
         <span>کاتالوگ کامل</span>
@@ -154,7 +199,7 @@
                 alt="{{ service.name }}"
                 width="160"
                 height="200"
-                {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                loading="lazy"
                 decoding="async"
               >
             </picture>
@@ -205,8 +250,49 @@
 
 {% include "components/gallery.html" %}
 
+{% if home_faqs and home_faq_section.enabled %}
+<section class="home-faq" aria-labelledby="home-faq-heading">
+  <div class="home-faq-shell" data-reveal>
+    <header class="home-section-head home-section-head--split">
+      <div>
+        <p class="section-label">{{ home_faq_section.label }}</p>
+        <h2 id="home-faq-heading">{{ home_faq_section.title }}</h2>
+      </div>
+      <p>{{ home_faq_section.description }}</p>
+    </header>
+    <div class="home-faq-list">
+      {% for faq in home_faqs %}
+      <details class="home-faq-item">
+        <summary>
+          <span>{{ faq.question }}</span>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3.25v9.5M3.25 8h9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </summary>
+        <div class="home-faq-answer">
+          {% if faq.category %}<p class="home-faq-category">{{ faq.category }}</p>{% endif %}
+          <p>{{ faq.answer|linebreaksbr }}</p>
+        </div>
+      </details>
+      {% endfor %}
+    </div>
+    <a href="{% url 'consultations:hub' %}" class="home-text-link">{{ home_faq_section.link_label }} <span aria-hidden="true">←</span></a>
+  </div>
+</section>
+{% endif %}
+
+
+
+{% endblock %}
+
+{% block floating_actions %}
+<a href="{% url 'appointments:create' %}" class="home-mobile-booking" data-home-mobile-booking aria-label="شروع رزرو نوبت">
+  <span>رزرو نوبت</span>
+  <span aria-hidden="true">←</span>
+</a>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 <script src="{% static 'js/gallery.js' %}" defer></script>
 {% endblock %}
