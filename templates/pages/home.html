@@ -59,7 +59,6 @@
 
   {# Brand lockup — bottom, inline-start (RTL asymmetric) #}
   <div class="hero-lockup" data-hero-lockup>
-    <p class="hero-eyebrow">استودیوی تخصصی داماد، پوست و مو در اصفهان</p>
     <div class="hero-logo-stage relative" data-parallax-target="logo">
       <svg
         class="hero-logo-svg"
@@ -97,7 +96,7 @@
       <img
         src="{% static 'images/brand/logo-signature.webp' %}"
         srcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w"
-        sizes="(max-width: 640px) 78vw, min(56vw, 21rem)"
+        sizes="(max-width: 719px) 74vw, min(66vw, 30rem)"
         alt="{{ SITE_NAME }}"
         class="hero-logo-img"
         data-hero-logo-img
@@ -108,16 +107,6 @@
     </div>
 
     <h1 id="hero-heading" class="hero-title">تجربهٔ اختصاصیِ داماد، پوست و مو</h1>
-    <p class="hero-tagline" data-hero-tagline>
-      <span class="hero-tagline-signature">{{ SITE_SUBTITLE }}</span>
-      <span>از مشاوره تا اجرای نهایی؛ هر انتخاب با زمان، هدف و استایل شما هماهنگ می‌شود.</span>
-    </p>
-    <ul class="hero-assurances" aria-label="ویژگی‌های تجربه">
-      <li>مشاوره پیش از مراجعه</li>
-      <li>انتخاب سرویس روشن</li>
-      <li>رزرو آنلاین</li>
-    </ul>
-
     <div class="hero-cta" data-hero-cta>
       <a
         href="{% url 'appointments:create' %}"
@@ -132,13 +121,7 @@
         <span class="btn-draw-label relative z-10">رزرو نوبت</span>
         <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
       </a>
-      <a href="#services" class="btn-quiet" data-hero-btn>
-        مشاهده خدمات
-      </a>
     </div>
-    <a href="{% url 'consultations:hub' %}" class="hero-consultation-link">
-      قبل از رزرو، مسیر مشاوره را ببینید <span aria-hidden="true">←</span>
-    </a>
   </div>
 </section>
 

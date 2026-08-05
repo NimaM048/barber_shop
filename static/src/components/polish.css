@@ -3305,81 +3305,30 @@ html.is-page-entering .site-shell {
   max-width: var(--container-content);
 }
 
-.is-home .hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 0 0 0.9rem;
-  color: rgba(251, 248, 242, 0.76);
-  font-size: clamp(0.68rem, 1vw, 0.78rem);
-  font-weight: 500;
-  letter-spacing: 0.13em;
+.is-home .hero-logo-stage {
+  width: min(66vw, 30rem);
 }
 
-.is-home .hero-eyebrow::before {
-  content: "";
-  inline-size: 1.85rem;
-  block-size: 1px;
-  background: var(--color-brass);
+.is-home .hero-logo-svg,
+.is-home .hero-logo-img {
+  max-height: min(31svh, 13rem);
 }
 
 .is-home .hero-title {
-  max-width: 19ch;
-  margin: clamp(0.45rem, 1.4vw, 0.85rem) 0 0;
+  max-width: 17ch;
+  margin: clamp(1rem, 2vw, 1.35rem) 0 0;
   color: var(--color-ivory);
   font-family: var(--font-body);
-  font-size: clamp(1.7rem, 3.2vw, 3.25rem);
+  font-size: clamp(1.55rem, 2.7vw, 2.75rem);
   font-weight: 500;
-  line-height: 1.32;
+  line-height: 1.4;
   letter-spacing: -0.035em;
   text-wrap: balance;
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.22);
 }
 
-.is-home .hero-tagline {
-  display: grid;
-  gap: 0.25rem;
-  max-width: 49ch;
-  margin-top: 0.8rem;
-  color: rgba(251, 248, 242, 0.82);
-  font-size: clamp(0.9rem, 1.4vw, 1.04rem);
-  line-height: 1.85;
-}
-
-.is-home .hero-tagline-signature {
-  color: rgba(218, 190, 133, 0.98);
-  font-weight: 500;
-}
-
-.is-home .hero-assurances {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.85rem;
-  margin: 1rem 0 0;
-  padding: 0;
-  color: rgba(251, 248, 242, 0.68);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.035em;
-  list-style: none;
-}
-
-.is-home .hero-assurances li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.is-home .hero-assurances li:not(:last-child)::after {
-  content: "";
-  inline-size: 0.22rem;
-  block-size: 0.22rem;
-  border-radius: 999px;
-  background: rgba(201, 170, 114, 0.82);
-}
-
 .is-home .hero-cta {
-  margin-top: 1.35rem;
+  margin-top: clamp(1.35rem, 2.5vw, 1.8rem);
 }
 
 .is-home .hero-consultation-link,
@@ -3651,10 +3600,11 @@ html.is-page-entering .site-shell {
 }
 
 .is-home .home-faq {
-  border-block: 1px solid rgba(251, 248, 242, 0.1);
+  border-top: 1px solid rgba(251, 248, 242, 0.1);
   background:
-    radial-gradient(55% 80% at 0% 100%, rgba(141, 168, 157, 0.1), transparent 65%),
-    var(--color-court-900);
+    radial-gradient(42% 72% at 100% 0%, rgba(201, 170, 114, 0.07), transparent 70%),
+    linear-gradient(180deg, rgba(10, 33, 28, 0.28), transparent 28%),
+    var(--color-court-950);
 }
 
 .is-home .home-faq-list {
@@ -3683,6 +3633,12 @@ html.is-page-entering .site-shell {
 
 .is-home .home-faq-item {
   border-bottom: 1px solid rgba(251, 248, 242, 0.13);
+  transition: background-color var(--duration-fast) ease;
+}
+
+.is-home .home-faq-item:hover,
+.is-home .home-faq-item[open] {
+  background: rgba(251, 248, 242, 0.025);
 }
 
 .is-home .home-faq-item summary {
@@ -3698,6 +3654,13 @@ html.is-page-entering .site-shell {
   font-weight: 500;
   line-height: 1.75;
   list-style: none;
+  transition: color var(--duration-fast) ease, padding-inline var(--duration-fast) var(--ease-out-expo);
+}
+
+.is-home .home-faq-item:hover summary,
+.is-home .home-faq-item[open] summary {
+  padding-inline: 0.75rem;
+  color: rgba(251, 248, 242, 0.98);
 }
 
 .is-home .home-faq-item summary::-webkit-details-marker {
@@ -3723,7 +3686,7 @@ html.is-page-entering .site-shell {
 
 .is-home .home-faq-answer {
   max-width: 61ch;
-  padding: 0 0 1.45rem;
+  padding: 0 0.75rem 1.45rem;
 }
 
 .is-home .home-faq-answer > p:last-child {
@@ -3883,27 +3846,36 @@ html.is-page-entering .site-shell {
 
 @media (max-width: 719px) {
   .is-home .hero-stage {
-    min-height: max(40rem, 86svh) !important;
+    min-height: max(38rem, 100svh) !important;
+  }
+
+  .is-home .hero-media-img {
+    object-position: 66% 38%;
+  }
+
+  .is-home .hero-media-veil {
+    background:
+      linear-gradient(180deg, rgba(6, 23, 19, 0.04), rgba(6, 23, 19, 0.22) 38%, rgba(6, 23, 19, 0.95) 78%, var(--color-court-950)),
+      linear-gradient(90deg, rgba(6, 23, 19, 0.12), rgba(6, 23, 19, 0.56));
+  }
+
+  .is-home .hero-lockup {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
   }
 
   .is-home .hero-logo-stage {
-    width: min(72vw, 18rem);
+    width: min(74vw, 21rem);
+  }
+
+  .is-home .hero-logo-svg,
+  .is-home .hero-logo-img {
+    max-height: min(24svh, 11.5rem);
   }
 
   .is-home .hero-title {
-    max-width: 15ch;
-    font-size: clamp(1.6rem, 7.2vw, 2.05rem);
-  }
-
-  .is-home .hero-tagline {
-    max-width: 35ch;
-    font-size: 0.88rem;
-    line-height: 1.8;
-  }
-
-  .is-home .hero-assurances {
-    gap: 0.45rem 0.65rem;
-    font-size: 0.66rem;
+    max-width: 13ch;
+    font-size: clamp(1.55rem, 7.3vw, 2.1rem);
+    line-height: 1.45;
   }
 
   .is-home .hero-cta {
