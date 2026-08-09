@@ -70,7 +70,7 @@
         frame.classList.add("is-loaded");
         return;
       }
-      const hasLqip = !!frame.querySelector(".mag-media-lqip");
+      const hasLqip = !!frame.querySelector(".mag-media-lqip, .mag-article-plate-lqip, .mag-cover-lqip");
       const mark = () => {
         frame.classList.remove("is-loading");
         frame.classList.add("is-loaded");

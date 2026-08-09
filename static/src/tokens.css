@@ -13,9 +13,9 @@
   --color-soft: rgba(251, 248, 242, 0.56);
   --color-hairline: rgba(251, 248, 242, 0.16);
 
-  /* Fonts — Cormorant = Latin only; Vazirmatn = Persian + UI */
+  /* Fonts — Cormorant = Latin accents; Estedad = Persian + UI */
   --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-body: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Estedad", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 
   /* Type roles */
   --text-overline: 0.72rem;

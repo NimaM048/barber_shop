@@ -20,7 +20,7 @@
 
 {% block content %}
 <section
-  class="consult-stage page-stage relative overflow-hidden"
+  class="consult-stage relative overflow-hidden"
   data-consult-hub
   data-api-base="{% url 'consultations:api-categories' %}"
   data-static="{% get_static_prefix %}"
@@ -38,10 +38,6 @@
         <h1 class="type-chapter" data-hub-title>مشاوره قبل از مراجعه</h1>
         <p class="consult-hub-subtitle type-lede" data-hub-subtitle>
           راهنمای VIP، داماد و پوست و مو در {{ SITE_NAME }} — قبل از رزرو نوبت در اصفهان بخوانید تا نتیجه بهتری بگیرید.
-        </p>
-        <p class="consult-hub-note">
-          <span aria-hidden="true"></span>
-          راهنمایی کوتاه، کاربردی و متناسب با انتخاب شما
         </p>
       </div>
       <a href="{% url 'appointments:create' %}" class="consult-hub-header-action">

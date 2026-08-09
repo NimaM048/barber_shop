@@ -48,18 +48,18 @@
   <div class="mag-read-progress" aria-hidden="true"><span data-read-progress></span></div>
 
   <article class="relative">
-    {# Typography-first opening — no forced full-bleed crop #}
-    <nav class="mag-breadcrumb mx-auto max-w-[720px] px-5 pt-20 sm:px-8 sm:pt-[5.5rem]" aria-label="مسیر صفحه">
-      <ol class="flex flex-wrap items-center gap-2 text-[0.7rem] tracking-wide text-ivory/40">
-        <li><a href="{% url 'core:home' %}" class="transition hover:text-ivory">خانه</a></li>
+    {# Editorial opening — cover sits under meta #}
+    <nav class="mag-breadcrumb mag-shell" aria-label="مسیر صفحه">
+      <ol>
+        <li><a href="{% url 'core:home' %}">خانه</a></li>
         <li aria-hidden="true">/</li>
-        <li><a href="{% url 'magazine:hub' %}" class="transition hover:text-ivory">مجله</a></li>
+        <li><a href="{% url 'magazine:hub' %}">مجله</a></li>
         <li aria-hidden="true">/</li>
-        <li><a href="{% url 'magazine:hub' %}?category={{ article.category.slug }}" class="transition hover:text-ivory">{{ article.category.title }}</a></li>
+        <li><a href="{% url 'magazine:hub' %}?category={{ article.category.slug }}">{{ article.category.title }}</a></li>
       </ol>
     </nav>
 
-    <div class="mag-article-layout mx-auto max-w-[1200px] px-5 pb-16 pt-6 sm:px-8 lg:px-12">
+    <div class="mag-article-layout mag-shell">
       <div class="mag-article-grid">
         {# Sticky TOC #}
         <aside class="mag-toc-col" data-toc-col {% if not article.toc %}hidden{% endif %}>
@@ -108,43 +108,8 @@
                 {% endif %}
               </div>
             </div>
-
-            {# Quiet actions — primary only; rest in disclosure #}
-            <div class="mag-actions">
-              <button type="button" class="mag-action-btn" data-like-btn aria-pressed="{{ engagement.liked|yesno:'true,false' }}">
-                <span data-like-label>{% if engagement.liked %}پسندیده‌اید{% else %}پسندیدن{% endif %}</span>
-              </button>
-              <button type="button" class="mag-action-btn" data-bookmark-btn aria-pressed="{{ engagement.bookmarked|yesno:'true,false' }}">
-                <span data-bookmark-label>{% if engagement.bookmarked %}ذخیره شد{% else %}ذخیره{% endif %}</span>
-              </button>
-              <details class="mag-more">
-                <summary class="mag-action-btn">بیشتر</summary>
-                <div class="mag-more-panel">
-                  <button type="button" class="mag-action-btn" data-print-btn>چاپ</button>
-                  {% if article.pdf_url %}
-                  <a href="{{ article.pdf_url }}" class="mag-action-btn" download>دانلود PDF</a>
-                  {% endif %}
-                  <div class="mag-share" data-share>
-                    <span class="mag-share-label">اشتراک</span>
-                    <a href="{{ share.telegram }}" target="_blank" rel="noopener noreferrer" data-share-ch="telegram">تلگرام</a>
-                    <a href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer" data-share-ch="whatsapp">واتساپ</a>
-                    <a href="{{ share.twitter }}" target="_blank" rel="noopener noreferrer" data-share-ch="twitter">ایکس</a>
-                    <button type="button" data-copy-link data-url="{{ share.url }}">کپی لینک</button>
-                  </div>
-                </div>
-              </details>
-            </div>
-
-            {% if article.tags %}
-            <div class="mag-article-tags">
-              {% for tag in article.tags %}
-              <a href="{% url 'magazine:hub' %}?tag={{ tag.slug }}" class="mag-tag">{{ tag.title }}</a>
-              {% endfor %}
-            </div>
-            {% endif %}
           </header>
 
-          {# Optional editorial plate — portrait-respecting, not full-bleed #}
           {% if article.cover %}
           <figure class="mag-article-plate" data-lqip-frame>
             {% if article.cover_lqip %}
@@ -153,7 +118,7 @@
               alt=""
               class="mag-article-plate-lqip"
               width="24"
-              height="30"
+              height="16"
               aria-hidden="true"
               decoding="async"
             >
@@ -164,8 +129,8 @@
                 src="{{ article.cover }}"
                 alt="{{ article.cover_alt }}"
                 class="mag-article-plate-img"
-                width="960"
-                height="1200"
+                width="1200"
+                height="750"
                 fetchpriority="high"
                 decoding="async"
                 data-lqip-full
@@ -175,6 +140,39 @@
             <figcaption class="mag-article-plate-cap">{{ article.cover_alt }}</figcaption>
             {% endif %}
           </figure>
+          {% endif %}
+
+          <div class="mag-actions">
+            <button type="button" class="mag-action-btn" data-like-btn aria-pressed="{{ engagement.liked|yesno:'true,false' }}">
+              <span data-like-label>{% if engagement.liked %}پسندیده‌اید{% else %}پسندیدن{% endif %}</span>
+            </button>
+            <button type="button" class="mag-action-btn" data-bookmark-btn aria-pressed="{{ engagement.bookmarked|yesno:'true,false' }}">
+              <span data-bookmark-label>{% if engagement.bookmarked %}ذخیره شد{% else %}ذخیره{% endif %}</span>
+            </button>
+            <details class="mag-more">
+              <summary class="mag-action-btn">بیشتر</summary>
+              <div class="mag-more-panel">
+                <button type="button" class="mag-action-btn" data-print-btn>چاپ</button>
+                {% if article.pdf_url %}
+                <a href="{{ article.pdf_url }}" class="mag-action-btn" download>دانلود PDF</a>
+                {% endif %}
+                <div class="mag-share" data-share>
+                  <span class="mag-share-label">اشتراک</span>
+                  <a href="{{ share.telegram }}" target="_blank" rel="noopener noreferrer" data-share-ch="telegram">تلگرام</a>
+                  <a href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer" data-share-ch="whatsapp">واتساپ</a>
+                  <a href="{{ share.twitter }}" target="_blank" rel="noopener noreferrer" data-share-ch="twitter">ایکس</a>
+                  <button type="button" data-copy-link data-url="{{ share.url }}">کپی لینک</button>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          {% if article.tags %}
+          <div class="mag-article-tags">
+            {% for tag in article.tags %}
+            <a href="{% url 'magazine:hub' %}?tag={{ tag.slug }}" class="mag-tag">{{ tag.title }}</a>
+            {% endfor %}
+          </div>
           {% endif %}
 
           {% if article.video_url %}
@@ -254,31 +252,35 @@
 
   {# Related #}
   {% if related %}
-  <section class="mag-related border-t border-ivory/10 py-10 sm:py-12">
-    <div class="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
-      <header class="mag-section-head">
+  <section class="mag-related" aria-labelledby="mag-related-title">
+    <div class="mag-shell">
+      <header class="mag-head">
         <p class="section-label">ادامه مطالعه</p>
-        <h2 class="mag-section-title">مقالات مرتبط</h2>
+        <h2 id="mag-related-title" class="mag-heading mag-heading-sm">مقالات مرتبط</h2>
       </header>
-      <div class="mag-related-grid mt-10">
+      <ul class="mag-desk-list mag-related-list">
         {% for item in related %}
-        <a href="{{ item.url }}" class="mag-card mag-card-dark">
-          {% if item.cover %}
-          <div class="mag-card-media" data-lqip-frame>
-            {% if item.cover_lqip %}
-            <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="10" aria-hidden="true" decoding="async">
-            {% endif %}
-            <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" loading="lazy" decoding="async" data-lqip-full>
-          </div>
-          {% endif %}
-          <div class="mag-card-body">
-            <p class="mag-card-cat">{{ item.category.title }}</p>
-            <h3 class="mag-card-title">{{ item.title }}</h3>
-            <p class="mag-card-meta">{{ item.reading_minutes_fa }} دقیقه · {{ item.published_at_fa }}</p>
-          </div>
-        </a>
+        <li>
+          <a href="{{ item.url }}" class="mag-desk-row">
+            <div class="mag-desk-thumb" data-lqip-frame>
+              {% if item.cover_lqip %}
+              <img src="{{ item.cover_lqip }}" alt="" class="mag-media-lqip" width="16" height="20" aria-hidden="true" decoding="async">
+              {% endif %}
+              {% if item.cover %}
+              <img src="{{ item.cover }}" alt="{{ item.cover_alt }}" class="mag-media-img" width="160" height="200" loading="lazy" decoding="async" data-lqip-full>
+              {% else %}
+              <div class="mag-media-empty" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+            <div class="mag-desk-copy">
+              <p class="mag-entry-meta">{{ item.category.title }} · {{ item.reading_minutes_fa }} دقیقه</p>
+              <h3 class="mag-desk-title">{{ item.title }}</h3>
+            </div>
+            <span class="mag-desk-action" aria-hidden="true">←</span>
+          </a>
+        </li>
         {% endfor %}
-      </div>
+      </ul>
     </div>
   </section>
   {% endif %}

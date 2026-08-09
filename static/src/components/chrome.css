@@ -151,6 +151,14 @@ html {
 }
 
 /* ── Page shell transitions ── */
+/* Layout chrome wrapper — never inherit section shell padding/max-width */
+[data-site-shell].site-shell {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+  padding-block: 0;
+}
+
 .site-shell {
   transform-origin: center top;
 }

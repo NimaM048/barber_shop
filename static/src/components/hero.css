@@ -15,6 +15,13 @@
 
     --hero-glow-opacity: 0;
 
+    /* Panoramic barbershop frame — tuned for barber (left) + client (right) */
+    --hero-focus-x: 40%;
+    --hero-focus-y: 18%;
+
+  /* 16:9 floor up to 42rem — avoids crushing heads on wide desktops */
+    min-height: clamp(28rem, min(56.25vw, 42rem), min(82svh, 44rem));
+
     perspective: none;
 
   }
@@ -48,13 +55,50 @@
     will-change: auto;
   }
 
-  .hero-media-img {
+  .hero-media picture {
+    display: block;
     width: 100%;
     height: 100%;
+  }
+
+  .hero-media-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
     object-fit: cover;
-    object-position: 50% 45%;
+    object-position: var(--hero-focus-x) var(--hero-focus-y);
     transform: none;
     filter: saturate(0.82) contrast(1.05) brightness(0.72);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-stage {
+      --hero-focus-x: 36%;
+      --hero-focus-y: 14%;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .hero-stage {
+      --hero-focus-x: 34%;
+      --hero-focus-y: 12%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero-stage {
+      --hero-focus-x: 56%;
+      --hero-focus-y: 14%;
+      min-height: max(36rem, 88svh);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .hero-stage {
+      --hero-focus-x: 62%;
+      --hero-focus-y: 16%;
+    }
   }
 
   .hero-media-veil {
