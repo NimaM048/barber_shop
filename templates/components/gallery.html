@@ -4,13 +4,13 @@
   id="gallery"
   class="gallery-stage relative overflow-hidden bg-court-950"
   data-gallery-root
-  aria-label="گالری آثار"
+  aria-labelledby="gallery-heading"
 >
   <div class="site-shell site-shell--flush-y gallery-intro">
     <header class="gallery-header" data-reveal>
       <div class="gallery-header-copy">
         <p class="section-label">نمونه کار</p>
-        <h2 class="gallery-heading">گالری</h2>
+        <h2 id="gallery-heading" class="gallery-heading">گالری</h2>
         <p class="gallery-lede">منتخب آثار — قبل و بعد، استایل و پروتکل‌های تخصصی.</p>
       </div>
     </header>
@@ -19,7 +19,7 @@
     <div
       class="gallery-filters"
       data-gallery-filters
-      role="tablist"
+      role="group"
       aria-label="فیلتر دسته‌بندی گالری"
       data-reveal
     >
@@ -27,14 +27,15 @@
       <button
         type="button"
         class="gallery-filter{% if cat.slug == 'all' %} is-active{% endif %}"
-        role="tab"
-        aria-selected="{% if cat.slug == 'all' %}true{% else %}false{% endif %}"
+        aria-pressed="{% if cat.slug == 'all' %}true{% else %}false{% endif %}"
+        aria-controls="gallery-carousel"
         data-gallery-filter="{{ cat.slug }}"
       >
         <span>{{ cat.title }}</span>
       </button>
       {% endfor %}
     </div>
+    <p class="sr-only" data-gallery-status aria-live="polite"></p>
     {% endif %}
   </div>
 
@@ -43,6 +44,7 @@
     <div class="gallery-fade gallery-fade-end" aria-hidden="true"></div>
 
     <div
+      id="gallery-carousel"
       class="gallery-swiper swiper"
       data-gallery-swiper
       role="region"
@@ -131,7 +133,7 @@
     <button type="button" class="gallery-nav gallery-prev" aria-label="اسلاید قبلی" data-gallery-prev>
       <span aria-hidden="true">→</span>
     </button>
-    <div class="gallery-pagination" data-gallery-pagination role="tablist" aria-label="صفحه‌بندی گالری"></div>
+    <div class="gallery-pagination" data-gallery-pagination aria-label="صفحه‌بندی گالری"></div>
     <button type="button" class="gallery-nav gallery-next" aria-label="اسلاید بعدی" data-gallery-next>
       <span aria-hidden="true">←</span>
     </button>
@@ -145,7 +147,7 @@
     hidden
     role="dialog"
     aria-modal="true"
-    aria-label="نمایشگر تمام‌صفحه گالری"
+    aria-labelledby="gallery-lightbox-title"
   >
     <div class="gallery-lb-backdrop" data-gallery-lb-close aria-hidden="true"></div>
 
@@ -153,7 +155,7 @@
       <header class="gallery-lb-top">
         <div class="gallery-lb-heading">
           <p class="gallery-lb-cat" data-lb-category></p>
-          <h3 class="gallery-lb-title" data-lb-title></h3>
+          <h3 id="gallery-lightbox-title" class="gallery-lb-title" data-lb-title></h3>
         </div>
         <button type="button" class="gallery-lb-close" data-gallery-lb-close aria-label="بستن">
           <span aria-hidden="true">✕</span>
@@ -182,7 +184,7 @@
               <div class="gallery-compare-after">
                 <img data-lb-after alt="" draggable="false">
               </div>
-              <div class="gallery-compare-before" data-lb-before-pane style="width: 50%">
+            <div class="gallery-compare-before" data-lb-before-pane>
                 <img data-lb-before alt="" draggable="false">
               </div>
               <div class="gallery-compare-handle" data-lb-compare-handle role="slider" aria-label="مقایسه قبل و بعد" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
@@ -200,7 +202,7 @@
         </button>
       </div>
 
-      <div class="gallery-lb-thumbs" data-lb-thumbs role="tablist" aria-label="تصاویر پروژه"></div>
+      <div class="gallery-lb-thumbs" data-lb-thumbs role="group" aria-label="تصاویر پروژه"></div>
 
       <aside class="gallery-lb-story" data-lb-story>
         <p class="gallery-lb-desc" data-lb-description></p>

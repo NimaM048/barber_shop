@@ -9,6 +9,7 @@
   <meta name="theme-color" content="#061713">
   <meta name="color-scheme" content="dark">
   <meta name="format-detection" content="telephone=no">
+  <link rel="icon" href="{% static 'images/brand/favicon.svg' %}" type="image/svg+xml">
   <meta name="robots" content="{% block meta_robots %}index,follow{% endblock %}">
   <link rel="canonical" href="{% block canonical %}{{ CANONICAL_URL }}{% endblock %}">
   {% if GOOGLE_SITE_VERIFICATION %}
@@ -31,12 +32,6 @@
 
   {% block structured_data %}{% endblock %}
 
-  <style>
-    html.is-page-entering .site-shell {
-      opacity: 0;
-      transform: translate3d(0, 5px, 0);
-    }
-  </style>
   <script src="{% static 'js/perf.js' %}"></script>
   <script>
     (function () {
@@ -48,7 +43,7 @@
               document.documentElement.classList.add("is-page-ready");
               document.documentElement.classList.remove("is-page-entering");
             }
-          }, 900);
+          }, 350);
         }
       } catch (e) { /* ignore */ }
     })();

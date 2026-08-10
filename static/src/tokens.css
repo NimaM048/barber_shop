@@ -71,7 +71,9 @@
   --radius-none: 0;
   --radius-sm: 0.35rem;
   --radius-md: 0.65rem;
+  --radius-lg: 1rem;
   --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.18);
   --focus-ring: 0 0 0 2px var(--color-court-950), 0 0 0 4px rgba(251, 248, 242, 0.9);
 
   /* Media — focus top so portrait subjects keep heads in frame */

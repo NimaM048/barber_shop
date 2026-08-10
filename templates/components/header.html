@@ -5,13 +5,12 @@
     <div class="site-header-inner mx-auto flex max-w-[var(--shell-max)] items-center justify-between gap-4 px-[var(--space-gutter)] py-2.5 lg:py-3">
       <a href="{% url 'core:home' %}" class="group shrink-0" aria-label="{{ SITE_NAME }}">
         <img
-          src="{% static 'images/brand/logo-signature.webp' %}"
-          srcset="{% static 'images/brand/logo-signature.webp' %} 1600w, {% static 'images/brand/logo-signature-4k.webp' %} 3200w"
+          src="{% static 'images/brand/logo-signature-800.webp' %}"
           sizes="10rem"
           alt="{{ SITE_NAME }}"
           class="logo-mark site-header-logo"
-          width="1600"
-          height="982"
+          width="800"
+          height="491"
           decoding="async"
         >
       </a>
@@ -20,7 +19,7 @@
         class="site-nav-primary hidden items-center lg:flex"
         aria-label="منوی اصلی"
       >
-        <a href="{% url 'catalog:list' %}" class="nav-link">خدمات</a>
+        <a href="{% url 'core:home' %}#services" class="nav-link">خدمات</a>
         <a href="{% url 'core:home' %}#gallery" class="nav-link">گالری</a>
         <a href="{% url 'magazine:hub' %}" class="nav-link">مجله</a>
         <a href="{% url 'consultations:hub' %}" class="nav-link">مشاوره</a>
@@ -29,15 +28,17 @@
       <div class="flex items-center gap-3 sm:gap-4">
         <a
           href="{% url 'appointments:create' %}"
-          class="btn-draw header-cta hidden items-center gap-2 sm:inline-flex"
+          class="btn-draw header-cta inline-flex items-center gap-2"
+          aria-label="رزرو نوبت"
         >
           <span class="btn-draw-border" aria-hidden="true">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">
               <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
             </svg>
           </span>
-          <span class="btn-draw-label relative z-10">رزرو نوبت</span>
-          <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+          <span class="btn-draw-label header-cta-short relative z-10" aria-hidden="true">رزرو</span>
+          <span class="btn-draw-label header-cta-full relative z-10">رزرو نوبت</span>
+          <span class="btn-draw-label header-cta-arrow relative z-10" aria-hidden="true">←</span>
         </a>
         <button
           type="button"
@@ -67,7 +68,7 @@
     <div class="mobile-nav-inner">
       <p class="mobile-nav-label">منو</p>
       <div class="mobile-nav-links">
-        <a href="{% url 'catalog:list' %}" class="nav-link">خدمات</a>
+        <a href="{% url 'core:home' %}#services" class="nav-link">خدمات</a>
         <a href="{% url 'core:home' %}#gallery" class="nav-link">گالری</a>
         <a href="{% url 'magazine:hub' %}" class="nav-link">مجله</a>
         <a href="{% url 'consultations:hub' %}" class="nav-link">مشاوره</a>

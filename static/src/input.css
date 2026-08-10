@@ -11,7 +11,6 @@
 @import "./components/chrome.css";
 @import "./components/hero.css";
 @import "./components/brand-ribbon.css";
-@import "./components/home.css";
 @import "./components/pages.css";
 @import "./components/gallery.css";
 @import "./components/booking.css";
@@ -29,3 +28,4 @@
 @import "./components/footer-finale.css";
 @import "./components/location.css";
 @import "./components/polish.css";
+@import "./components/home-landing.css";

@@ -171,8 +171,8 @@ html.is-page-leaving .site-shell {
 }
 
 html.is-page-entering .site-shell {
-  opacity: 0;
-  transform: translate3d(0, 5px, 0);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 html.is-page-ready .site-shell {

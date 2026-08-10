@@ -9,9 +9,9 @@ from apps.core.services import SeoService
 from apps.portfolio.services import PortfolioService
 
 SERVICE_IMAGES = [
-    ("images/brand/hero-groom-1-hd.webp", "images/brand/hero-groom-1-hd.jpg"),
-    ("images/brand/hero-groom-3-hd.webp", "images/brand/hero-groom-3-hd.jpg"),
-    ("images/brand/hero-groom-2-hd.webp", "images/brand/hero-groom-2-hd.jpg"),
+    ("images/brand/service-card-1.webp", "images/brand/service-card-1.jpg"),
+    ("images/brand/service-card-3.webp", "images/brand/service-card-3.jpg"),
+    ("images/brand/service-card-2.webp", "images/brand/service-card-2.jpg"),
 ]
 
 FALLBACK_SERVICES = [
@@ -124,14 +124,8 @@ class HomeView(TemplateView):
                     }
                 )
             ctx["showcase_services"] = showcase
-            ctx["showcase_count_display"] = (
-                PERSIAN_INDEX[len(showcase) - 1]
-                if 1 <= len(showcase) <= len(PERSIAN_INDEX)
-                else str(len(showcase))
-            )
         else:
             ctx["showcase_services"] = FALLBACK_SERVICES
-            ctx["showcase_count_display"] = PERSIAN_INDEX[len(FALLBACK_SERVICES) - 1]
 
         gallery = PortfolioService().homepage_payload()
         ctx["gallery_categories"] = gallery["categories"]

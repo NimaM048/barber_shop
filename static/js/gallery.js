@@ -6,7 +6,9 @@
   "use strict";
 
   const root = document.querySelector("[data-gallery-root]");
-  if (!root || typeof Swiper === "undefined") return;
+  if (!root) return;
+  const hasSwiper = typeof window.Swiper === "function";
+  root.classList.toggle("is-static-gallery", !hasSwiper);
 
   const perf = window.__sitePerf || {
     reduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -31,6 +33,7 @@
   const nextEl = root.querySelector("[data-gallery-next]");
   const filterBtns = Array.from(root.querySelectorAll("[data-gallery-filter]"));
   const openBtns = Array.from(root.querySelectorAll("[data-gallery-open]"));
+  const statusEl = root.querySelector("[data-gallery-status]");
 
   const lightbox = root.querySelector("[data-gallery-lightbox]");
   if (!swiperEl || !lightbox) return;
@@ -53,7 +56,7 @@
   });
 
   /* ── Swiper ── */
-  const gallerySwiper = new Swiper(swiperEl, {
+  const gallerySwiper = hasSwiper ? new Swiper(swiperEl, {
     slidesPerView: "auto",
     centeredSlides: false,
     spaceBetween: 14,
@@ -95,7 +98,15 @@
         });
       },
     },
-  });
+  }) : {
+    autoplay: null,
+    params: { loop: false },
+    slides: Array.from(swiperEl.querySelectorAll("[data-gallery-slide]")),
+    update() {},
+    slideTo() {},
+    loopDestroy() {},
+    loopCreate() {},
+  };
 
   if (typeof ScrollTrigger !== "undefined" && window.__sitePerf && window.__sitePerf.allowGsapScroll) {
     ScrollTrigger.create({
@@ -116,7 +127,7 @@
     filterBtns.forEach((btn) => {
       const isActive = btn.getAttribute("data-gallery-filter") === slug;
       btn.classList.toggle("is-active", isActive);
-      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
     });
 
     const slides = Array.from(swiperEl.querySelectorAll(".swiper-slide[data-gallery-slide]"));
@@ -128,6 +139,7 @@
       const visible = slug === "all" || cat === slug;
       slide.classList.toggle("is-filtered-out", !visible);
       slide.style.display = visible ? "" : "none";
+      slide.setAttribute("aria-hidden", visible ? "false" : "true");
       if (visible) {
         visibleCount += 1;
         if (firstVisible < 0) firstVisible = index;
@@ -144,6 +156,9 @@
       gallerySwiper.update();
     }
     gallerySwiper.slideTo(Math.max(firstVisible, 0), reduceMotion ? 0 : 700);
+    if (statusEl) {
+      statusEl.textContent = `${visibleCount.toLocaleString("fa-IR")} اثر نمایش داده شد.`;
+    }
   };
 
   filterBtns.forEach((btn) => {
@@ -188,6 +203,28 @@
   let lastFocus = null;
   let pinchStartDist = 0;
   let isZoomed = false;
+
+  const focusableSelector = [
+    "a[href]",
+    "button:not([disabled])",
+    "video[controls]",
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(",");
+
+  const getLightboxFocusable = () =>
+    Array.from(lightbox.querySelectorAll(focusableSelector)).filter(
+      (node) =>
+        !node.hidden &&
+        node.getAttribute("aria-hidden") !== "true" &&
+        node.getClientRects().length
+    );
+
+  document.addEventListener("focusin", (event) => {
+    if (!lightbox.classList.contains("is-open")) return;
+    if (lightbox.contains(event.target)) return;
+    const first = getLightboxFocusable()[0];
+    if (first) first.focus({ preventScroll: true });
+  });
 
   const setMode = (mode) => {
     Object.entries(lb.modes).forEach(([key, node]) => {
@@ -235,9 +272,8 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "gallery-lb-thumb" + (index === currentMediaIndex ? " is-active" : "");
-      btn.setAttribute("role", "tab");
       btn.setAttribute("aria-label", media.label || `رسانه ${index + 1}`);
-      btn.setAttribute("aria-selected", index === currentMediaIndex ? "true" : "false");
+      btn.setAttribute("aria-pressed", index === currentMediaIndex ? "true" : "false");
 
       if (media.kind === "video") {
         btn.innerHTML =
@@ -354,7 +390,7 @@
       Array.from(lb.thumbs.children).forEach((node, i) => {
         const on = i === currentMediaIndex;
         node.classList.toggle("is-active", on);
-        node.setAttribute("aria-selected", on ? "true" : "false");
+        node.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
   };
@@ -608,15 +644,34 @@
   /* ── Keyboard ── */
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("is-open")) return;
-    if (e.key === "Escape") {
+    if (e.key === "Tab") {
+      const focusable = getLightboxFocusable();
+      if (!focusable.length) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    } else if (e.key === "Escape") {
       e.preventDefault();
       closeLightbox();
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      showMedia(currentMediaIndex - 1);
+      const delta = document.documentElement.dir === "rtl" ? -1 : 1;
+      if (mediaList.length > 1) showMedia(currentMediaIndex + delta);
+      else stepItem(delta);
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      showMedia(currentMediaIndex + 1);
+      const delta = document.documentElement.dir === "rtl" ? 1 : -1;
+      if (mediaList.length > 1) showMedia(currentMediaIndex + delta);
+      else stepItem(delta);
     } else if (e.key === "Home") {
       e.preventDefault();
       showMedia(0);

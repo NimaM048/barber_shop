@@ -266,6 +266,7 @@
     const y = lenis ? lenis.scroll : window.scrollY || document.documentElement.scrollTop;
     if (headerEl) headerEl.classList.toggle("is-compact", y > 24);
     if (navBar) navBar.classList.toggle("is-solid", y > 24);
+    document.body.classList.toggle("is-scrolled", y > 24);
     if (scrollTopBtn) {
       /* visibility handled below when present */
     }
@@ -291,6 +292,7 @@
       setVisible(y > SHOW_AFTER);
       if (headerEl) headerEl.classList.toggle("is-compact", y > 24);
       if (navBar) navBar.classList.toggle("is-solid", y > 24);
+      document.body.classList.toggle("is-scrolled", y > 24);
     };
 
     const onScroll = () => {
@@ -373,9 +375,29 @@
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key !== "Escape") return;
       if (toggle.getAttribute("aria-expanded") !== "true") return;
-      setNavOpen(false);
+      if (e.key === "Escape") {
+        setNavOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const focusable = [
+        toggle,
+        ...mobileNav.querySelectorAll(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ),
+      ].filter((node) => node.getClientRects().length);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -458,6 +480,8 @@
 
     const setMobileBookingVisible = (visible) => {
       homeMobileBooking.classList.toggle("is-visible", visible);
+      document.body.classList.toggle("has-bottom-bar", visible);
+      document.documentElement.classList.toggle("has-bottom-bar", visible);
     };
 
     const syncMobileBooking = () => {
@@ -513,10 +537,18 @@
       if (!target) return;
 
       e.preventDefault();
+      const headerOffset = (headerEl ? headerEl.offsetHeight : 64) + 16;
       if (lenis) {
-        lenis.scrollTo(target, { offset: -20 });
+        lenis.scrollTo(target, { offset: -headerOffset });
       } else {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top,
+          behavior: reduceMotion ? "auto" : "smooth",
+        });
+      }
+      if (window.location.hash !== id) {
+        window.history.pushState(null, "", id);
       }
     });
   });
