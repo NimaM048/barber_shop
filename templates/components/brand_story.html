@@ -9,7 +9,7 @@
 >
   <div class="bs-shell">
     <header class="bs-philosophy" data-bs-reveal>
-      <p class="section-label">درباره</p>
+      <p class="section-label">{{ bs.section_label|default:"درباره" }}</p>
       <h2 id="brand-story-heading" class="bs-headline">
         {% for line in bs.headline_lines %}
         <span class="bs-headline-line">{{ line }}</span>

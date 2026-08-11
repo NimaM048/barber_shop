@@ -34,16 +34,14 @@
   <div class="consult-shell relative z-10">
     <header class="consult-hub-header" data-hub-header>
       <div class="consult-hub-header-copy">
-        <p class="section-label" data-hub-section-label>راهنمای تخصصی · اصفهان</p>
-        <h1 class="type-chapter" data-hub-title>مشاوره قبل از مراجعه</h1>
-        <p class="consult-hub-subtitle type-lede" data-hub-subtitle>
-          راهنمای VIP، داماد و پوست و مو در {{ SITE_NAME }} — قبل از رزرو نوبت در اصفهان بخوانید تا نتیجه بهتری بگیرید.
-        </p>
+        <p class="section-label" data-hub-section-label>{{ page_content.section_label }}</p>
+        <h1 class="type-chapter" data-hub-title>{{ page_content.title }}</h1>
+        <p class="consult-hub-subtitle type-lede" data-hub-subtitle>{{ page_content.lede }}</p>
       </div>
       <a href="{% url 'appointments:create' %}" class="consult-hub-header-action">
-        <span class="consult-hub-header-action-kicker">برای شروع آماده‌اید؟</span>
+        <span class="consult-hub-header-action-kicker">{{ page_content.content_json.header_cta_kicker }}</span>
         <span class="consult-hub-header-action-label">
-          <span>رزرو نوبت</span>
+          <span>{{ page_content.content_json.header_cta_label }}</span>
           <span aria-hidden="true">←</span>
         </span>
       </a>

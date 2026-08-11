@@ -1,12 +1,12 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}دانشنامه تخصصی داماد، پوست، مو و استایل — مقالات فاخر و آموزشی {{ SITE_NAME }} در اصفهان{% endblock %}
-{% block og_title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
-{% block og_description %}دانشنامه تخصصی داماد، پوست و مو و استایل — {{ SITE_NAME }}{% endblock %}
-{% block twitter_title %}مجله زیبایی | {{ SITE_NAME }}{% endblock %}
-{% block twitter_description %}دانشنامه تخصصی داماد، پوست و مو و استایل — {{ SITE_NAME }}{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
 
 {% block extra_head %}
 <link rel="alternate" type="application/rss+xml" title="مجله {{ SITE_NAME }}" href="{% url 'magazine:rss' %}">
@@ -48,22 +48,24 @@
   </div>
 
   {# ── 1. Masthead ── #}
+  {% with mj=page_content.content_json %}
   <header class="mag-mast mag-shell">
     <div class="mag-mast-copy">
       <p class="section-label">
-        <span lang="en" class="font-latin">{{ hub.masthead.label_en|default:"Magazine" }}</span>
+        <span lang="en" class="font-latin">{{ mj.label_en|default:"Magazine" }}</span>
         <span class="mag-mast-sep" aria-hidden="true">·</span>
-        <span>{{ hub.masthead.label_fa|default:"مجله" }}</span>
+        <span>{{ page_content.section_label|default:"مجله" }}</span>
       </p>
-      <h1 class="mag-mast-title">مجله زیبایی</h1>
-      <p class="mag-mast-lede">دانشنامه تخصصی داماد، پوست، مو و استایل — خواندنی، کاربردی و هم‌تراز استاندارد برند.</p>
+      <h1 class="mag-mast-title">{{ page_content.title }}</h1>
+      <p class="mag-mast-lede">{{ page_content.lede }}</p>
       <ul class="mag-mast-signals" aria-label="ویژگی‌های مجله">
-        <li>دانش تخصصی</li>
-        <li>انتخاب تحریریه</li>
-        <li>رزرو آگاهانه</li>
+        {% for signal in mj.signals %}
+        <li>{{ signal }}</li>
+        {% endfor %}
       </ul>
     </div>
   </header>
+  {% endwith %}
 
   {# ── 2. Sticky toolbar ── #}
   <section class="mag-rail" data-mag-rail aria-label="ناوبری مجله">

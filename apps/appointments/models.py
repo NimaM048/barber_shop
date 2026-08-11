@@ -317,3 +317,46 @@ class Appointment(TimeStampedModel, SoftDeleteModel):
             else:
                 self.booking_code = generate_booking_code()
         super().save(*args, **kwargs)
+
+
+class BookingSettings(TimeStampedModel):
+    """Global booking policy — singleton (key=site)."""
+
+    key = models.SlugField("کلید", max_length=40, unique=True, default="site")
+    is_active = models.BooleanField("فعال", default=True)
+
+    auto_confirm = models.BooleanField(
+        "تأیید خودکار نوبت",
+        default=True,
+        help_text="اگر غیرفعال باشد نوبت با وضعیت «در انتظار» ثبت می‌شود.",
+    )
+    cancel_before_hours = models.PositiveSmallIntegerField(
+        "حداقل فاصله لغو (ساعت)",
+        default=24,
+    )
+    allow_customer_cancel = models.BooleanField("لغو توسط مشتری", default=False)
+    allow_customer_lookup = models.BooleanField("جستجوی نوبت توسط مشتری", default=True)
+    max_bookings_per_phone_per_day = models.PositiveSmallIntegerField(
+        "حداکثر نوبت روزانه هر شماره",
+        default=3,
+    )
+    default_booking_lead_hours = models.PositiveSmallIntegerField(
+        "پیش‌فرض فاصله تا نوبت (ساعت)",
+        default=2,
+        help_text="برای سرویس‌هایی که مقدار خاص ندارند.",
+    )
+    default_booking_window_days = models.PositiveSmallIntegerField(
+        "پیش‌فرض بازه رزرو (روز)",
+        default=45,
+    )
+    staff_notification_email = models.EmailField("ایمیل اطلاع‌رسانی", blank=True)
+    cancellation_policy_text = models.TextField("متن قوانین لغو", blank=True)
+    confirmation_message = models.CharField("پیام تأیید", max_length=300, blank=True)
+    pending_message = models.CharField("پیام در انتظار", max_length=300, blank=True)
+
+    class Meta:
+        verbose_name = "تنظیمات رزرو"
+        verbose_name_plural = "تنظیمات رزرو"
+
+    def __str__(self) -> str:
+        return f"Booking settings ({self.key})"

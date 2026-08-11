@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block content %}
+{% with cj=page_content.content_json %}
 <section class="page-stage catalog-stage" aria-labelledby="catalog-heading" data-service-catalog>
   <div class="catalog-atmosphere" aria-hidden="true">
     <span class="catalog-atmosphere-rail"></span>
@@ -23,42 +24,39 @@
   <div class="page-shell page-shell--narrow catalog-shell">
     <header class="page-header catalog-header">
       <div class="catalog-header-copy">
-        <p class="section-label">فهرست تخصص‌ها · اصفهان</p>
-        <h1 id="catalog-heading" class="page-title type-display">خدمات داماد، پوست و مو</h1>
-        <p class="page-lede">
-          کاتالوگ خدمات {{ SITE_NAME }} در اصفهان — زمان، جزئیات و مسیر مناسب را ببینید،
-          سپس نوبت را آنلاین رزرو کنید.
-        </p>
+        <p class="section-label">{{ page_content.section_label }}</p>
+        <h1 id="catalog-heading" class="page-title type-display">{{ page_content.title }}</h1>
+        <p class="page-lede">{{ page_content.lede }}</p>
         <div class="catalog-header-assurance" aria-label="ویژگی‌های رزرو">
-          <span>انتخاب آگاهانه</span>
-          <span>زمان‌بندی شفاف</span>
-          <span>رزرو آنلاین</span>
+          {% for item in cj.assurance %}
+          <span>{{ item }}</span>
+          {% endfor %}
         </div>
       </div>
       <div class="catalog-header-side">
-        <p class="catalog-header-side-kicker">مسیر اختصاصی شما</p>
-        <p class="catalog-header-side-copy">خدمت مناسب را انتخاب کنید؛ زمان دلخواهتان را در مرحلهٔ بعد می‌بینید.</p>
+        <p class="catalog-header-side-kicker">{{ cj.side_kicker }}</p>
+        <p class="catalog-header-side-copy">{{ cj.side_copy }}</p>
         <a href="{% url 'appointments:create' %}" class="page-header-action catalog-header-action">
-          <span class="catalog-header-action-kicker">شروع در کمتر از یک دقیقه</span>
-          <span class="catalog-header-action-label">شروع رزرو <span aria-hidden="true">←</span></span>
+          <span class="catalog-header-action-kicker">{{ cj.side_cta_kicker }}</span>
+          <span class="catalog-header-action-label">{{ cj.side_cta_label }} <span aria-hidden="true">←</span></span>
         </a>
       </div>
     </header>
 
     <div class="catalog-journey" aria-label="مراحل رزرو">
-      <span><b>۰۱</b> انتخاب خدمت</span>
-      <span><b>۰۲</b> انتخاب زمان</span>
-      <span><b>۰۳</b> تأیید نهایی</span>
+      {% for step in cj.journey %}
+      <span><b>{{ step.num }}</b> {{ step.label }}</span>
+      {% endfor %}
     </div>
 
     {% if services %}
     <div class="service-menu catalog-service-menu" data-reveal>
       <div class="service-menu-intro">
         <div>
-          <p class="service-menu-eyebrow">منوی خدمات</p>
-          <p class="service-menu-intro-copy">هر مسیر با زمان، هزینه و امکان رزرو فوری در دسترس شماست.</p>
+          <p class="service-menu-eyebrow">{{ cj.menu_eyebrow }}</p>
+          <p class="service-menu-intro-copy">{{ cj.menu_intro }}</p>
         </div>
-        <p class="service-menu-intro-status"><span aria-hidden="true"></span> رزرو آنلاین فعال است</p>
+        <p class="service-menu-intro-status"><span aria-hidden="true"></span> {{ cj.menu_status }}</p>
       </div>
       <div class="service-menu-head" aria-hidden="true">
         <span>خدمت</span>
@@ -114,18 +112,19 @@
     </div>
     {% else %}
     <div class="page-empty" data-reveal>
-      <p class="page-empty-title">هنوز خدمتی ثبت نشده است</p>
-      <p class="page-empty-copy">سه تخصص اصلی ما: داماد، پوست و مو</p>
+      <p class="page-empty-title">{{ cj.empty_title }}</p>
+      <p class="page-empty-copy">{{ cj.empty_copy }}</p>
       <a href="{% url 'appointments:create' %}" class="btn-draw mt-8 inline-flex">
         <span class="btn-draw-border" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none">
             <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
           </svg>
         </span>
-        <span class="btn-draw-label relative z-10">رزرو نوبت</span>
+        <span class="btn-draw-label relative z-10">{{ cj.empty_cta }}</span>
       </a>
     </div>
     {% endif %}
   </div>
 </section>
+{% endwith %}
 {% endblock %}

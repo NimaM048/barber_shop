@@ -9,10 +9,19 @@
 
   const DRAFT_KEY = "sa_booking_draft_v1";
   const FIRST_VISIT_KEY = "sa_booking_seen_services";
-  const SERVICE_LABELS = {
-    vip: "تجربه اختصاصی",
-    skin: "مراقبت تخصصی",
-    groom: "تشریفات داماد",
+  const DEFAULT_UI = {
+    error_fetch: "خطا در دریافت اطلاعات",
+    error_book: "خطا در ثبت رزرو",
+    success_book: "رزرو با موفقیت ثبت شد",
+    error_guide_ack: "برای ثبت نهایی باید راهنما را تأیید کنید",
+    success_copy: "اطلاعات رزرو کپی شد",
+    error_copy: "امکان کپی وجود ندارد",
+    error_form: "لطفاً اطلاعات را اصلاح کنید",
+    success_resume: "ادامه رزرو از جایی که رها کردید",
+    capacity_changed:
+      "ظرفیت این نوبت تغییر کرده است؛ لطفاً ساعت دیگری انتخاب کنید.",
+    service_label_fallback: "خدمت تخصصی",
+    service_select_cta: "انتخاب",
   };
 
   const state = {
@@ -34,6 +43,7 @@
     guideAck: false,
     consultGate: null,
     consultGateSkipped: false,
+    ui: { ...DEFAULT_UI },
   };
 
   const els = {};
@@ -77,6 +87,21 @@
     return `${base}${encodeURIComponent(key)}/`;
   }
 
+  function ui(key, fallback = "") {
+    return state.ui[key] || DEFAULT_UI[key] || fallback;
+  }
+
+  function loadUiConfig() {
+    const raw = els.app?.dataset.uiConfig;
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      state.ui = { ...DEFAULT_UI, ...parsed };
+    } catch {
+      state.ui = { ...DEFAULT_UI };
+    }
+  }
+
   async function apiGet(url) {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
@@ -84,7 +109,7 @@
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.ok === false) {
-      throw new Error(data.error || "خطا در دریافت اطلاعات");
+      throw new Error(data.error || ui("error_fetch"));
     }
     return data;
   }
@@ -102,7 +127,7 @@
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.ok === false) {
-      const error = new Error(data.error || "خطا در ثبت رزرو");
+      const error = new Error(data.error || ui("error_book"));
       error.status = res.status;
       throw error;
     }
@@ -343,7 +368,8 @@
       );
       const img = svc.image_webp || svc.image_jpg;
       const jpg = svc.image_jpg || svc.image_webp;
-      const serviceLabel = SERVICE_LABELS[svc.key] || "خدمت تخصصی";
+      const serviceLabel =
+        svc.card_label || svc.label || ui("service_label_fallback");
       btn.innerHTML = `
         <div class="booking-service-thumb">
           <picture>
@@ -357,7 +383,7 @@
           <p class="svc-desc">${escapeHtml(svc.description || "")}</p>
           <p class="svc-duration">حدود ${escapeHtml(svc.duration_display || svc.duration_minutes)} دقیقه</p>
         </div>
-        <span class="svc-cta">انتخاب <span aria-hidden="true">←</span></span>
+        <span class="svc-cta">${escapeHtml(ui("service_select_cta"))} <span aria-hidden="true">←</span></span>
       `;
       btn.addEventListener("click", () => selectService(svc));
       grid.appendChild(btn);
@@ -875,7 +901,7 @@
     if (state.guideSummary?.acknowledgment_required && !state.guideAck) {
       const ackErr = qs("[data-guide-ack-error]");
       if (ackErr) ackErr.hidden = false;
-      toast("برای ثبت نهایی باید راهنما را تأیید کنید", "error");
+      toast(ui("error_guide_ack"), "error");
       return;
     }
 
@@ -899,13 +925,13 @@
       renderSuccess();
       showStep("success");
       clearDraft();
-      toast("رزرو با موفقیت ثبت شد", "success");
+      toast(ui("success_book"), "success");
     } catch (e) {
       if (e.status === 409 && state.selectedDate) {
         state.selectedSlot = null;
         await loadSlots(state.selectedDate);
         showStep(3);
-        toast("ظرفیت این نوبت تغییر کرده است؛ لطفاً ساعت دیگری انتخاب کنید.", "error");
+        toast(ui("capacity_changed"), "error");
       } else {
         toast(e.message, "error");
         if (state.selectedDate) {
@@ -958,8 +984,8 @@
     }
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(text).then(
-        () => toast("اطلاعات رزرو کپی شد", "success"),
-        () => toast("امکان کپی وجود ندارد", "error")
+        () => toast(ui("success_copy"), "success"),
+        () => toast(ui("error_copy"), "error")
       );
     }
   }
@@ -1035,7 +1061,7 @@
       e.preventDefault();
       readForm();
       if (!validateForm()) {
-        toast("لطفاً اطلاعات را اصلاح کنید", "error");
+        toast(ui("error_form"), "error");
         return;
       }
       renderSummary();
@@ -1110,7 +1136,7 @@
       /* ignore */
     }
 
-    toast("ادامه رزرو از جایی که رها کردید", "success");
+    toast(ui("success_resume"), "success");
     return true;
   }
 
@@ -1125,13 +1151,27 @@
     return true;
   }
 
+  async function refreshSettings() {
+    const url = els.app?.dataset.settingsUrl;
+    if (!url) return;
+    try {
+      const data = await apiGet(url);
+      if (data.ui) state.ui = { ...DEFAULT_UI, ...data.ui };
+    } catch {
+      /* keep SSR ui config */
+    }
+  }
+
   function init() {
     if (!cacheElements()) return;
+    loadUiConfig();
     bindEvents();
     showStep(1);
-    loadServices().then(async () => {
-      const resumed = await resumeFromDraft();
-      if (resumed) return;
+    refreshSettings().finally(() => {
+      loadServices().then(async () => {
+        const resumed = await resumeFromDraft();
+        if (resumed) return;
+      });
     });
   }
 

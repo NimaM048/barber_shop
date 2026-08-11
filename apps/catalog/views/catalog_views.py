@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.core.services import SeoService
+from apps.core.services.page_content_service import PageContentService
 
 from ..services import CatalogService
 
@@ -73,6 +74,7 @@ class ServiceListView(View):
                 }
             )
         page_seo = seo.catalog_meta()
+        page_content = PageContentService().get("catalog")
         schemas = [
             seo.breadcrumb_schema(
                 [
@@ -90,6 +92,7 @@ class ServiceListView(View):
             {
                 "services": cards,
                 "page_seo": page_seo,
+                "page_content": page_content,
                 "schema_json": seo.dumps(schemas),
             },
         )

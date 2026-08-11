@@ -13,6 +13,7 @@ from django.utils import feedgenerator
 
 from apps.core.exceptions import DomainError, NotFoundError, ValidationError
 from apps.core.services import SeoService
+from apps.core.services.page_content_service import PageContentService
 
 from apps.magazine.services import MagazineService
 
@@ -74,6 +75,10 @@ class MagazineHubView(View):
             page_size=9,
         )
 
+        page_content = PageContentService().get("magazine")
+        seo_helper = SeoService()
+        page_seo = seo_helper.magazine_hub_meta()
+
         return render(
             request,
             self.template_name,
@@ -81,6 +86,8 @@ class MagazineHubView(View):
                 "api_base": "/magazine/api",
                 "hub": hub,
                 "listing": listing,
+                "page_content": page_content,
+                "page_seo": page_seo,
                 "filters": {
                     "category": category,
                     "tag": tag,

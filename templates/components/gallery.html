@@ -9,9 +9,9 @@
   <div class="site-shell site-shell--flush-y gallery-intro">
     <header class="gallery-header" data-reveal>
       <div class="gallery-header-copy">
-        <p class="section-label">نمونه کار</p>
-        <h2 id="gallery-heading" class="gallery-heading">گالری</h2>
-        <p class="gallery-lede">منتخب آثار — قبل و بعد، استایل و پروتکل‌های تخصصی.</p>
+        <p class="section-label">{{ gallery_chrome.label|default:"نمونه کار" }}</p>
+        <h2 id="gallery-heading" class="gallery-heading">{{ gallery_chrome.title|default:"گالری" }}</h2>
+        <p class="gallery-lede">{{ gallery_chrome.lede|default:"منتخب آثار — قبل و بعد، استایل و پروتکل‌های تخصصی." }}</p>
       </div>
     </header>
 

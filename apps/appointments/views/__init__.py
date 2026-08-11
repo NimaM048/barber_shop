@@ -1,10 +1,13 @@
 from .appointment_views import (
     AppointmentCreateView,
     BookingCalendarAPIView,
+    BookingCancelAPIView,
     BookingCreateAPIView,
+    BookingLookupAPIView,
     BookingPageView,
     BookingServiceDetailAPIView,
     BookingServicesAPIView,
+    BookingSettingsAPIView,
     BookingSlotsAPIView,
 )
 
@@ -16,4 +19,7 @@ __all__ = [
     "BookingCalendarAPIView",
     "BookingSlotsAPIView",
     "BookingCreateAPIView",
+    "BookingSettingsAPIView",
+    "BookingLookupAPIView",
+    "BookingCancelAPIView",
 ]

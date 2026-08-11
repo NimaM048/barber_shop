@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 
+import json
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -12,6 +14,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from apps.core.exceptions import ConflictError, DomainError, NotFoundError, ValidationError
 from apps.core.services import SeoService
+from apps.core.services.page_content_service import PageContentService
 
 from apps.appointments.services import AppointmentService
 
@@ -43,6 +46,9 @@ class BookingPageView(View):
         seo = SeoService()
         preselect = request.GET.get("service", "").strip()
         page_seo = seo.booking_meta()
+        booking_page = PageContentService().get("booking")
+        booking_settings = AppointmentService().get_booking_settings()
+        booking_ui = PageContentService().booking_ui()
         schema = seo.breadcrumb_schema(
             [
                 {"name": "خانه", "path": "/"},
@@ -57,6 +63,10 @@ class BookingPageView(View):
                 "preselect_service": preselect,
                 "api_base": "/appointments/api",
                 "page_seo": page_seo,
+                "booking_page": booking_page,
+                "booking_settings": booking_settings,
+                "booking_ui": booking_ui,
+                "booking_ui_json": json.dumps(booking_ui, ensure_ascii=False),
                 "schema_json": seo.dumps(schema),
             },
         )
@@ -128,6 +138,56 @@ class BookingCreateAPIView(View):
             )
             data = AppointmentService().serialize_booking(appointment)
             return JsonResponse({"ok": True, "booking": data}, status=201)
+        except DomainError as exc:
+            return _json_error(exc, _status_for(exc))
+
+
+class BookingSettingsAPIView(View):
+    def get(self, request):
+        settings = AppointmentService().get_booking_settings()
+        page = PageContentService().get("booking")
+        policy = settings.get("cancellation_policy_text") or page.get("policy_text", "")
+        ui = PageContentService().booking_ui()
+        return JsonResponse(
+            {
+                "ok": True,
+                "settings": {**settings, "cancellation_policy_text": policy},
+                "page": page,
+                "ui": ui,
+            }
+        )
+
+
+class BookingLookupAPIView(View):
+    def post(self, request):
+        try:
+            payload = json.loads(request.body.decode("utf-8") or "{}")
+        except json.JSONDecodeError:
+            return _json_error(ValidationError("درخواست نامعتبر است."))
+        try:
+            appointment = AppointmentService().lookup_guest_booking(
+                payload.get("booking_code", ""),
+                payload.get("phone", ""),
+            )
+            data = AppointmentService().serialize_booking(appointment)
+            return JsonResponse({"ok": True, "booking": data})
+        except DomainError as exc:
+            return _json_error(exc, _status_for(exc))
+
+
+class BookingCancelAPIView(View):
+    def post(self, request):
+        try:
+            payload = json.loads(request.body.decode("utf-8") or "{}")
+        except json.JSONDecodeError:
+            return _json_error(ValidationError("درخواست نامعتبر است."))
+        try:
+            appointment = AppointmentService().cancel_guest_booking(
+                payload.get("booking_code", ""),
+                payload.get("phone", ""),
+            )
+            data = AppointmentService().serialize_booking(appointment)
+            return JsonResponse({"ok": True, "booking": data})
         except DomainError as exc:
             return _json_error(exc, _status_for(exc))
 

@@ -1,16 +1,23 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %}آرایشگران | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}تیم متخصص {{ SITE_NAME }} در اصفهان — آرایشگران استودیو داماد و پوست و مو{% endblock %}
-{% block og_title %}آرایشگران | {{ SITE_NAME }}{% endblock %}
-{% block og_description %}تیم متخصص {{ SITE_NAME }} در اصفهان — آرایشگران استودیو{% endblock %}
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
 
 {% block content %}
+{% with cj=page_content.content_json %}
 <section class="page-stage barbers-stage" aria-labelledby="barbers-heading">
   <div class="page-shell">
     <header class="page-header" data-reveal>
-      <h1 id="barbers-heading" class="page-title">آرایشگران</h1>
+      <div>
+        <p class="section-label">{{ page_content.section_label }}</p>
+        <h1 id="barbers-heading" class="page-title">{{ page_content.title }}</h1>
+        <p class="page-lede">{{ page_content.lede }}</p>
+      </div>
       <a href="{% url 'appointments:create' %}" class="page-header-action">
         <span>رزرو</span>
         <span aria-hidden="true">←</span>
@@ -57,10 +64,11 @@
     </ul>
     {% else %}
     <div class="page-empty" data-reveal>
-      <p class="page-empty-title">هنوز آرایشگری ثبت نشده است</p>
-      <p class="page-empty-copy">به‌زودی تیم استودیو اینجا معرفی می‌شود.</p>
+      <p class="page-empty-title">{{ cj.empty_title }}</p>
+      <p class="page-empty-copy">{{ cj.empty_copy }}</p>
     </div>
     {% endif %}
   </div>
 </section>
+{% endwith %}
 {% endblock %}

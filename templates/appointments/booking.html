@@ -26,7 +26,8 @@
   data-book-url="{% url 'appointments:api-book' %}"
   data-guide-summary-base="/consultations/api/booking-summary/"
   data-preselect="{{ preselect_service }}"
-  data-static="{% get_static_prefix %}"
+  data-settings-url="{% url 'appointments:api-settings' %}"
+  data-ui-config="{{ booking_ui_json|escape }}"
 >
   <div class="booking-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
     <span class="booking-atmosphere-rail"></span>
@@ -37,45 +38,48 @@
   <div class="booking-shell relative z-10">
     <div class="booking-layout">
       <aside class="booking-aside" data-booking-aside aria-label="خلاصه رزرو">
-        <p class="section-label">رزرو آنلاین · اصفهان</p>
-        <h1 class="booking-aside-title">رزرو نوبت در {{ SITE_NAME }}</h1>
-        <p class="booking-aside-lede">
-          خدمت داماد، پوست، مو یا VIP را انتخاب کنید؛ روز و ساعت مناسب را ببینید و نوبت را بدون تماس ثبت کنید.
-        </p>
+        <p class="section-label">{{ booking_page.section_label }}</p>
+        <h1 class="booking-aside-title">{{ booking_page.title }} {{ SITE_NAME }}</h1>
+        <p class="booking-aside-lede">{{ booking_page.lede }}</p>
         <div class="booking-assurance" aria-label="ویژگی‌های رزرو">
-          <span>تأیید آنی</span>
-          <span>بدون نیاز به تماس</span>
+          {% if booking_page.assurance_1 %}<span>{{ booking_page.assurance_1 }}</span>{% endif %}
+          {% if booking_page.assurance_2 %}<span>{{ booking_page.assurance_2 }}</span>{% endif %}
         </div>
-        <p class="booking-aside-status"><span aria-hidden="true"></span> مسیر رزرو در هر مرحله قابل بازگشت است</p>
+        <p class="booking-aside-status"><span aria-hidden="true"></span> {{ booking_page.status_text }}</p>
 
         <nav class="booking-phases" aria-label="مراحل رزرو" data-booking-stepper>
           <ol>
             <li class="booking-phase is-active" data-step-indicator="1" aria-current="step">
               <span class="booking-phase-index" aria-hidden="true">01</span>
-              <span class="booking-phase-label">خدمات</span>
+              <span class="booking-phase-label">{{ booking_page.step_1_label }}</span>
             </li>
             <li class="booking-phase" data-step-indicator="2">
               <span class="booking-phase-index" aria-hidden="true">02</span>
-              <span class="booking-phase-label">تاریخ</span>
+              <span class="booking-phase-label">{{ booking_page.step_2_label }}</span>
             </li>
             <li class="booking-phase" data-step-indicator="3">
               <span class="booking-phase-index" aria-hidden="true">03</span>
-              <span class="booking-phase-label">زمان</span>
+              <span class="booking-phase-label">{{ booking_page.step_3_label }}</span>
             </li>
             <li class="booking-phase" data-step-indicator="4">
               <span class="booking-phase-index" aria-hidden="true">04</span>
-              <span class="booking-phase-label">مشخصات</span>
+              <span class="booking-phase-label">{{ booking_page.step_4_label }}</span>
             </li>
             <li class="booking-phase" data-step-indicator="5">
               <span class="booking-phase-index" aria-hidden="true">05</span>
-              <span class="booking-phase-label">تأیید</span>
+              <span class="booking-phase-label">{{ booking_page.step_5_label }}</span>
             </li>
           </ol>
         </nav>
 
         <div class="booking-summary" data-booking-summary aria-live="polite" aria-atomic="true">
-          <p class="booking-summary-empty">هنوز سرویسی انتخاب نشده است.</p>
+          <p class="booking-summary-empty">{{ booking_page.summary_empty }}</p>
         </div>
+        {% if booking_settings.cancellation_policy_text or booking_page.policy_text %}
+        <div class="booking-policy" data-booking-policy>
+          <p>{{ booking_settings.cancellation_policy_text|default:booking_page.policy_text }}</p>
+        </div>
+        {% endif %}
       </aside>
 
       <div class="booking-main">
@@ -88,20 +92,20 @@
               <div class="booking-skeleton-card"></div>
               <div class="booking-skeleton-card"></div>
             </div>
-            <p class="booking-loading-copy">در حال بارگذاری…</p>
+            <p class="booking-loading-copy">{{ booking_ui.loading }}</p>
           </div>
 
           {# Step consult — pre-booking guidance gate #}
           <div data-booking-step="consult" class="booking-step-panel" hidden>
             <div class="booking-gate" data-booking-gate>
               <button type="button" class="booking-back" data-back>
-                <span aria-hidden="true">→</span> بازگشت به انتخاب سرویس
+                <span aria-hidden="true">→</span> {{ booking_ui.gate_back }}
               </button>
 
               <p class="booking-gate-phase" aria-hidden="true">
-                <span>سرویس انتخاب شد</span>
+                <span>{{ booking_ui.gate_phase_1 }}</span>
                 <span class="booking-gate-phase-sep">·</span>
-                <span>راهنمای اختیاری پیش از ادامه</span>
+                <span>{{ booking_ui.gate_phase_2 }}</span>
               </p>
 
               <div class="booking-gate-first" data-gate-first hidden>
@@ -134,17 +138,17 @@
           {# Step 1 — Services #}
           <div data-booking-step="1" class="booking-step-panel">
             <header class="booking-step-head">
-              <h2 class="type-title">انتخاب سرویس</h2>
-              <p class="booking-step-sub">یکی از مسیرهای رزرو را انتخاب کنید</p>
+              <h2 class="type-title">{{ booking_ui.step1_title }}</h2>
+              <p class="booking-step-sub">{{ booking_ui.step1_sub }}</p>
             </header>
             <div class="booking-service-grid" data-service-grid></div>
             <div class="booking-empty" data-services-empty hidden>
-              <p class="booking-empty-title">در حال حاضر سرویسی برای رزرو فعال نیست.</p>
-              <p class="booking-empty-copy">لطفاً بعداً دوباره سر بزنید.</p>
+              <p class="booking-empty-title">{{ booking_ui.services_empty_title }}</p>
+              <p class="booking-empty-copy">{{ booking_ui.services_empty_copy }}</p>
             </div>
             <div class="booking-error" data-services-error hidden role="alert">
-              <p data-services-error-text>خطا در دریافت سرویس‌ها</p>
-              <button type="button" class="btn-court mt-6" data-retry-services>تلاش مجدد</button>
+              <p data-services-error-text>{{ booking_ui.services_error }}</p>
+              <button type="button" class="btn-court mt-6" data-retry-services>{{ booking_ui.retry }}</button>
             </div>
           </div>
 

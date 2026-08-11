@@ -56,3 +56,6 @@ class SoftDeleteModel(models.Model):
 # Concrete CMS models (imported for Django app registry discovery)
 from apps.core.brand_story import BrandStory, BrandTimelineStep, BrandValue  # noqa: E402, F401
 from apps.core.footer_finale import FooterFinale, FooterNavLink  # noqa: E402, F401
+from apps.core.home_page import HomeAssuranceStep, HomePage, HomeProofBullet  # noqa: E402, F401
+from apps.core.page_content import PageContent  # noqa: E402, F401
+from apps.core.site_settings import HeaderNavLink, SiteSettings  # noqa: E402, F401

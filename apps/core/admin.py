@@ -1,138 +1,9 @@
 from django.contrib import admin
 
-from apps.core.brand_story import BrandStory, BrandTimelineStep, BrandValue
 from apps.core.footer_finale import FooterFinale, FooterNavLink
-
-
-class BrandTimelineStepInline(admin.TabularInline):
-    model = BrandTimelineStep
-    extra = 0
-    fields = (
-        "number_label",
-        "title",
-        "description",
-        "portrait_effect",
-        "sort_order",
-        "is_active",
-    )
-    ordering = ("sort_order",)
-
-
-class BrandValueInline(admin.TabularInline):
-    model = BrandValue
-    extra = 0
-    fields = ("title", "subtitle", "sort_order", "is_active")
-    ordering = ("sort_order",)
-
-
-@admin.register(BrandStory)
-class BrandStoryAdmin(admin.ModelAdmin):
-    list_display = ("key", "section_label", "founder_name", "is_published", "updated_at")
-    list_filter = ("is_published",)
-    search_fields = ("key", "headline", "quote_text", "founder_name")
-    inlines = [BrandTimelineStepInline, BrandValueInline]
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "key",
-                    "is_published",
-                    "edition_label",
-                    "section_label",
-                )
-            },
-        ),
-        (
-            "فلسفه",
-            {
-                "fields": (
-                    "headline",
-                    "subtitle",
-                    "story_body",
-                )
-            },
-        ),
-        (
-            "نقل‌قول و امضا",
-            {
-                "fields": (
-                    "quote_text",
-                    "founder_name",
-                    "founder_title",
-                    "quote_signature",
-                )
-            },
-        ),
-        (
-            "تایپوگرافی پس‌زمینه",
-            {
-                "fields": (
-                    "bg_word_1",
-                    "bg_word_2",
-                    "bg_word_3",
-                    "bg_word_4",
-                )
-            },
-        ),
-        (
-            "پرتره",
-            {
-                "fields": (
-                    "portrait",
-                    "portrait_static",
-                    "portrait_webp_static",
-                    "portrait_lqip_static",
-                    "portrait_alt",
-                    "portrait_caption",
-                    "portrait_index",
-                )
-            },
-        ),
-        (
-            "برچسب‌ها و CTA",
-            {
-                "fields": (
-                    "timeline_label",
-                    "values_label",
-                    "cta_primary_label",
-                    "cta_primary_href",
-                    "cta_secondary_label",
-                    "cta_secondary_href",
-                )
-            },
-        ),
-        (
-            "SEO",
-            {
-                "classes": ("collapse",),
-                "fields": ("seo_title", "seo_description"),
-            },
-        ),
-    )
-
-
-@admin.register(BrandTimelineStep)
-class BrandTimelineStepAdmin(admin.ModelAdmin):
-    list_display = (
-        "number_label",
-        "title",
-        "story",
-        "portrait_effect",
-        "sort_order",
-        "is_active",
-    )
-    list_filter = ("is_active", "portrait_effect", "story")
-    search_fields = ("title", "description", "number_label")
-    ordering = ("story", "sort_order")
-
-
-@admin.register(BrandValue)
-class BrandValueAdmin(admin.ModelAdmin):
-    list_display = ("title", "subtitle", "story", "sort_order", "is_active")
-    list_filter = ("is_active", "story")
-    search_fields = ("title", "subtitle")
-    ordering = ("story", "sort_order")
+from apps.core.home_page import HomeAssuranceStep, HomePage, HomeProofBullet
+from apps.core.page_content import PageContent
+from apps.core.site_settings import HeaderNavLink, SiteSettings
 
 
 class FooterNavLinkInline(admin.TabularInline):
@@ -240,3 +111,163 @@ class FooterNavLinkAdmin(admin.ModelAdmin):
     list_filter = ("is_active", "footer")
     search_fields = ("label", "href")
     ordering = ("footer", "sort_order")
+
+
+class HeaderNavLinkInline(admin.TabularInline):
+    model = HeaderNavLink
+    extra = 0
+    fields = ("label", "href", "sort_order", "is_active", "show_on_mobile")
+    ordering = ("sort_order",)
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    list_display = ("key", "site_name", "phone_display", "is_published", "updated_at")
+    list_filter = ("is_published",)
+    search_fields = ("site_name", "phone", "address")
+    inlines = [HeaderNavLinkInline]
+    fieldsets = (
+        (None, {"fields": ("key", "is_published")}),
+        (
+            "برند",
+            {"fields": ("site_name", "site_tagline", "site_subtitle", "logo_path", "logo_alt")},
+        ),
+        (
+            "تماس",
+            {
+                "fields": (
+                    ("phone", "phone_display"),
+                    ("whatsapp", "email"),
+                    ("instagram", "telegram", "website"),
+                    "address",
+                    "city",
+                    ("lat", "lng", "map_zoom"),
+                    "hours_text",
+                    ("google_maps_url", "gbp_url"),
+                )
+            },
+        ),
+        (
+            "هدر",
+            {"fields": ("header_cta_short", "header_cta_full", "header_cta_href")},
+        ),
+        (
+            "موقعیت (نقشه)",
+            {
+                "fields": (
+                    "location_eyebrow",
+                    "location_title_fa",
+                    "location_badge",
+                    "location_lede",
+                    ("location_district", "location_street", "location_cue"),
+                    "location_availability",
+                    ("location_cta_directions", "location_cta_maps"),
+                    ("location_cta_copy", "location_cta_gbp"),
+                )
+            },
+        ),
+        (
+            "SEO پیش‌فرض",
+            {"classes": ("collapse",), "fields": ("seo_title_default", "seo_description_default")},
+        ),
+    )
+
+
+class HomeProofBulletInline(admin.TabularInline):
+    model = HomeProofBullet
+    extra = 0
+    fields = ("text", "sort_order", "is_active")
+    ordering = ("sort_order",)
+
+
+class HomeAssuranceStepInline(admin.TabularInline):
+    model = HomeAssuranceStep
+    extra = 0
+    fields = ("number_label", "title", "description", "sort_order", "is_active")
+    ordering = ("sort_order",)
+
+
+@admin.register(HomePage)
+class HomePageAdmin(admin.ModelAdmin):
+    list_display = ("key", "is_published", "updated_at")
+    list_filter = ("is_published",)
+    inlines = [HomeProofBulletInline, HomeAssuranceStepInline]
+    fieldsets = (
+        (None, {"fields": ("key", "is_published")}),
+        (
+            "هیرو",
+            {
+                "fields": (
+                    "hero_eyebrow",
+                    "hero_title",
+                    "hero_tagline",
+                    ("hero_cta_primary_label", "hero_cta_primary_href"),
+                    ("hero_cta_secondary_label", "hero_cta_secondary_href"),
+                    ("hero_image_webp", "hero_image_mobile_webp", "hero_image_fallback"),
+                    "hero_logo_webp",
+                    "hero_scroll_hint",
+                )
+            },
+        ),
+        (
+            "تجربه (assurance)",
+            {"fields": ("assurance_label", "assurance_title", "assurance_lede")},
+        ),
+        (
+            "بخش خدمات",
+            {
+                "fields": (
+                    "services_label",
+                    "services_title",
+                    "services_lede",
+                    ("services_cta_label", "services_cta_href"),
+                    "services_empty_message",
+                    "services_card_cta_label",
+                )
+            },
+        ),
+        (
+            "بخش گالری",
+            {"fields": ("gallery_label", "gallery_title", "gallery_lede")},
+        ),
+        (
+            "SEO",
+            {"classes": ("collapse",), "fields": ("seo_title", "seo_description")},
+        ),
+    )
+
+
+@admin.register(PageContent)
+class PageContentAdmin(admin.ModelAdmin):
+    list_display = ("page", "section_label", "is_published", "updated_at")
+    list_filter = ("page", "is_published")
+    fieldsets = (
+        (None, {"fields": ("page", "is_published")}),
+        ("محتوا", {"fields": ("section_label", "title", "lede", "extra_label")}),
+        (
+            "رزرو — مراحل و نشان‌ها",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    ("assurance_1", "assurance_2"),
+                    "status_text",
+                    ("step_1_label", "step_2_label", "step_3_label"),
+                    ("step_4_label", "step_5_label"),
+                    "summary_empty",
+                    "policy_text",
+                ),
+            },
+        ),
+        (
+            "محتوای ساختاریافته (JSON)",
+            {
+                "classes": ("collapse",),
+                "fields": ("content_json",),
+                "description": "لیست‌ها، UI رزرو، signals مجله، journey کاتالوگ و …",
+            },
+        ),
+        (
+            "SEO",
+            {"classes": ("collapse",), "fields": ("seo_title", "seo_description")},
+        ),
+    )

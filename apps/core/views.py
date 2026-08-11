@@ -6,6 +6,8 @@ from django.views.generic import TemplateView
 from apps.catalog.services import CatalogService
 from apps.consultations.models import ConsultationFAQ, ConsultationHubPage
 from apps.core.services import SeoService
+from apps.core.services.home_page_service import HomePageService
+from apps.core.services.page_content_service import PageContentService
 from apps.portfolio.services import PortfolioService
 
 SERVICE_IMAGES = [
@@ -107,7 +109,12 @@ class HomeView(TemplateView):
             for i, service in enumerate(active):
                 idx = PERSIAN_INDEX[i] if i < len(PERSIAN_INDEX) else str(i + 1)
                 category = service.category.name if service.category_id else "خدمت"
+                cfg = getattr(service, "booking_config", None)
                 webp, jpg = SERVICE_IMAGES[i % len(SERVICE_IMAGES)]
+                if cfg and cfg.image_webp:
+                    webp = cfg.image_webp
+                if cfg and cfg.image_jpg:
+                    jpg = cfg.image_jpg
                 showcase.append(
                     {
                         "name": service.name,
@@ -154,6 +161,13 @@ class HomeView(TemplateView):
                 }
             )
         ctx["home_faq_section"] = home_faq_section
+        home_cms = HomePageService().payload()
+        ctx["home_cms"] = home_cms
+        ctx["gallery_chrome"] = {
+            "label": home_cms["gallery_label"],
+            "title": home_cms["gallery_title"],
+            "lede": home_cms["gallery_lede"],
+        }
         ctx["page_seo"] = seo.home_meta()
         schemas = [
             seo.local_business_schema(request),

@@ -27,6 +27,7 @@ from ..repositories import (
     AppointmentRepository,
     BookingServiceConfigRepository,
 )
+from .booking_settings_service import BookingSettingsService
 from .slot_engine import JALALI_MONTHS, SlotEngine, format_time_fa, to_persian_digits
 
 PHONE_RE = re.compile(r"^09\d{9}$")
@@ -42,6 +43,10 @@ class AppointmentService(BaseService[AppointmentRepository]):
         super().__init__(repository)
         self.config_repository = config_repository or BookingServiceConfigRepository()
         self.slot_engine = slot_engine or SlotEngine(appointment_repo=self.repository)
+        self.booking_settings = BookingSettingsService()
+
+    def get_booking_settings(self) -> dict:
+        return self.booking_settings.payload()
 
     def _default_repository(self) -> AppointmentRepository:
         return AppointmentRepository()
@@ -168,6 +173,13 @@ class AppointmentService(BaseService[AppointmentRepository]):
         if matched is None:
             raise ConflictError("این بازه زمانی دیگر در دسترس نیست.")
 
+        settings = self.booking_settings.payload()
+        today = timezone.localdate()
+        taken_today = self.repository.count_for_phone_on_day(phone=phone, day=today)
+        max_daily = settings["max_bookings_per_phone_per_day"]
+        if max_daily and taken_today >= max_daily:
+            raise ConflictError("حداکثر نوبت روزانه برای این شماره تکمیل شده است.")
+
         ends_at = parse_datetime(matched["ends_at"])
         if ends_at and timezone.is_naive(ends_at):
             ends_at = timezone.make_aware(ends_at, timezone.get_current_timezone())
@@ -179,6 +191,12 @@ class AppointmentService(BaseService[AppointmentRepository]):
             )
             if taken >= matched["capacity"]:
                 raise ConflictError("ظرفیت این نوبت تکمیل شده است.")
+
+            initial_status = (
+                Appointment.Status.CONFIRMED
+                if settings["auto_confirm"]
+                else Appointment.Status.PENDING
+            )
 
             return self.repository.create(
                 booking_code=generate_booking_code(),
@@ -192,8 +210,45 @@ class AppointmentService(BaseService[AppointmentRepository]):
                 notes=notes,
                 guide_acknowledged=bool(guide_acknowledged),
                 price_at_booking=config.service.price,
-                status=Appointment.Status.CONFIRMED,
+                status=initial_status,
             )
+
+    def lookup_guest_booking(self, booking_code: str, phone: str) -> Appointment:
+        phone = self._normalize_phone(phone)
+        code = (booking_code or "").strip().upper()
+        if not code:
+            raise ValidationError("کد رزرو الزامی است.")
+        settings = self.booking_settings.payload()
+        if not settings["allow_customer_lookup"]:
+            raise ValidationError("جستجوی نوبت در حال حاضر غیرفعال است.")
+        appointment = self.repository.get_by_code_and_phone(code, phone)
+        if appointment is None:
+            raise ValidationError("نوبتی با این مشخصات پیدا نشد.")
+        return appointment
+
+    def cancel_guest_booking(self, booking_code: str, phone: str) -> Appointment:
+        settings = self.booking_settings.payload()
+        if not settings["allow_customer_cancel"]:
+            raise ValidationError("لغو نوبت توسط مشتری در حال حاضر غیرفعال است.")
+
+        appointment = self.lookup_guest_booking(booking_code, phone)
+        if appointment.status in (
+            Appointment.Status.CANCELLED,
+            Appointment.Status.COMPLETED,
+            Appointment.Status.NO_SHOW,
+        ):
+            raise ValidationError("این نوبت قابل لغو نیست.")
+
+        local_start = timezone.localtime(appointment.starts_at)
+        hours_until = (local_start - timezone.localtime()).total_seconds() / 3600
+        if hours_until < settings["cancel_before_hours"]:
+            raise ValidationError(
+                f"لغو نوبت حداقل {settings['cancel_before_hours']} ساعت قبل از زمان نوبت مجاز است."
+            )
+
+        appointment.status = Appointment.Status.CANCELLED
+        appointment.save(update_fields=["status", "updated_at"])
+        return appointment
 
     def serialize_booking(self, appointment: Appointment) -> dict[str, Any]:
         local_start = timezone.localtime(appointment.starts_at)

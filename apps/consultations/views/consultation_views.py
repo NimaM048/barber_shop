@@ -12,6 +12,7 @@ from django.conf import settings
 
 from apps.core.exceptions import DomainError, NotFoundError, ValidationError
 from apps.core.services import SeoService
+from apps.core.services.page_content_service import PageContentService
 
 from apps.consultations.services import ConsultationService
 
@@ -38,6 +39,7 @@ class ConsultationHubView(View):
         seo = SeoService()
         payload = ConsultationService().list_categories()
         hub = payload.get("hub") or {}
+        page_content = PageContentService().get("consultations")
         page_seo = seo.consultation_hub_meta(hub)
         schema = seo.breadcrumb_schema(
             [
@@ -52,6 +54,7 @@ class ConsultationHubView(View):
             {
                 "api_base": "/consultations/api",
                 "page_seo": page_seo,
+                "page_content": page_content,
                 "schema_json": seo.dumps(schema),
             },
         )

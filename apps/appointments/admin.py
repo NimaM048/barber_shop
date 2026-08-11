@@ -1,10 +1,11 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from .models import (
     Appointment,
     BookingBreak,
     BookingHoliday,
     BookingServiceConfig,
+    BookingSettings,
     BookingSpecialDate,
     DisabledTimeSlot,
 )
@@ -124,12 +125,13 @@ class AppointmentAdmin(admin.ModelAdmin):
         "full_name_display",
         "phone",
         "service",
+        "barber",
         "starts_at",
         "status",
         "guide_acknowledged",
         "price_at_booking",
     )
-    list_filter = ("status", "booking_config", "service", "guide_acknowledged")
+    list_filter = ("status", "booking_config", "service", "barber", "guide_acknowledged")
     search_fields = (
         "booking_code",
         "first_name",
@@ -139,7 +141,92 @@ class AppointmentAdmin(admin.ModelAdmin):
     )
     date_hierarchy = "starts_at"
     readonly_fields = ("booking_code", "created_at", "updated_at")
+    list_editable = ("status",)
+    actions = (
+        "action_confirm",
+        "action_cancel",
+        "action_complete",
+        "action_no_show",
+    )
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "booking_code",
+                    "status",
+                    ("first_name", "last_name"),
+                    "phone",
+                    ("service", "booking_config"),
+                    "barber",
+                    ("starts_at", "ends_at"),
+                    "price_at_booking",
+                    "guide_acknowledged",
+                    "notes",
+                )
+            },
+        ),
+        (
+            "سیستم",
+            {"classes": ("collapse",), "fields": ("customer", "created_at", "updated_at")},
+        ),
+    )
 
     @admin.display(description="نام")
     def full_name_display(self, obj):
         return obj.full_name
+
+    @admin.action(description="تأیید نوبت‌های انتخاب‌شده")
+    def action_confirm(self, request, queryset):
+        updated = queryset.exclude(status=Appointment.Status.CONFIRMED).update(
+            status=Appointment.Status.CONFIRMED
+        )
+        self.message_user(request, f"{updated} نوبت تأیید شد.", messages.SUCCESS)
+
+    @admin.action(description="لغو نوبت‌های انتخاب‌شده")
+    def action_cancel(self, request, queryset):
+        updated = queryset.exclude(status=Appointment.Status.CANCELLED).update(
+            status=Appointment.Status.CANCELLED
+        )
+        self.message_user(request, f"{updated} نوبت لغو شد.", messages.WARNING)
+
+    @admin.action(description="انجام شد")
+    def action_complete(self, request, queryset):
+        updated = queryset.update(status=Appointment.Status.COMPLETED)
+        self.message_user(request, f"{updated} نوبت انجام‌شده ثبت شد.", messages.SUCCESS)
+
+    @admin.action(description="حاضر نشد")
+    def action_no_show(self, request, queryset):
+        updated = queryset.update(status=Appointment.Status.NO_SHOW)
+        self.message_user(request, f"{updated} نوبت «حاضر نشد» ثبت شد.", messages.WARNING)
+
+
+@admin.register(BookingSettings)
+class BookingSettingsAdmin(admin.ModelAdmin):
+    list_display = ("key", "auto_confirm", "allow_customer_cancel", "is_active", "updated_at")
+    fieldsets = (
+        (None, {"fields": ("key", "is_active")}),
+        (
+            "قوانین رزرو",
+            {
+                "fields": (
+                    "auto_confirm",
+                    "cancel_before_hours",
+                    ("allow_customer_cancel", "allow_customer_lookup"),
+                    "max_bookings_per_phone_per_day",
+                    ("default_booking_lead_hours", "default_booking_window_days"),
+                )
+            },
+        ),
+        (
+            "پیام‌ها",
+            {
+                "fields": (
+                    "confirmation_message",
+                    "pending_message",
+                    "cancellation_policy_text",
+                    "staff_notification_email",
+                )
+            },
+        ),
+    )

@@ -15,7 +15,7 @@
 {% block body_class %} is-home{% endblock %}
 
 {% block extra_head %}
-<link rel="preload" as="image" href="{% static 'images/brand/hero-cinematic-frame.webp' %}" type="image/webp" fetchpriority="high" imagesrcset="{% static 'images/brand/hero-cinematic-frame-mobile.webp' %} 960w, {% static 'images/brand/hero-cinematic-frame.webp' %} 2250w" imagesizes="100vw">
+<link rel="preload" as="image" href="{{ home_cms.hero_image_webp }}" type="image/webp" fetchpriority="high" imagesrcset="{{ home_cms.hero_image_mobile_webp }} 960w, {{ home_cms.hero_image_webp }} 2250w" imagesizes="100vw">
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
 {% endblock %}
@@ -34,13 +34,13 @@
     <picture>
       <source
         media="(max-width: 768px)"
-        srcset="{% static 'images/brand/hero-cinematic-frame-mobile.webp' %}"
+        srcset="{{ home_cms.hero_image_mobile_webp }}"
         type="image/webp"
       >
-      <source srcset="{% static 'images/brand/hero-cinematic-frame.webp' %}" type="image/webp">
+      <source srcset="{{ home_cms.hero_image_webp }}" type="image/webp">
       <img
         class="hero-media-img"
-        src="{% static 'images/brand/hero-cinematic-frame-fallback.jpg' %}"
+        src="{{ home_cms.hero_image_fallback }}"
         alt=""
         width="1600"
         height="1067"
@@ -61,7 +61,7 @@
   <div class="hero-lockup" data-hero-lockup>
     <p class="hero-eyebrow">
       <span class="hero-eyebrow-dot" aria-hidden="true"></span>
-      استودیوی تخصصی داماد، پوست و مو در اصفهان
+      {{ home_cms.hero_eyebrow }}
     </p>
     <div class="hero-logo-stage relative" data-parallax-target="logo">
       <svg
@@ -98,7 +98,7 @@
       </svg>
 
       <img
-        src="{% static 'images/brand/logo-signature-800.webp' %}"
+        src="{{ home_cms.hero_logo_webp }}"
         sizes="(max-width: 719px) 72vw, min(44vw, 25rem)"
         alt="{{ SITE_NAME }}"
         class="hero-logo-img"
@@ -109,13 +109,11 @@
       >
     </div>
 
-    <h1 id="hero-heading" class="hero-title">استایل داماد، پوست و مو؛ دقیق، شخصی و آماده برای روز مهم.</h1>
-    <p class="hero-tagline" data-hero-tagline>
-      از مشاوره تا اجرای نهایی، هر خدمت متناسب با چهره، زمان و نتیجه‌ای که می‌خواهید طراحی می‌شود.
-    </p>
+    <h1 id="hero-heading" class="hero-title">{{ home_cms.hero_title }}</h1>
+    <p class="hero-tagline" data-hero-tagline>{{ home_cms.hero_tagline }}</p>
     <div class="hero-cta" data-hero-cta>
       <a
-        href="{% url 'appointments:create' %}"
+        href="{{ home_cms.hero_cta_primary_href }}"
         class="btn-draw"
         data-hero-btn
       >
@@ -124,18 +122,18 @@
             <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
           </svg>
         </span>
-        <span class="btn-draw-label relative z-10">رزرو آنلاین</span>
+        <span class="btn-draw-label relative z-10">{{ home_cms.hero_cta_primary_label }}</span>
         <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
       </a>
-      <a href="{% url 'consultations:hub' %}" class="hero-secondary" data-hero-btn>
-        راهنمای پیش از مراجعه
+      <a href="{{ home_cms.hero_cta_secondary_href }}" class="hero-secondary" data-hero-btn>
+        {{ home_cms.hero_cta_secondary_label }}
         <span aria-hidden="true">←</span>
       </a>
     </div>
     <ul class="hero-proof" aria-label="مزیت‌های تجربه">
-      <li><span aria-hidden="true">✓</span> مشاوره پیش از اجرا</li>
-      <li><span aria-hidden="true">✓</span> رزرو مرحله‌به‌مرحله</li>
-      <li><span aria-hidden="true">✓</span> انتخاب شفاف خدمت</li>
+      {% for bullet in home_cms.proof_bullets %}
+      <li><span aria-hidden="true">✓</span> {{ bullet }}</li>
+      {% endfor %}
     </ul>
   </div>
   <a href="#services" class="hero-scroll" data-hero-scroll aria-label="مشاهده خدمات">
@@ -147,26 +145,18 @@
 <section class="home-assurance" aria-labelledby="home-assurance-heading">
   <div class="home-assurance-shell" data-reveal>
     <header class="home-assurance-intro">
-      <p class="section-label">تجربه‌ای حساب‌شده</p>
-      <h2 id="home-assurance-heading">از تصمیم تا نتیجه، هیچ مرحله‌ای مبهم نمی‌ماند.</h2>
-      <p>مسیر مراجعه کوتاه، روشن و متناسب با نیاز واقعی شما طراحی شده است.</p>
+      <p class="section-label">{{ home_cms.assurance_label }}</p>
+      <h2 id="home-assurance-heading">{{ home_cms.assurance_title }}</h2>
+      <p>{{ home_cms.assurance_lede }}</p>
     </header>
     <ol class="home-assurance-list">
+      {% for step in home_cms.assurance_steps %}
       <li>
-        <span class="home-assurance-index" aria-hidden="true">۰۱</span>
-        <h3>انتخاب آگاهانه</h3>
-        <p>خدمات، زمان اجرا و جزئیات هر مسیر را پیش از رزرو بررسی کنید.</p>
+        <span class="home-assurance-index" aria-hidden="true">{{ step.number_label }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.description }}</p>
       </li>
-      <li>
-        <span class="home-assurance-index" aria-hidden="true">۰۲</span>
-        <h3>مشاورهٔ شخصی</h3>
-        <p>پیشنهاد نهایی بر اساس چهره، سبک و موقعیت شما شکل می‌گیرد.</p>
-      </li>
-      <li>
-        <span class="home-assurance-index" aria-hidden="true">۰۳</span>
-        <h3>رزرو بدون اصطکاک</h3>
-        <p>خدمت و زمان مناسب را آنلاین انتخاب کنید و آماده مراجعه شوید.</p>
-      </li>
+      {% endfor %}
     </ol>
   </div>
 </section>
@@ -179,12 +169,12 @@
   <div class="svc-shell">
     <header class="svc-header" data-reveal>
       <div class="svc-header-copy">
-        <p class="section-label">خدمات منتخب</p>
-        <h2 id="services-heading" class="svc-heading">برای نتیجه‌ای که در جزئیات دیده می‌شود.</h2>
-        <p class="svc-lede">از آماده‌سازی داماد تا پروتکل‌های پوست و طراحی مو؛ هر مسیر با اجرای دقیق و مشاورهٔ متناسب آغاز می‌شود.</p>
+        <p class="section-label">{{ home_cms.services_label }}</p>
+        <h2 id="services-heading" class="svc-heading">{{ home_cms.services_title }}</h2>
+        <p class="svc-lede">{{ home_cms.services_lede }}</p>
       </div>
-      <a href="{% url 'catalog:list' %}" class="svc-header-action">
-        <span>کاتالوگ کامل</span>
+      <a href="{{ home_cms.services_cta_href }}" class="svc-header-action">
+        <span>{{ home_cms.services_cta_label }}</span>
         <span aria-hidden="true">←</span>
       </a>
     </header>
@@ -230,7 +220,7 @@
             <p class="svc-card-desc">{{ service.description }}</p>
             {% endif %}
             <span class="svc-card-action">
-              رزرو این خدمت
+              {{ home_cms.services_card_cta_label }}
               <span aria-hidden="true">←</span>
             </span>
           </div>
@@ -241,7 +231,7 @@
     {% else %}
     <div class="svc-empty" data-reveal>
       <p class="svc-empty-title">هنوز خدمتی برای نمایش نیست</p>
-      <p class="svc-empty-copy">به زودی کاتالوگ تخصص‌ها اینجا می‌آید.</p>
+      <p class="svc-empty-copy">{{ home_cms.services_empty_message }}</p>
       <div class="svc-empty-actions">
         <a href="{% url 'appointments:create' %}" class="btn-draw">
           <span class="btn-draw-border" aria-hidden="true">
@@ -259,6 +249,7 @@
 </section>
 
 {% include "components/gallery.html" %}
+
 
 {% if home_faqs and home_faq_section.enabled %}
 <section id="faq" class="home-faq" aria-labelledby="home-faq-heading">

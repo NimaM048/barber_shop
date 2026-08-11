@@ -11,6 +11,10 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.urls import NoReverseMatch, reverse
 
+from apps.core.page_content import PageContent
+from apps.core.services.home_page_service import HomePageService
+from apps.core.services.page_content_service import PageContentService
+from apps.core.services.site_settings_service import SiteSettingsService
 
 DEFAULT_OG_STATIC = "images/brand/hero-cinematic-frame.jpg"
 
@@ -65,71 +69,117 @@ class SeoService:
     def dumps(self, data: Any) -> str:
         return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
 
-    # ── Page meta copy ─────────────────────────────────────────────
+    def _site_name(self) -> str:
+        return SiteSettingsService().branding()["SITE_NAME"]
+
+    def _meta_from_cms(
+        self,
+        *,
+        seo_title: str = "",
+        seo_description: str = "",
+        fallback_title: str,
+        fallback_description: str,
+    ) -> dict[str, str]:
+        site = self._site_name()
+        title = (seo_title or "").strip() or fallback_title
+        if title and site and site not in title:
+            title = f"{title} | {site}"
+        description = (seo_description or "").strip() or fallback_description
+        return {
+            "title": title,
+            "description": description,
+            "og_title": title,
+            "og_description": description,
+        }
 
     def home_meta(self) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
-        title = f"{site} | آرایشگاه داماد و پوست و مو در اصفهان"
-        description = (
+        site = self._site_name()
+        home_rec = HomePageService().get_record()
+        site_rec = SiteSettingsService().get_record()
+        seo_title = ""
+        seo_desc = ""
+        if home_rec and home_rec.seo_title:
+            seo_title = home_rec.seo_title
+        elif site_rec and site_rec.seo_title_default:
+            seo_title = site_rec.seo_title_default
+        if home_rec and home_rec.seo_description:
+            seo_desc = home_rec.seo_description
+        elif site_rec and site_rec.seo_description_default:
+            seo_desc = site_rec.seo_description_default
+
+        fallback_title = f"{site} | آرایشگاه داماد و پوست و مو در اصفهان"
+        fallback_desc = (
             f"{site} — مرکز تخصصی داماد، پوست و مو در اصفهان. "
             "رزرو آنلاین نوبت، مشاوره قبل از مراجعه و تجربه اختصاصی زیبایی."
         )
-        return {
-            "title": title,
-            "description": description,
-            "og_title": title,
-            "og_description": description,
-        }
+        return self._meta_from_cms(
+            seo_title=seo_title,
+            seo_description=seo_desc,
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
 
     def catalog_meta(self) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
-        title = f"خدمات داماد، پوست و مو | {site}"
-        description = (
+        site = self._site_name()
+        pc = PageContentService().get(PageContent.PageKey.CATALOG)
+        fallback_title = f"خدمات داماد، پوست و مو | {site}"
+        fallback_desc = (
             f"کاتالوگ خدمات {site} در اصفهان — داماد، مراقبت پوست، طراحی مو و VIP. "
             "جزئیات، زمان و رزرو آنلاین."
         )
-        return {
-            "title": title,
-            "description": description,
-            "og_title": title,
-            "og_description": description,
-        }
+        return self._meta_from_cms(
+            seo_title=pc.get("seo_title", ""),
+            seo_description=pc.get("seo_description", ""),
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
 
     def booking_meta(self) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
-        title = f"رزرو آنلاین نوبت | {site}"
-        description = (
+        site = self._site_name()
+        pc = PageContentService().get(PageContent.PageKey.BOOKING)
+        fallback_title = f"رزرو آنلاین نوبت | {site}"
+        fallback_desc = (
             f"رزرو آنلاین نوبت {site} در اصفهان — VIP، داماد، پوست و مو. "
             "زمان دلخواه را انتخاب کنید و نوبت خود را ثبت کنید."
         )
-        return {
-            "title": title,
-            "description": description,
-            "og_title": title,
-            "og_description": description,
-        }
+        return self._meta_from_cms(
+            seo_title=pc.get("seo_title", ""),
+            seo_description=pc.get("seo_description", ""),
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
 
     def consultation_hub_meta(self, hub: dict[str, Any] | None = None) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
+        site = self._site_name()
         hub = hub or {}
-        raw_title = (hub.get("document_title") or hub.get("title") or "").strip()
-        title = f"{raw_title} | {site}" if raw_title else f"مشاوره قبل از مراجعه | {site}"
+        pc = PageContentService().get(PageContent.PageKey.CONSULTATIONS)
+        raw_title = (
+            (hub.get("document_title") or hub.get("title") or "").strip()
+            or pc.get("seo_title", "")
+            or pc.get("title", "")
+        )
+        fallback_title = f"{raw_title} | {site}" if raw_title else f"مشاوره قبل از مراجعه | {site}"
         description = (
             (hub.get("meta_description") or "").strip()
+            or pc.get("seo_description", "")
+            or pc.get("lede", "")
             or (
                 f"مشاوره تخصصی قبل از مراجعه در {site} — راهنمای VIP، داماد و پوست و مو "
                 "برای آمادگی بهتر در اصفهان."
             )
         )
+        title = pc.get("seo_title") or fallback_title
+        if pc.get("seo_title"):
+            title = f"{pc['seo_title']} | {site}" if site not in pc["seo_title"] else pc["seo_title"]
         return {
             "title": title,
-            "description": description,
+            "description": description[:300],
             "og_title": title,
-            "og_description": description,
+            "og_description": description[:300],
         }
 
     def consultation_detail_meta(self, category: Any) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
+        site = self._site_name()
         if isinstance(category, dict):
             cat_title = category.get("title") or "راهنمای مشاوره"
             short = category.get("short_description") or ""
@@ -150,29 +200,44 @@ class SeoService:
         }
 
     def magazine_hub_meta(self) -> dict[str, str]:
-        site = _setting("SITE_NAME", "صالح ایوبی")
-        title = f"مجله زیبایی | {site}"
-        description = (
+        site = self._site_name()
+        pc = PageContentService().get(PageContent.PageKey.MAGAZINE)
+        fallback_title = f"مجله زیبایی | {site}"
+        fallback_desc = (
             f"دانشنامه تخصصی داماد، پوست، مو و استایل — مقالات آموزشی {site} در اصفهان."
         )
-        return {
-            "title": title,
-            "description": description,
-            "og_title": title,
-            "og_description": description,
-        }
+        return self._meta_from_cms(
+            seo_title=pc.get("seo_title", ""),
+            seo_description=pc.get("seo_description", ""),
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
+
+    def barbers_meta(self) -> dict[str, str]:
+        site = self._site_name()
+        pc = PageContentService().get(PageContent.PageKey.BARBERS)
+        fallback_title = f"آرایشگران | {site}"
+        fallback_desc = f"تیم و آرایشگران {site} در اصفهان."
+        return self._meta_from_cms(
+            seo_title=pc.get("seo_title", ""),
+            seo_description=pc.get("seo_description", ""),
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
 
     # ── JSON-LD ────────────────────────────────────────────────────
 
     def local_business_schema(self, request=None) -> dict[str, Any]:
+        branding = SiteSettingsService().branding()
         origin = self.site_origin(request)
-        site = _setting("SITE_NAME", "صالح ایوبی")
-        phone = _setting("SITE_PHONE", "")
-        address = _setting("SITE_ADDRESS", "")
-        hours_text = _setting("SITE_HOURS_TEXT", "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱")
-        instagram = (_setting("SITE_INSTAGRAM") or "").lstrip("@")
-        maps_url = (_setting("SITE_GOOGLE_MAPS_URL") or "").strip()
-        gbp_url = (_setting("SITE_GBP_URL") or "").strip()
+        site = branding["SITE_NAME"]
+        phone = branding["SITE_PHONE"]
+        address = branding["SITE_ADDRESS"]
+        hours_text = branding["SITE_HOURS_TEXT"] or "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱"
+        instagram = (branding["SITE_INSTAGRAM"] or "").lstrip("@")
+        maps_url = (branding["SITE_GOOGLE_MAPS_URL"] or "").strip()
+        gbp_url = (branding["SITE_GBP_URL"] or "").strip()
+        tagline = branding.get("SITE_TAGLINE") or _setting("SITE_TAGLINE", "معماری زیبایی")
 
         same_as: list[str] = []
         if instagram:
@@ -182,7 +247,6 @@ class SeoService:
         if maps_url and maps_url not in same_as:
             same_as.append(maps_url)
 
-        # Default: Sat–Thu 10:00–21:00 (Iran business week; matches SITE_HOURS_TEXT)
         opening_hours = [
             {
                 "@type": "OpeningHoursSpecification",
@@ -199,12 +263,10 @@ class SeoService:
             }
         ]
 
+        lat = branding["SITE_LAT"]
+        lng = branding["SITE_LNG"]
         if not maps_url:
-            lat = float(_setting("SITE_LAT", 32.6412))
-            lng = float(_setting("SITE_LNG", 51.6902))
-            maps_url = (
-                f"https://www.google.com/maps/search/?api=1&query={lat}%2C{lng}"
-            )
+            maps_url = f"https://www.google.com/maps/search/?api=1&query={lat}%2C{lng}"
 
         schema: dict[str, Any] = {
             "@context": "https://schema.org",
@@ -222,14 +284,14 @@ class SeoService:
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": address,
-                "addressLocality": "اصفهان",
+                "addressLocality": branding.get("SITE_CITY", "اصفهان"),
                 "addressRegion": "اصفهان",
                 "addressCountry": "IR",
             },
             "geo": {
                 "@type": "GeoCoordinates",
-                "latitude": float(_setting("SITE_LAT", 32.6412)),
-                "longitude": float(_setting("SITE_LNG", 51.6902)),
+                "latitude": lat,
+                "longitude": lng,
             },
             "hasMap": maps_url,
             "openingHoursSpecification": opening_hours,
@@ -248,7 +310,7 @@ class SeoService:
             "currenciesAccepted": "IRR",
             "paymentAccepted": "Cash, Card",
             "inLanguage": "fa",
-            "slogan": _setting("SITE_TAGLINE", "معماری زیبایی"),
+            "slogan": tagline,
         }
         if hours_text:
             schema["openingHours"] = hours_text
@@ -310,7 +372,7 @@ class SeoService:
         request=None,
     ) -> dict[str, Any]:
         origin = self.site_origin(request)
-        site = _setting("SITE_NAME", "صالح ایوبی")
+        site = self._site_name()
         elements = []
         for i, svc in enumerate(services, start=1):
             name = svc.get("name") or "خدمت"

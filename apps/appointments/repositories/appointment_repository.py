@@ -173,6 +173,28 @@ class AppointmentRepository(BaseRepository[Appointment]):
         )
         return {row["starts_at"]: row["taken"] for row in rows}
 
+    def count_for_phone_on_day(self, *, phone: str, day: date) -> int:
+        return (
+            self.get_queryset()
+            .filter(
+                phone=phone,
+                starts_at__date=day,
+                status__in=self.ACTIVE_STATUSES,
+            )
+            .count()
+        )
+
+    def get_by_code_and_phone(
+        self, booking_code: str, phone: str
+    ) -> Appointment | None:
+        try:
+            return self.get_queryset().get(
+                booking_code=booking_code.upper().strip(),
+                phone=phone,
+            )
+        except Appointment.DoesNotExist:
+            return None
+
     def daily_booked_counts(
         self,
         *,

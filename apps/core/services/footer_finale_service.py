@@ -48,50 +48,51 @@ def _wa_digits(phone: str) -> str:
 
 def _location_payload(address: str, hours: str = "") -> dict:
     """Premium location block — Leaflet map + Google Maps deep links."""
-    lat = float(getattr(settings, "SITE_LAT", 32.6412) or 32.6412)
-    lng = float(getattr(settings, "SITE_LNG", 51.6902) or 51.6902)
-    zoom = int(getattr(settings, "SITE_MAP_ZOOM", 16) or 16)
+    from apps.core.services.site_settings_service import SiteSettingsService
+
+    chrome = SiteSettingsService().location_chrome()
+    branding = SiteSettingsService().branding()
+    lat = branding["SITE_LAT"]
+    lng = branding["SITE_LNG"]
+    zoom = int(branding.get("SITE_MAP_ZOOM", 16) or 16)
     query = f"{lat},{lng}"
     maps_query = quote_plus(address) if address else query
-    hours_value = hours or _site("SITE_HOURS_TEXT", "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱")
-    site = _site("SITE_NAME", "صالح ایوبی")
-    maps_place = (_site("SITE_GOOGLE_MAPS_URL") or "").strip()
-    gbp_url = (_site("SITE_GBP_URL") or "").strip()
+    hours_value = hours or branding["SITE_HOURS_TEXT"] or "شنبه تا پنج‌شنبه · ۱۰ تا ۲۱"
+    site = branding["SITE_NAME"]
+    maps_place = (branding["SITE_GOOGLE_MAPS_URL"] or "").strip()
+    gbp_url = (branding["SITE_GBP_URL"] or "").strip()
     maps_url = maps_place or (
         f"https://www.google.com/maps/search/?api=1&query={maps_query}"
     )
 
     return {
         "show": bool(address),
-        "eyebrow": "موقعیت در اصفهان",
+        "eyebrow": chrome["eyebrow"],
         "title_find": "Find",
         "title_us": "Us",
-        "title_fa": f"آدرس سالن {site} در اصفهان",
-        "badge": "سالن تخصصی",
-        "lede": (
-            f"استودیوی تخصصی داماد، پوست و مو {site} در مشتاق اول اصفهان — "
-            "رزرو قبلی، مسیریابی آسان."
-        ),
-        "city": "اصفهان",
+        "title_fa": chrome["title_fa"],
+        "badge": chrome["badge"],
+        "lede": chrome["lede"],
+        "city": branding["SITE_CITY"],
         "address": address,
         "address_parts": [
-            {"role": "district", "text": "مشتاق اول"},
-            {"role": "street", "text": "خیابان ابوالحسن اصفهانی"},
-            {"role": "cue", "text": "بعد از کوچه ۲۶"},
+            {"role": "district", "text": chrome["district"]},
+            {"role": "street", "text": chrome["street"]},
+            {"role": "cue", "text": chrome["cue"]},
         ],
         "address_lines": [
-            "مشتاق اول",
-            "خیابان ابوالحسن اصفهانی",
-            "بعد از کوچه ۲۶",
+            chrome["district"],
+            chrome["street"],
+            chrome["cue"],
         ],
         "hours_label": "ساعات",
         "hours": hours_value,
         "availability_label": "نوبت",
-        "availability": "فقط با رزرو قبلی",
-        "cta_directions": "مسیریابی",
-        "cta_maps": "باز کردن در نقشه",
-        "cta_copy": "کپی آدرس",
-        "cta_gbp": "مشاهده در گوگل",
+        "availability": chrome["availability"],
+        "cta_directions": chrome["cta_directions"],
+        "cta_maps": chrome["cta_maps"],
+        "cta_copy": chrome["cta_copy"],
+        "cta_gbp": chrome["cta_gbp"],
         "gbp_url": gbp_url,
         "lat": lat,
         "lng": lng,
