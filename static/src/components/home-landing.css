@@ -13,17 +13,17 @@
    * Breakpoints remap tokens only; components never hardcode sizes.
    *  <720  phone | ≥720 tablet | ≥1080 desktop | ≥1600 wide | ≤374 xs
    */
-  --home-fs-hero: clamp(1.85rem, 0.95rem + 4.5vw, 2.6rem);
-  --home-fs-hero-sub: 0.82rem;
+  --home-fs-hero: clamp(1.75rem, 1.25rem + 2.5vw, 2.15rem);
+  --home-fs-hero-sub: clamp(0.8rem, 0.74rem + 0.3vw, 0.86rem);
   --home-fs-eyebrow: 0.68rem;
   --home-fs-overline: 0.68rem;
-  --home-fs-section: clamp(1.75rem, 1.1rem + 3.2vw, 2.35rem);
-  --home-fs-section-sm: clamp(1.7rem, 1.05rem + 3vw, 2.2rem);
-  --home-fs-assurance: clamp(1.7rem, 1.05rem + 2.9vw, 2.15rem);
-  --home-fs-lede: 0.82rem;
-  --home-fs-body: 0.9rem;
-  --home-fs-body-sm: 0.82rem;
-  --home-fs-card-title: 1.12rem;
+  --home-fs-section: clamp(1.6rem, 1.22rem + 1.9vw, 1.95rem);
+  --home-fs-section-sm: clamp(1.55rem, 1.2rem + 1.75vw, 1.9rem);
+  --home-fs-assurance: clamp(1.55rem, 1.18rem + 1.8vw, 1.9rem);
+  --home-fs-lede: 0.84rem;
+  --home-fs-body: 0.88rem;
+  --home-fs-body-sm: 0.8rem;
+  --home-fs-card-title: 1.08rem;
   --home-fs-step-title: 1rem;
   --home-fs-faq-q: 0.92rem;
   --home-fs-caption: 0.7rem;
@@ -54,7 +54,7 @@
 
 /* Hero */
 .is-home .hero-stage {
-  min-height: clamp(46rem, 94svh, 58rem) !important;
+  min-height: clamp(42rem, 100svh, 54rem) !important;
   align-items: stretch;
   padding-top: 4rem;
   background: var(--color-court-950);
@@ -88,7 +88,7 @@
   max-width: 82rem;
   min-height: 100%;
   margin-inline: auto;
-  padding: clamp(4rem, 8vh, 6.5rem) 0 clamp(3rem, 6vh, 5rem);
+  padding: clamp(5.75rem, 12vh, 8.5rem) 0 clamp(3.25rem, 7vh, 5rem);
   justify-content: center;
   align-items: flex-start;
   text-align: start;
@@ -116,48 +116,48 @@
 }
 
 .is-home .hero-logo-stage {
-  width: min(44vw, 25rem);
+  width: min(34vw, 20rem);
   max-width: 100%;
-  margin-bottom: clamp(0.4rem, 1.5vw, 0.8rem);
+  margin-bottom: clamp(0.35rem, 1vw, 0.65rem);
 }
 
 .is-home .hero-logo-svg,
 .is-home .hero-logo-img {
-  max-height: clamp(5.5rem, 14vw, 10rem);
+  max-height: clamp(5.25rem, 11vw, 8.5rem);
 }
 
 .is-home .hero-title {
-  max-width: 17ch;
+  max-width: 15ch;
   margin: 0;
   color: var(--home-ivory);
   font-family: var(--font-body);
   font-size: var(--home-fs-hero);
   font-weight: 600;
-  line-height: 1.34;
-  letter-spacing: -0.035em;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   text-shadow: 0 0.18rem 2rem rgba(0, 0, 0, 0.24);
 }
 
 .is-home .hero-tagline {
-  max-width: 48ch;
-  margin-top: clamp(1.15rem, 2.4vw, 1.65rem);
+  max-width: 45ch;
+  margin-top: clamp(0.9rem, 2vw, 1.35rem);
   color: rgba(246, 241, 232, 0.74);
   font-size: var(--home-fs-hero-sub);
   font-weight: 300;
-  line-height: 2;
+  line-height: 1.9;
   letter-spacing: 0;
 }
 
 .is-home .hero-cta {
   gap: 0.8rem 1.2rem;
-  margin-top: clamp(1.5rem, 3vw, 2.15rem);
+  margin-top: clamp(1.25rem, 2.5vw, 1.85rem);
 }
 
 .is-home .hero-cta .btn-draw {
-  min-width: 11.5rem;
-  min-height: 3.5rem;
-  padding-inline: 1.6rem;
+  min-width: 10.75rem;
+  min-height: 3.25rem;
+  padding-inline: 1.4rem;
   border-radius: var(--radius-sm);
   background: var(--home-ivory);
   font-weight: 600;
@@ -165,7 +165,7 @@
 
 .is-home .hero-secondary {
   gap: 0.55rem;
-  min-height: 3.5rem;
+  min-height: 3.25rem;
   padding-inline: 0.45rem;
   border-bottom: 1px solid rgba(246, 241, 232, 0.34);
   color: rgba(246, 241, 232, 0.82);
@@ -326,6 +326,7 @@
 .is-home .svc-shell {
   width: var(--home-shell);
   max-width: 82rem;
+  margin-inline: auto;
   padding: clamp(4.5rem, 8vw, 8rem) 0;
 }
 
@@ -554,6 +555,7 @@
 .is-home .gallery-intro {
   width: var(--home-shell);
   max-width: 82rem;
+  margin-inline: auto;
   padding: 0;
 }
 
@@ -635,6 +637,7 @@
 .is-home .gallery-controls-bar {
   width: var(--home-shell);
   max-width: 82rem;
+  margin-inline: auto;
   padding: 1.5rem 0 0;
 }
 
@@ -680,6 +683,7 @@
 .is-home .home-faq-shell {
   width: var(--home-shell);
   max-width: 82rem;
+  margin-inline: auto;
   padding: clamp(4.5rem, 8vw, 7.5rem) 0;
 }
 
@@ -760,14 +764,14 @@
 
 @media (min-width: 720px) {
   .is-home {
-    --home-fs-hero: clamp(2.35rem, 1.35rem + 2.5vw, 3.75rem);
-    --home-fs-hero-sub: clamp(0.92rem, 0.82rem + 0.25vw, 1.02rem);
+    --home-fs-hero: clamp(2.15rem, 1.55rem + 1.35vw, 2.75rem);
+    --home-fs-hero-sub: clamp(0.88rem, 0.82rem + 0.14vw, 0.96rem);
     --home-fs-eyebrow: clamp(0.72rem, 0.66rem + 0.15vw, 0.8rem);
     --home-fs-overline: 0.72rem;
-    --home-fs-section: clamp(2rem, 1.15rem + 1.9vw, 3.25rem);
-    --home-fs-section-sm: clamp(1.9rem, 1.15rem + 1.65vw, 2.85rem);
-    --home-fs-assurance: clamp(1.85rem, 1.15rem + 1.45vw, 2.75rem);
-    --home-fs-lede: clamp(0.9rem, 0.82rem + 0.2vw, 1rem);
+    --home-fs-section: clamp(1.9rem, 1.45rem + 1vw, 2.35rem);
+    --home-fs-section-sm: clamp(1.85rem, 1.42rem + 0.9vw, 2.25rem);
+    --home-fs-assurance: clamp(1.8rem, 1.4rem + 0.85vw, 2.2rem);
+    --home-fs-lede: clamp(0.88rem, 0.82rem + 0.14vw, 0.96rem);
     --home-fs-body: 0.9rem;
     --home-fs-body-sm: 0.84rem;
     --home-fs-card-title: clamp(1.18rem, 0.95rem + 0.55vw, 1.4rem);
@@ -778,14 +782,8 @@
     --home-fs-ui-sm: 0.78rem;
   }
 
-  .is-home .home-assurance-shell {
-    grid-template-columns: minmax(15rem, 0.78fr) minmax(0, 1.45fr);
-    align-items: start;
-  }
-
   .is-home .home-assurance-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-inline-start: 1px solid rgba(246, 241, 232, 0.1);
   }
 
   .is-home .home-assurance-list li {
@@ -825,16 +823,27 @@
   }
 }
 
+@media (min-width: 960px) {
+  .is-home .home-assurance-shell {
+    grid-template-columns: minmax(15rem, 0.78fr) minmax(0, 1.45fr);
+    align-items: start;
+  }
+
+  .is-home .home-assurance-list {
+    border-inline-start: 1px solid rgba(246, 241, 232, 0.1);
+  }
+}
+
 @media (min-width: 1080px) {
   .is-home {
-    --home-fs-hero: clamp(3.25rem, 1.6rem + 2.4vw, 4.75rem);
-    --home-fs-hero-sub: 1.05rem;
-    --home-fs-eyebrow: 0.82rem;
+    --home-fs-hero: clamp(2.65rem, 2rem + 0.95vw, 3.25rem);
+    --home-fs-hero-sub: 0.96rem;
+    --home-fs-eyebrow: 0.78rem;
     --home-fs-overline: 0.74rem;
-    --home-fs-section: clamp(2.75rem, 1.6rem + 1.7vw, 4rem);
-    --home-fs-section-sm: clamp(2.4rem, 1.45rem + 1.4vw, 3.5rem);
-    --home-fs-assurance: clamp(2.35rem, 1.5rem + 1.2vw, 3.25rem);
-    --home-fs-lede: 1rem;
+    --home-fs-section: clamp(2.25rem, 1.8rem + 0.65vw, 2.75rem);
+    --home-fs-section-sm: clamp(2.15rem, 1.75rem + 0.55vw, 2.6rem);
+    --home-fs-assurance: clamp(2.05rem, 1.7rem + 0.5vw, 2.45rem);
+    --home-fs-lede: 0.96rem;
     --home-fs-body: 0.92rem;
     --home-fs-body-sm: 0.84rem;
     --home-fs-card-title: clamp(1.28rem, 1rem + 0.45vw, 1.5rem);
@@ -873,77 +882,91 @@
 
   .is-home .hero-stage {
     min-height: max(42rem, 100svh) !important;
-    padding-top: 3.65rem;
+    padding-top: 0;
+    align-items: stretch;
+  }
+
+  .is-home .hero-media {
+    inset: 0;
+    height: 100%;
   }
 
   .is-home .hero-media-img {
-    object-position: 60% 15%;
-    filter: saturate(0.78) contrast(1.04) brightness(0.68);
+    object-position: 54% 12%;
+    filter: saturate(0.86) contrast(1.06) brightness(0.68);
   }
 
   .is-home .hero-media-veil {
     background:
       linear-gradient(
         180deg,
-        rgba(6, 23, 19, 0.05) 0%,
-        rgba(6, 23, 19, 0.18) 31%,
-        rgba(6, 23, 19, 0.87) 62%,
+        rgba(6, 23, 19, 0.06) 0%,
+        rgba(6, 23, 19, 0.14) 28%,
+        rgba(6, 23, 19, 0.78) 54%,
+        rgba(6, 23, 19, 0.96) 72%,
         var(--color-court-950) 100%
       ),
-      linear-gradient(270deg, rgba(6, 23, 19, 0.42), rgba(6, 23, 19, 0.08));
+      linear-gradient(270deg, rgba(6, 23, 19, 0.38), rgba(6, 23, 19, 0.04));
   }
 
   .is-home .hero-lockup {
     width: var(--home-shell);
-    padding: clamp(12.5rem, 38svh, 18rem) 0 max(2rem, env(safe-area-inset-bottom));
+    min-height: max(42rem, 100svh);
+    margin-top: 0;
+    padding: clamp(14.5rem, 40svh, 19rem) 0 max(2rem, env(safe-area-inset-bottom));
     justify-content: flex-end;
+    background: none;
   }
 
   .is-home .hero-eyebrow {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.55rem;
   }
 
   .is-home .hero-logo-stage {
-    width: min(72vw, 18rem);
-    margin-bottom: 0;
+    width: min(48vw, 11.5rem);
+    margin-bottom: 0.25rem;
   }
 
   .is-home .hero-logo-svg,
   .is-home .hero-logo-img {
-    max-height: 7.5rem;
+    max-height: 4.5rem;
   }
 
   .is-home .hero-title {
     max-width: 18ch;
-    line-height: 1.42;
-    letter-spacing: -0.025em;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
   }
 
   .is-home .hero-tagline {
-    max-width: 38ch;
-    margin-top: 0.85rem;
+    max-width: 40ch;
+    margin-top: 0.65rem;
     line-height: 1.9;
   }
 
   .is-home .hero-cta {
-    width: 100%;
-    margin-top: 1.2rem;
+    display: grid;
+    width: min(100%, 26rem);
+    margin-top: 1.05rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
   }
 
   .is-home .hero-cta .btn-draw {
+    width: 100%;
     min-width: 0;
-    min-height: 3.35rem;
-    flex: 1 1 10rem;
+    min-height: 3.25rem;
   }
 
   .is-home .hero-secondary {
-    min-height: 3.35rem;
-    flex: 0 1 auto;
+    width: fit-content;
+    min-height: 2.75rem;
+    padding-inline: 0;
   }
 
   .is-home .hero-proof {
-    gap: 0.4rem 0.8rem;
-    margin-top: 1.15rem;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.7rem;
   }
 
   .is-home .hero-proof li:last-child {
@@ -1063,7 +1086,7 @@
   }
 
   .is-home .hero-lockup {
-    padding-top: 10.5rem;
+    padding-top: 13rem;
   }
 
   .is-home .hero-secondary {
@@ -1072,15 +1095,58 @@
   }
 }
 
+@media (max-width: 900px) and (max-height: 600px) and (orientation: landscape) {
+  .is-home .hero-stage,
+  .is-home .hero-lockup {
+    min-height: 34rem !important;
+  }
+
+  .is-home .hero-media-img {
+    object-position: 38% 14%;
+  }
+
+  .is-home .hero-media-veil {
+    background:
+      linear-gradient(270deg, rgba(6, 23, 19, 0.96), rgba(6, 23, 19, 0.74) 48%, rgba(6, 23, 19, 0.14)),
+      linear-gradient(180deg, rgba(6, 23, 19, 0.12), rgba(6, 23, 19, 0.58));
+  }
+
+  .is-home .hero-lockup {
+    padding: 5.5rem 0 2rem;
+    justify-content: center;
+  }
+
+  .is-home .hero-logo-stage {
+    width: 9rem;
+  }
+
+  .is-home .hero-logo-svg,
+  .is-home .hero-logo-img {
+    max-height: 3.5rem;
+  }
+
+  .is-home .hero-title {
+    max-width: 16ch;
+  }
+
+  .is-home .hero-tagline {
+    max-width: 38ch;
+  }
+
+  .is-home .hero-proof {
+    display: none;
+  }
+}
+
 @media (min-width: 1600px) {
   .is-home {
-    --home-fs-hero: 4.6rem;
-    --home-fs-hero-sub: 1.05rem;
-    --home-fs-section: 4rem;
-    --home-fs-section-sm: 3.5rem;
-    --home-fs-assurance: 3.25rem;
-    --home-fs-card-title: 1.5rem;
-    --home-fs-lede: 1rem;
+    --home-fs-hero: 3.25rem;
+    --home-fs-hero-sub: 0.98rem;
+    --home-fs-section: 2.75rem;
+    --home-fs-section-sm: 2.6rem;
+    --home-fs-assurance: 2.45rem;
+    --home-fs-card-title: 1.42rem;
+    --home-fs-lede: 0.98rem;
   }
 
   .is-home .hero-lockup {

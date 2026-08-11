@@ -25,8 +25,12 @@ DEFAULTS = {
     ),
     "hero_cta_primary_label": "رزرو آنلاین",
     "hero_cta_secondary_label": "راهنمای پیش از مراجعه",
-    "hero_image_webp": "images/brand/hero-cinematic-frame.webp",
-    "hero_image_mobile_webp": "images/brand/hero-cinematic-frame-mobile.webp",
+    # Lossless WebP from the 2250px master; avoids showing a visibly
+    # over-compressed image in the desktop LCP slot.
+    "hero_image_webp": "images/brand/hero-cinematic-frame-hq.webp",
+    # A dedicated 2560px portrait crop prevents the phone hero from enlarging
+    # the old 960px landscape derivative until it looks soft.
+    "hero_image_mobile_webp": "images/brand/hero-cinematic.webp",
     "hero_image_fallback": "images/brand/hero-cinematic-frame-fallback.jpg",
     "hero_logo_webp": "images/brand/logo-signature-800.webp",
     "hero_scroll_hint": "Scroll",
@@ -42,6 +46,13 @@ DEFAULTS = {
     "gallery_label": "نمونه کار",
     "gallery_title": "گالری",
     "gallery_lede": "نمونه‌های منتخب از اجرای خدمات در استودیو.",
+}
+
+# Keep deployments that already ran `seed_cms` on the improved assets without
+# overwriting a genuinely custom image selected from the CMS.
+LEGACY_HERO_ASSETS = {
+    "hero_image_webp": "images/brand/hero-cinematic-frame.webp",
+    "hero_image_mobile_webp": "images/brand/hero-cinematic-frame-mobile.webp",
 }
 
 DEFAULT_PROOF = [
@@ -92,6 +103,10 @@ class HomePageService:
             data["hero_cta_primary_href"] = "appointments:create"
             data["hero_cta_secondary_href"] = "consultations:hub"
             data["services_cta_href"] = "catalog:list"
+
+        for field, legacy_path in LEGACY_HERO_ASSETS.items():
+            if data[field] == legacy_path:
+                data[field] = DEFAULTS[field]
 
         data["hero_image_webp"] = _static(data["hero_image_webp"])
         data["hero_image_mobile_webp"] = _static(data["hero_image_mobile_webp"])
