@@ -14,9 +14,9 @@
 
 @media (min-width: 960px) {
   .ff-locate {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: clamp(2rem, 4vw, 3.5rem);
-    align-items: center;
+    align-items: start;
   }
 }
 
@@ -95,13 +95,13 @@
 .ff-locate-lede {
   margin: 0.85rem 0 0;
   align-self: flex-start;
-  max-width: 34ch;
+  max-width: 36ch;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: clamp(1.02rem, 0.94rem + 0.28vw, 1.12rem);
   font-weight: 300;
-  line-height: 1.8;
+  line-height: 1.85;
   letter-spacing: -0.01em;
-  color: rgba(251, 248, 242, 0.55);
+  color: rgba(251, 248, 242, 0.62);
 }
 
 .ff-locate-badge {
@@ -111,7 +111,7 @@
   min-height: 1.65rem;
   padding: 0.2rem 0.7rem;
   border: 1px solid rgba(201, 170, 114, 0.28);
-  border-radius: 999px;
+  border-radius: 0.25rem;
   font-family: var(--font-body);
   font-size: 0.6875rem;
   font-weight: 400;
@@ -125,16 +125,33 @@
 .ff-locate-title {
   margin: 0;
   align-self: flex-start;
+  max-width: 16ch;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(1.55rem, 1.15rem + 1.7vw, 2.25rem);
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  color: rgba(251, 248, 242, 0.96);
+  text-wrap: pretty;
+}
+
+.ff-locate-kicker {
+  margin: 0 0 0.7rem;
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.35em;
   font-family: "Cormorant Garamond", var(--font-display), Georgia, serif;
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.32rem);
   font-weight: 400;
   font-style: italic;
-  line-height: 1;
-  color: rgba(251, 248, 242, 0.96);
+  letter-spacing: 0.08em;
+  color: rgba(201, 170, 114, 0.72);
+}
+
+.ff-locate-kicker span:last-child {
+  color: rgba(223, 196, 138, 0.95);
 }
 
 .ff-locate-rule {
@@ -192,10 +209,10 @@
   gap: 0.4rem 0.5rem;
   margin: 0;
   font-style: normal;
-  font-size: 0.95rem;
+  font-size: 1.02rem;
   font-weight: 300;
   line-height: 1.9;
-  color: rgba(251, 248, 242, 0.78);
+  color: rgba(251, 248, 242, 0.82);
 }
 
 .ff-locate-city {
@@ -238,18 +255,18 @@
 
 .ff-locate-fact dt {
   margin: 0;
-  font-size: 0.625rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  color: rgba(251, 248, 242, 0.4);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: rgba(201, 170, 114, 0.78);
 }
 
 .ff-locate-fact dd {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.98rem;
   font-weight: 300;
-  line-height: 1.65;
-  color: rgba(251, 248, 242, 0.78);
+  line-height: 1.7;
+  color: rgba(251, 248, 242, 0.86);
 }
 
 .ff-locate-actions {
@@ -318,12 +335,12 @@
 .ff-locate-media {
   width: 100%;
   min-width: 0;
-  align-self: center;
+  align-self: start;
   display: flex;
 }
 
 .ff-locate-frame {
-  --ff-map-radius: clamp(1.25rem, 2.5vw, 1.75rem);
+  --ff-map-radius: 0.25rem;
   position: relative;
   margin: 0;
   isolation: isolate;
@@ -333,25 +350,24 @@
   min-height: 16rem;
   aspect-ratio: 4 / 3;
   border-radius: var(--ff-map-radius);
-  border: 1px solid rgba(251, 248, 242, 0.12);
+  border: 1px solid rgba(251, 248, 242, 0.14);
   background:
     radial-gradient(60% 50% at 50% 40%, rgba(141, 168, 157, 0.1), transparent 70%),
     var(--color-court-900);
   box-shadow:
     0 1px 0 rgba(251, 248, 242, 0.04) inset,
-    0 28px 70px rgba(0, 0, 0, 0.34);
+    0 22px 48px rgba(0, 0, 0, 0.28);
   transition:
-    transform 0.7s var(--ff-loc-ease),
-    box-shadow 0.7s var(--ff-loc-ease),
-    border-color 0.7s var(--ff-loc-soft);
+    border-color 0.55s var(--ff-loc-soft),
+    box-shadow 0.55s var(--ff-loc-ease);
 }
 
 @media (min-width: 960px) {
   .ff-locate-frame {
-    aspect-ratio: 5 / 4;
-    min-height: 0;
+    aspect-ratio: 4 / 5;
+    min-height: 22rem;
     height: auto;
-    max-height: 22rem;
+    max-height: 28rem;
   }
 }
 
@@ -389,11 +405,10 @@
 
 @media (hover: hover) and (pointer: fine) {
   .ff-locate-frame:hover {
-    transform: translateY(-4px) scale(1.006);
-    border-color: rgba(201, 170, 114, 0.28);
+    border-color: rgba(201, 170, 114, 0.32);
     box-shadow:
       0 1px 0 rgba(251, 248, 242, 0.06) inset,
-      0 36px 90px rgba(0, 0, 0, 0.42),
+      0 26px 56px rgba(0, 0, 0, 0.34),
       0 0 0 1px rgba(201, 170, 114, 0.08);
   }
 
@@ -696,31 +711,29 @@ html.is-balanced-motion .ff-locate-skeleton-pulse {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 2.25rem;
-  padding: 0.375rem 0.875rem;
-  border-radius: 999px;
-  border: 1px solid rgba(251, 248, 242, 0.14);
-  background: rgba(6, 23, 19, 0.72);
+  min-height: 2.35rem;
+  padding: 0.375rem 0.9rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(251, 248, 242, 0.16);
+  background: rgba(6, 23, 19, 0.78);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: rgba(251, 248, 242, 0.78);
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
+  color: rgba(251, 248, 242, 0.82);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   transition:
     color 0.4s var(--ff-loc-soft),
     border-color 0.4s var(--ff-loc-soft),
-    background-color 0.4s var(--ff-loc-soft),
-    transform 0.4s var(--ff-loc-ease);
+    background-color 0.4s var(--ff-loc-soft);
 }
 
 .ff-locate-open:hover,
 .ff-locate-open:focus-visible {
   color: var(--color-ivory);
   border-color: rgba(201, 170, 114, 0.45);
-  background: rgba(6, 23, 19, 0.88);
-  transform: translateY(-2px);
+  background: rgba(6, 23, 19, 0.92);
 }
 
 .ff-locate-open:focus-visible {

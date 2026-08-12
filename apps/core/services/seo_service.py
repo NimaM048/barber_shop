@@ -225,9 +225,56 @@ class SeoService:
             fallback_description=fallback_desc,
         )
 
+    def reviews_hub_meta(self) -> dict[str, str]:
+        site = self._site_name()
+        pc = PageContentService().get(PageContent.PageKey.REVIEWS)
+        fallback_title = f"نظرات مشتریان | آرایشگاه {site} اصفهان"
+        fallback_desc = (
+            f"روایت داماد، اصلاح VIP و مراقبت پوست در {site} اصفهان — "
+            "تجربه واقعی مشتریان با امتیاز مشخص."
+        )
+        return self._meta_from_cms(
+            seo_title=pc.get("seo_title", ""),
+            seo_description=pc.get("seo_description", ""),
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
+
+    def reviews_category_meta(self, category: dict[str, Any]) -> dict[str, str]:
+        site = self._site_name()
+        title = (category.get("seo_title") or "").strip()
+        desc = (category.get("seo_description") or "").strip()
+        cat_title = category.get("title") or "نظرات"
+        fallback_title = f"نظرات {cat_title} | {site} اصفهان"
+        fallback_desc = (
+            desc
+            or (category.get("lede") or "").strip()
+            or f"تجربه مشتریان {cat_title} در {site} اصفهان."
+        )
+        return self._meta_from_cms(
+            seo_title=title,
+            seo_description=desc,
+            fallback_title=fallback_title,
+            fallback_description=fallback_desc,
+        )
+
+    def reviews_detail_meta(self, review: dict[str, Any]) -> dict[str, str]:
+        site = self._site_name()
+        title = (review.get("seo_title") or "").strip() or review.get("title") or "نظر مشتری"
+        desc = (review.get("seo_description") or "").strip() or review.get("excerpt") or ""
+        if desc and site not in desc:
+            desc = f"{desc} — {site}، اصفهان."
+        fallback_title = f"{title} | {site}"
+        return self._meta_from_cms(
+            seo_title=title if title != review.get("title") else "",
+            seo_description=(review.get("seo_description") or "").strip(),
+            fallback_title=fallback_title,
+            fallback_description=desc[:300] or f"نظر مشتری درباره خدمات {site} در اصفهان.",
+        )
+
     # ── JSON-LD ────────────────────────────────────────────────────
 
-    def local_business_schema(self, request=None) -> dict[str, Any]:
+    def local_business_schema(self, request=None, *, include_reviews: bool = False) -> dict[str, Any]:
         branding = SiteSettingsService().branding()
         origin = self.site_origin(request)
         site = branding["SITE_NAME"]
@@ -316,7 +363,124 @@ class SeoService:
             schema["openingHours"] = hours_text
         if same_as:
             schema["sameAs"] = same_as
+        if include_reviews:
+            self._attach_review_schema(schema, request)
         return schema
+
+    def _iso_date(self, value: Any) -> str:
+        if value is None:
+            return ""
+        if hasattr(value, "date") and callable(getattr(value, "date")):
+            try:
+                return value.date().isoformat()
+            except Exception:
+                pass
+        if hasattr(value, "isoformat"):
+            return value.isoformat()
+        return str(value)
+
+    def review_node(self, card: dict[str, Any], request=None) -> dict[str, Any]:
+        origin = self.site_origin(request)
+        site = self._site_name()
+        item_reviewed: dict[str, Any] = (
+            {"@id": f"{origin}/#business"} if origin else {"@type": "BeautySalon", "name": site}
+        )
+        node: dict[str, Any] = {
+            "@type": "Review",
+            "name": card.get("title") or "نظر مشتری",
+            "reviewBody": (card.get("body") or card.get("excerpt") or "").strip(),
+            "author": {
+                "@type": "Person",
+                "name": card.get("author_display_name") or "مشتری",
+            },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": card.get("rating") or 5,
+                "bestRating": 5,
+                "worstRating": 1,
+            },
+            "itemReviewed": item_reviewed,
+        }
+        published = self._iso_date(card.get("published_at"))
+        if published:
+            node["datePublished"] = published
+        url = card.get("url")
+        if url:
+            node["url"] = self.absolute_url(url, request)
+        return node
+
+    def _attach_review_schema(self, schema: dict[str, Any], request=None) -> None:
+        from apps.reviews.services import ReviewService
+
+        payload = ReviewService().homepage_payload(limit=6)
+        aggregate = payload.get("aggregate") or {}
+        if not aggregate.get("has_reviews"):
+            return
+        schema["aggregateRating"] = {
+            "@type": "AggregateRating",
+            "ratingValue": aggregate["rating_value"],
+            "reviewCount": aggregate["review_count"],
+            "bestRating": 5,
+            "worstRating": 1,
+        }
+        reviews = payload.get("items") or []
+        if reviews:
+            schema["review"] = [self.review_node(card, request) for card in reviews]
+
+    def review_item_list_schema(
+        self,
+        reviews: list[dict[str, Any]],
+        request=None,
+    ) -> dict[str, Any] | None:
+        if not reviews:
+            return None
+        site = self._site_name()
+        elements = []
+        for i, card in enumerate(reviews, start=1):
+            elements.append(
+                {
+                    "@type": "ListItem",
+                    "position": i,
+                    "url": self.absolute_url(card.get("url") or "/reviews/", request),
+                    "item": self.review_node(card, request),
+                }
+            )
+        return {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": f"نظرات مشتریان {site}",
+            "url": self.absolute_url("/reviews/", request),
+            "numberOfItems": len(elements),
+            "itemListElement": elements,
+        }
+
+    def review_collection_schema(
+        self,
+        category: dict[str, Any],
+        reviews: list[dict[str, Any]],
+        request=None,
+    ) -> dict[str, Any]:
+        site = self._site_name()
+        title = category.get("title") or "نظرات"
+        item_list = self.review_item_list_schema(reviews, request) or {
+            "@type": "ItemList",
+            "numberOfItems": 0,
+            "itemListElement": [],
+        }
+        item_list.pop("@context", None)
+        return {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": f"نظرات {title} | {site}",
+            "url": self.absolute_url(category.get("url") or "/reviews/", request),
+            "description": (category.get("lede") or category.get("seo_description") or "").strip(),
+            "mainEntity": item_list,
+        }
+
+    def review_detail_schema(self, review: dict[str, Any], request=None) -> dict[str, Any]:
+        node = self.review_node(review, request)
+        node["@context"] = "https://schema.org"
+        return node
 
     def breadcrumb_schema(
         self,
@@ -432,6 +596,7 @@ class SeoService:
             ("appointments:create", "weekly", "0.9"),
             ("consultations:hub", "weekly", "0.8"),
             ("magazine:hub", "daily", "0.8"),
+            ("reviews:hub", "weekly", "0.8"),
         ]
         entries: list[dict[str, Any]] = []
         for name, changefreq, priority in pages:
@@ -491,11 +656,30 @@ class SeoService:
             )
         return entries
 
+    def review_sitemap_entries(self, request=None) -> list[dict[str, Any]]:
+        from apps.reviews.services import ReviewService
+
+        entries: list[dict[str, Any]] = []
+        for e in ReviewService().sitemap_entries():
+            lastmod = None
+            if e.get("updated_at"):
+                lastmod = e["updated_at"].date().isoformat()
+            entries.append(
+                {
+                    "loc": self.absolute_url(e["path"], request),
+                    "changefreq": "weekly",
+                    "priority": "0.6" if e.get("kind") == "detail" else "0.7",
+                    "lastmod": lastmod,
+                }
+            )
+        return entries
+
     def build_sitemap_xml(self, request=None) -> str:
         all_entries = (
             self.static_sitemap_entries(request)
             + self.consultation_sitemap_entries(request)
             + self.magazine_sitemap_entries(request)
+            + self.review_sitemap_entries(request)
         )
         lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',

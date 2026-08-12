@@ -1,0 +1,63 @@
+{% if home_reviews %}
+<section id="reviews" class="home-reviews" aria-labelledby="home-reviews-heading">
+  <div class="home-reviews-shell" data-reveal>
+    <header class="home-section-head home-section-head--split">
+      <div>
+        <p class="section-label">{{ reviews_chrome.label }}</p>
+        <h2 id="home-reviews-heading">{{ reviews_chrome.title }}</h2>
+      </div>
+      <div class="home-reviews-intro">
+        {% if home_reviews_aggregate.has_reviews %}
+        <p class="home-reviews-score" aria-label="میانگین امتیاز {{ home_reviews_aggregate.rating_display }} از {{ home_reviews_aggregate.count_display }} نظر">
+          <span class="home-reviews-score-value">{{ home_reviews_aggregate.rating_value_display }}</span>
+          <span class="home-reviews-score-meta">
+            <span>از ۵</span>
+            <span aria-hidden="true">·</span>
+            <span>{{ home_reviews_aggregate.count_display }} روایت</span>
+          </span>
+        </p>
+        {% endif %}
+        <p>{{ reviews_chrome.lede }}</p>
+      </div>
+    </header>
+
+    <ul class="home-reviews-grid">
+      {% for item in home_reviews %}
+      <li>
+        <a href="{{ item.url }}" class="home-review">
+          <span class="home-review-index" aria-hidden="true">{{ item.index_label }}</span>
+          <blockquote>
+            <p>«{{ item.excerpt_short }}»</p>
+          </blockquote>
+          <span class="home-review-foot">
+            <span class="home-review-who">
+              <span class="home-review-name">{{ item.author_display_name }}</span>
+              <small>{{ item.service_name }}{% if item.city %} · {{ item.city }}{% endif %}</small>
+            </span>
+            <span class="home-review-rating">{{ item.rating_display }}</span>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="home-reviews-actions">
+      <a href="{% url 'reviews:hub' %}" class="home-text-link">
+        {{ reviews_chrome.cta_label|default:"همه روایت‌ها" }}
+        <span aria-hidden="true">←</span>
+      </a>
+      {% if home_reviews_gbp_url %}
+      <a
+        href="{{ home_reviews_gbp_url }}"
+        class="home-text-link home-reviews-gbp"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ home_reviews_gbp_label|default:"مشاهده در گوگل" }}
+        <span aria-hidden="true">↗</span>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}

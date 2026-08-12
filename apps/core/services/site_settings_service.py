@@ -100,6 +100,7 @@ class SiteSettingsService:
             links = [
                 {"label": "خدمات", "href": reverse("core:home") + "#services", "show_on_mobile": True},
                 {"label": "گالری", "href": reverse("core:home") + "#gallery", "show_on_mobile": True},
+                {"label": "نظرات", "href": reverse("reviews:hub"), "show_on_mobile": True},
                 {"label": "مجله", "href": reverse("magazine:hub"), "show_on_mobile": True},
                 {"label": "مشاوره", "href": reverse("consultations:hub"), "show_on_mobile": True},
             ]

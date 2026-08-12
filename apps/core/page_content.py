@@ -14,6 +14,7 @@ class PageContent(TimeStampedModel, SoftDeleteModel):
         BOOKING = "booking", "رزرو نوبت"
         BARBERS = "barbers", "آرایشگران"
         CONSULTATIONS = "consultations", "مشاوره"
+        REVIEWS = "reviews", "نظرات"
 
     page = models.CharField(
         "صفحه",

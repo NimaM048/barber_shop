@@ -9,6 +9,7 @@ from apps.core.services import SeoService
 from apps.core.services.home_page_service import HomePageService
 from apps.core.services.page_content_service import PageContentService
 from apps.portfolio.services import PortfolioService
+from apps.reviews.services import ReviewService
 
 SERVICE_IMAGES = [
     ("images/brand/service-card-1.webp", "images/brand/service-card-1.jpg"),
@@ -137,6 +138,11 @@ class HomeView(TemplateView):
         gallery = PortfolioService().homepage_payload()
         ctx["gallery_categories"] = gallery["categories"]
         ctx["gallery_items"] = gallery["items"]
+        reviews = ReviewService().homepage_payload()
+        ctx["home_reviews"] = reviews["items"]
+        ctx["home_reviews_aggregate"] = reviews["aggregate"]
+        ctx["home_reviews_gbp_url"] = reviews["gbp_url"]
+        ctx["home_reviews_gbp_label"] = reviews["gbp_label"]
         ctx["home_faqs"] = self._homepage_faqs()
         home_faq_section = self.HOME_FAQ_DEFAULTS.copy()
         hub = (
@@ -168,9 +174,15 @@ class HomeView(TemplateView):
             "title": home_cms["gallery_title"],
             "lede": home_cms["gallery_lede"],
         }
+        ctx["reviews_chrome"] = {
+            "label": home_cms["reviews_label"],
+            "title": home_cms["reviews_title"],
+            "lede": home_cms["reviews_lede"],
+            "cta_label": home_cms["reviews_cta_label"],
+        }
         ctx["page_seo"] = seo.home_meta()
         schemas = [
-            seo.local_business_schema(request),
+            seo.local_business_schema(request, include_reviews=bool(reviews["items"])),
             seo.breadcrumb_schema(
                 [{"name": "خانه", "path": "/"}],
                 request,

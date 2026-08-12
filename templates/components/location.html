@@ -28,13 +28,13 @@
           {% endif %}
         </div>
 
-        <h2 id="ff-locate-heading" class="ff-locate-title" lang="en" dir="ltr">
-          <span class="ff-locate-word ff-locate-word--find">{{ loc.title_find }}</span>
-          <span class="ff-locate-word ff-locate-word--us">{{ loc.title_us }}</span>
+        <p class="ff-locate-kicker" lang="en" dir="ltr">
+          <span>{{ loc.title_find }}</span>
+          <span>{{ loc.title_us }}</span>
+        </p>
+        <h2 id="ff-locate-heading" class="ff-locate-title">
+          {{ loc.title_fa|default:"آدرس سالن در اصفهان" }}
         </h2>
-        {% if loc.title_fa %}
-        <p class="sr-only">{{ loc.title_fa }}</p>
-        {% endif %}
 
         {% if loc.lede %}
         <p class="ff-locate-lede">{{ loc.lede }}</p>

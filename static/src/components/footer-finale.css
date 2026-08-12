@@ -4,36 +4,43 @@
   --ff-ink: var(--color-ivory);
   --ff-void: var(--color-court-950);
   --ff-depth: var(--color-court-950);
-  --ff-mute: rgba(247, 244, 239, 0.55);
+  --ff-mute: rgba(247, 244, 239, 0.64);
   --ff-soft: rgba(247, 244, 239, 0.42);
   --ff-faint: rgba(247, 244, 239, 0.14);
+  --ff-line: rgba(247, 244, 239, 0.1);
   --ff-hairline: var(--color-hairline);
   --ff-ease: var(--ease-out-expo);
+  --ff-fs-display: clamp(2.05rem, 1.2rem + 3.4vw, 3.35rem);
+  --ff-fs-lede: clamp(1.02rem, 0.94rem + 0.3vw, 1.12rem);
+  --ff-fs-ui: clamp(1.02rem, 0.96rem + 0.22vw, 1.12rem);
+  --ff-fs-meta: 0.78rem;
 
   position: relative;
   isolation: isolate;
   overflow: hidden;
   color: var(--ff-ink);
   background:
-    radial-gradient(ellipse 50% 40% at 50% 0%, rgba(74, 122, 110, 0.08), transparent 55%),
+    radial-gradient(ellipse 52% 34% at 92% 0%, rgba(74, 122, 110, 0.13), transparent 58%),
+    radial-gradient(ellipse 38% 26% at 0% 72%, rgba(201, 170, 114, 0.07), transparent 55%),
     var(--ff-void);
   margin-top: 0;
-  padding-block: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.25rem);
-  border-top: 0;
+  padding-block: clamp(4.5rem, 9vw, 7rem) 0;
+  border-top: 1px solid var(--ff-line);
 }
 
 .ff-stage::before {
   content: "";
   pointer-events: none;
   position: absolute;
-  inset-inline: 0;
+  inset-inline: 12%;
   top: 0;
   z-index: 3;
-  height: clamp(3rem, 7vw, 5rem);
+  height: 1px;
   background: linear-gradient(
-    180deg,
-    rgba(7, 25, 22, 0.35) 0%,
-    transparent 100%
+    90deg,
+    transparent,
+    rgba(201, 170, 114, 0.38),
+    transparent
   );
 }
 
@@ -43,25 +50,27 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      transparent 18%,
-      rgba(5, 15, 13, 0.22) 58%,
-      rgba(5, 15, 13, 0.82) 100%
-    ),
-    radial-gradient(
-      ellipse 58% 38% at 50% 24%,
-      rgba(26, 58, 52, 0.18) 0%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 50% 40% at 80% 70%,
-      rgba(18, 48, 42, 0.28) 0%,
-      transparent 70%
-    ),
-    var(--ff-depth);
+  overflow: hidden;
+}
+
+.ff-atmosphere-ring {
+  position: absolute;
+  border: 1px solid rgba(201, 170, 114, 0.13);
+  border-radius: 50%;
+}
+
+.ff-atmosphere-ring-a {
+  width: min(32rem, 78vw);
+  aspect-ratio: 1;
+  top: -10rem;
+  inset-inline-end: -12rem;
+}
+
+.ff-atmosphere-ring-b {
+  width: min(20rem, 52vw);
+  aspect-ratio: 1;
+  bottom: 10%;
+  inset-inline-start: -8rem;
 }
 
 .ff-glow {
@@ -103,17 +112,17 @@
   position: absolute;
   z-index: 1;
   inset-inline: 0;
-  top: 12%;
+  top: 8%;
   margin: 0;
   text-align: center;
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(3rem, 11vw, 7.5rem);
+  font-size: clamp(3.5rem, 12vw, 8.5rem);
   font-weight: 400;
   font-style: italic;
   letter-spacing: 0.12em;
   line-height: 0.9;
   color: var(--ff-ink);
-  opacity: 0.03;
+  opacity: 0.045;
   pointer-events: none;
   user-select: none;
   will-change: auto;
@@ -139,6 +148,11 @@
 /* Acts — seamless vertical rhythm, no boxed containers */
 .ff-act {
   position: relative;
+}
+
+.ff-act + .ff-act,
+.ff-act + .ff-finale {
+  border-top: 1px solid var(--ff-line);
 }
 
 .ff-act-reflect {
@@ -222,29 +236,37 @@
 .ff-act-decide {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
-  padding-block: 0 clamp(1.5rem, 3.5vw, 2.25rem);
-  text-align: center;
+  align-items: flex-start;
+  gap: clamp(1.35rem, 3vw, 2rem);
+  padding-block: 0 clamp(2.25rem, 4.5vw, 3.25rem);
+  text-align: start;
 }
 
 .ff-decide-copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  max-width: 24rem;
+  align-items: flex-start;
+  gap: 0.85rem;
+  max-width: none;
+}
+
+.ff-act-decide .ff-act-label,
+.ff-contact-caption,
+.ff-locate-eyebrow {
+  margin: 0;
+  color: rgba(201, 170, 114, 0.86);
 }
 
 .ff-cta-statement {
   margin: 0;
-  max-width: 28ch;
+  max-width: 12ch;
   font-family: var(--font-body);
-  font-size: var(--text-title);
-  font-weight: 300;
-  line-height: 1.7;
-  letter-spacing: -0.01em;
-  color: var(--ff-mute);
+  font-size: var(--ff-fs-display);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+  color: rgba(247, 244, 239, 0.96);
+  text-wrap: pretty;
 }
 
 .ff-cta-arrow {
@@ -260,66 +282,92 @@ html.is-full-motion .ff-cta-arrow {
 }
 
 .ff-cta-prompt {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  color: rgba(247, 244, 239, 0.42);
+  margin: 0.15rem 0 0;
+  max-width: 34ch;
+  font-size: var(--ff-fs-lede);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.85;
+  color: var(--ff-mute);
 }
 
 .ff-cta-actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  align-items: stretch;
+  gap: 0.75rem;
   width: 100%;
-  max-width: 22rem;
+  max-width: 18rem;
 }
 
 .ff-cta-primary {
   width: 100%;
   justify-content: center;
-  min-height: 2.75rem;
+  min-height: 2.85rem;
 }
 
 .ff-cta-secondary {
+  width: 100%;
+  justify-content: center;
   min-height: 2.85rem;
-  padding-inline: 0.5rem;
+  padding-inline: 1rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 640px) and (max-width: 959px) {
   .ff-cta-actions {
     flex-direction: row;
-    justify-content: center;
+    flex-wrap: wrap;
     max-width: none;
-    gap: 1.5rem;
+    gap: 0.75rem 1rem;
   }
 
-  .ff-cta-primary {
+  .ff-cta-primary,
+  .ff-cta-secondary {
     width: auto;
-    min-width: 15rem;
+    min-width: 12.5rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .ff-act-decide {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(14rem, 0.6fr);
+    align-items: end;
+    gap: 2.5rem 3.5rem;
+  }
+
+  .ff-cta-actions {
+    justify-self: end;
+    width: 100%;
+    max-width: 17.5rem;
   }
 }
 
 /* Act III — Connection */
 .ff-act-connect {
-  padding-block: 0 clamp(1.5rem, 3.5vw, 2.25rem);
+  padding-block: clamp(2.5rem, 5vw, 4rem);
 }
 
 .ff-connect-head {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  margin-bottom: clamp(2rem, 4.5vw, 3rem);
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 .ff-contact-caption {
   margin: 0;
-  font-size: 0.62rem;
-  font-weight: 400;
-  letter-spacing: 0.36em;
-  color: rgba(247, 244, 239, 0.42);
+}
+
+.ff-connect-lede {
+  margin: 0;
+  max-width: 36ch;
+  font-size: var(--ff-fs-lede);
+  font-weight: 300;
+  line-height: 1.85;
+  letter-spacing: -0.01em;
+  color: var(--ff-mute);
 }
 
 .ff-hairline {
@@ -334,58 +382,65 @@ html.is-full-motion .ff-cta-arrow {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0;
-  max-width: 36rem;
-  margin-inline: auto;
-  border-top: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  max-width: none;
+  border: 1px solid rgba(251, 248, 242, 0.16);
+  background: rgba(251, 248, 242, 0.16);
 }
 
 .ff-contact-item {
-  display: grid;
-  grid-template-columns: 5.5rem 1fr;
-  gap: 0.85rem;
-  align-items: baseline;
-  padding-block: 0.8rem;
-  border-bottom: 1px solid rgba(247, 244, 239, 0.045);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.15rem;
+  min-height: 8.75rem;
+  padding: 1.4rem 1.45rem;
+  background: rgba(14, 42, 37, 0.94);
+  border: 0;
+  transition: background-color 0.35s var(--ff-ease);
+}
+
+.ff-contact-item:hover {
+  background: rgba(18, 52, 46, 0.98);
 }
 
 .ff-contact-item:last-child {
   border-bottom-color: transparent;
 }
 
-@media (min-width: 640px) {
-  .ff-contact-item {
-    grid-template-columns: 7rem 1fr;
-    gap: 1.25rem;
-    padding-block: 0.9rem;
-  }
-}
-
 .ff-contact-label {
-  font-size: var(--text-overline);
-  font-weight: 400;
+  font-size: var(--ff-fs-meta);
+  font-weight: 500;
   letter-spacing: 0.16em;
-  color: rgba(247, 244, 239, 0.42);
-  padding-top: 0.15rem;
+  color: rgba(201, 170, 114, 0.82);
+  padding-top: 0;
 }
 
 .ff-contact-value {
-  font-size: var(--text-ui);
+  font-size: 1.08rem;
   font-weight: 400;
   line-height: 1.65;
-  color: rgba(247, 244, 239, 0.7);
+  color: rgba(247, 244, 239, 0.96);
   text-decoration: none;
   transition: color 0.35s var(--ff-ease);
   outline: none;
+  word-break: break-word;
 }
 
 a.ff-contact-value:hover {
-  color: var(--ff-ink);
+  color: rgba(223, 196, 138, 0.98);
 }
 
 a.ff-contact-value:focus-visible {
   color: var(--ff-ink);
   box-shadow: 0 1px 0 currentColor;
+}
+
+@media (min-width: 960px) {
+  .ff-contact-list {
+    grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  }
 }
 
 .ff-contact-value--static {
@@ -412,21 +467,24 @@ a.ff-contact-value:focus-visible {
 
 .ff-logo {
   display: block;
-  width: clamp(8rem, 28vw, 16rem);
-  height: auto;
-  max-height: clamp(3.5rem, 8vw, 5rem);
+  width: auto;
+  height: clamp(2.85rem, 5vw, 3.9rem);
+  max-height: 3.9rem;
+  max-width: min(18rem, 70vw);
   object-fit: contain;
-  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.4));
+  margin-bottom: 0.7rem;
+  mix-blend-mode: screen;
+  opacity: 1;
 }
 
 .ff-monogram {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-family: var(--font-body);
+  font-size: clamp(1.2rem, 1.05rem + 0.7vw, 1.55rem);
   font-weight: 400;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(247, 244, 239, 0.68);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: rgba(247, 244, 239, 0.94);
 }
 
 .ff-signature--minimal {
@@ -440,16 +498,15 @@ a.ff-contact-value:focus-visible {
 
 .ff-contact-list {
   text-align: start;
-  max-width: var(--measure-prose);
 }
 
 .ff-sig-tagline {
-  margin: clamp(1.5rem, 3.5vw, 2.25rem) 0 0;
-  font-family: var(--font-body);
-  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
   font-style: italic;
-  letter-spacing: 0.2em;
-  color: var(--ff-soft);
+  letter-spacing: 0.16em;
+  color: rgba(201, 170, 114, 0.78);
 }
 
 .ff-sig-founder {
@@ -474,15 +531,15 @@ a.ff-contact-value:focus-visible {
 }
 
 .ff-sig-meta {
-  margin: 1.15rem 0 0;
+  margin: 0.45rem 0 0;
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
   font-style: italic;
   letter-spacing: 0.12em;
-  color: rgba(247, 244, 239, 0.42);
+  color: rgba(247, 244, 239, 0.48);
 }
 
 .ff-sig-dot {
@@ -490,59 +547,70 @@ a.ff-contact-value:focus-visible {
 }
 
 /* Closing bar */
+.ff-finale {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(2.25rem, 4.5vw, 3.25rem) clamp(1.75rem, 3.2vw, 2.5rem);
+  border-top: 1px solid var(--ff-line);
+}
+
+.ff-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+  gap: 0;
+  padding-block: 0;
+}
+
 .ff-close {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  padding-top: clamp(1.75rem, 4vw, 2.5rem);
+  align-items: flex-start;
+  gap: 1rem;
+  padding-top: 0;
   border-top: 0;
   position: relative;
 }
 
 .ff-close::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  inset-inline: 30%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(247, 244, 239, 0.14) 50%,
-    transparent 100%
-  );
-  opacity: 0.7;
+  content: none;
 }
 
 @media (min-width: 768px) {
+  .ff-finale {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+    align-items: end;
+    gap: 2rem 3rem;
+  }
+
   .ff-close {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: end;
+    gap: 1.1rem;
   }
 }
 
 .ff-nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem 1.35rem;
+  justify-content: flex-start;
+  gap: 0.15rem 1.35rem;
 }
 
 .ff-nav-link {
   position: relative;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  color: rgba(247, 244, 239, 0.48);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(247, 244, 239, 0.72);
   text-decoration: none;
   padding-block: 0.35rem;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
-  transition: color 0.65s var(--ff-ease);
+  transition: color 0.45s var(--ff-ease);
   outline: none;
 }
 
@@ -578,14 +646,18 @@ a.ff-contact-value:focus-visible {
 
 .ff-copyright {
   margin: 0;
-  font-size: 0.64rem;
+  font-size: 0.78rem;
   font-weight: 400;
-  letter-spacing: 0.18em;
-  color: rgba(247, 244, 239, 0.34);
-  text-align: center;
+  letter-spacing: 0.04em;
+  color: rgba(247, 244, 239, 0.48);
+  text-align: start;
 }
 
 @media (min-width: 768px) {
+  .ff-nav {
+    justify-content: flex-end;
+  }
+
   .ff-copyright {
     text-align: end;
   }
@@ -635,7 +707,7 @@ a.ff-contact-value:focus-visible {
 }
 
 .ff-stage.is-static .ff-bg-word.is-inview {
-  opacity: 0.035;
+  opacity: 0.05;
 }
 
 @keyframes ff-breathe {
@@ -661,32 +733,31 @@ a.ff-contact-value:focus-visible {
   }
 
   .ff-bg-word {
-    opacity: 0.03 !important;
+    opacity: 0.045 !important;
   }
 }
 
 /* Mobile — independent editorial pacing */
 @media (max-width: 639px) {
   .ff-stage {
-    padding-block: 2.75rem 1.75rem;
+    padding-block: 3.75rem 0;
   }
 
   .ff-philosophy {
     max-width: 14ch;
   }
 
-  .ff-contact-item {
+  .ff-contact-list {
     grid-template-columns: 1fr;
-    gap: 0.35rem;
-    padding-block: 1.15rem;
   }
 
-  .ff-contact-label {
-    padding-top: 0;
+  .ff-contact-item {
+    min-height: 7.25rem;
+    padding: 1.25rem 1.2rem;
   }
 
   .ff-logo {
-    width: min(78vw, 16rem);
-    max-height: 4.25rem;
+    height: 2.85rem;
+    max-height: 2.85rem;
   }
 }

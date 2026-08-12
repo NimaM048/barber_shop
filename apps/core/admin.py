@@ -231,6 +231,17 @@ class HomePageAdmin(admin.ModelAdmin):
             {"fields": ("gallery_label", "gallery_title", "gallery_lede")},
         ),
         (
+            "بخش نظرات",
+            {
+                "fields": (
+                    "reviews_label",
+                    "reviews_title",
+                    "reviews_lede",
+                    "reviews_cta_label",
+                )
+            },
+        ),
+        (
             "SEO",
             {"classes": ("collapse",), "fields": ("seo_title", "seo_description")},
         ),

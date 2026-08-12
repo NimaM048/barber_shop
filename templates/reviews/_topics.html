@@ -1,0 +1,19 @@
+<nav class="rv-topics" aria-label="دسته‌بندی نظرات">
+  <div class="rv-topics-track">
+    <a
+      href="{% url 'reviews:hub' %}"
+      class="rv-topic{% if not category %} is-active{% endif %}"
+      {% if not category %}aria-current="page"{% endif %}
+    >همه</a>
+    {% for cat in hub.categories %}
+    <a
+      href="{{ cat.url }}"
+      class="rv-topic{% if category and category.slug == cat.slug %} is-active{% endif %}"
+      {% if category and category.slug == cat.slug %}aria-current="page"{% endif %}
+    >
+      {{ cat.title }}
+      <span class="rv-topic-count">{{ cat.review_count_display }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</nav>

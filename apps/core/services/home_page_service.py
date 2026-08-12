@@ -46,6 +46,10 @@ DEFAULTS = {
     "gallery_label": "نمونه کار",
     "gallery_title": "گالری",
     "gallery_lede": "نمونه‌های منتخب از اجرای خدمات در استودیو.",
+    "reviews_label": "روایت مشتریان",
+    "reviews_title": "آن‌چه بعد از مراجعه می‌ماند.",
+    "reviews_lede": "تجربه داماد، VIP و پوست در استودیوی اصفهان — به روایت کسانی که آمده‌اند.",
+    "reviews_cta_label": "همه روایت‌ها",
 }
 
 # Keep deployments that already ran `seed_cms` on the improved assets without

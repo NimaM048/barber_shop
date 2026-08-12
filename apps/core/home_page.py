@@ -40,6 +40,11 @@ class HomePage(TimeStampedModel, SoftDeleteModel):
     gallery_title = models.CharField("گالری — عنوان", max_length=200, blank=True)
     gallery_lede = models.TextField("گالری — توضیح", blank=True)
 
+    reviews_label = models.CharField("نظرات — برچسب", max_length=120, blank=True)
+    reviews_title = models.CharField("نظرات — عنوان", max_length=200, blank=True)
+    reviews_lede = models.TextField("نظرات — توضیح", blank=True)
+    reviews_cta_label = models.CharField("نظرات — CTA", max_length=80, blank=True)
+
     seo_title = models.CharField("SEO عنوان", max_length=160, blank=True)
     seo_description = models.CharField("SEO توضیح", max_length=300, blank=True)
 

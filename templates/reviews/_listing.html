@@ -1,0 +1,127 @@
+{% with mj=page_content.content_json %}
+{% if hub.featured %}
+<section class="rv-feature rv-shell" aria-labelledby="rv-feature-heading" data-reveal>
+  <p class="section-label">منتخب</p>
+  <article class="rv-feature-card">
+    <div class="rv-feature-mark" aria-hidden="true">
+      {% if hub.featured.portrait %}
+      <div class="rv-feature-media">
+        <img src="{{ hub.featured.portrait }}" alt="" width="640" height="800" loading="lazy" decoding="async">
+      </div>
+      {% else %}
+      <div class="rv-feature-ornament">
+        <span class="rv-feature-index">{{ hub.featured.index_label|default:"۰۱" }}</span>
+        <span class="rv-feature-quote-mark" lang="en">«</span>
+      </div>
+      {% endif %}
+    </div>
+    <div class="rv-feature-copy">
+      <p class="rv-meta">
+        <span>{{ hub.featured.service_name }}</span>
+        <span aria-hidden="true">·</span>
+        <span>{{ hub.featured.city }}</span>
+      </p>
+      <h2 id="rv-feature-heading" class="rv-feature-title">
+        <a href="{{ hub.featured.url }}">{{ hub.featured.title }}</a>
+      </h2>
+      <blockquote class="rv-quote">«{{ hub.featured.excerpt }}»</blockquote>
+      <div class="rv-feature-foot">
+        <p class="rv-byline">
+          <span>{{ hub.featured.author_display_name }}</span>
+          {% if hub.featured.author_role %}
+          <span aria-hidden="true">·</span>
+          <span>{{ hub.featured.author_role }}</span>
+          {% endif %}
+          {% if hub.featured.published_display %}
+          <span aria-hidden="true">·</span>
+          <time>{{ hub.featured.published_display }}</time>
+          {% endif %}
+        </p>
+        <p class="rv-rating-chip" aria-label="امتیاز {{ hub.featured.rating_display }}">
+          <span class="rv-rating-chip-value">{{ hub.featured.rating_value_display }}</span>
+          <span>از ۵</span>
+        </p>
+      </div>
+      <a href="{{ hub.featured.url }}" class="rv-entry-cta">
+        خواندن روایت
+        <span aria-hidden="true">←</span>
+      </a>
+    </div>
+  </article>
+</section>
+{% endif %}
+
+<section class="rv-archive rv-shell" aria-labelledby="rv-archive-heading" data-reveal>
+  <header class="rv-archive-head">
+    <p class="section-label">{% if category %}{{ category.title }}{% else %}آرشیو{% endif %}</p>
+    <h2 id="rv-archive-heading">
+      {% if category %}روایت‌های {{ category.title }}{% else %}همه روایت‌ها{% endif %}
+    </h2>
+  </header>
+
+  {% if hub.archive %}
+  <ul class="rv-desk">
+    {% for item in hub.archive %}
+    <li>
+      <a href="{{ item.url }}" class="rv-desk-row">
+        <span class="rv-desk-index" aria-hidden="true">{{ item.index_label }}</span>
+        <div class="rv-desk-copy">
+          <p class="rv-meta">
+            <span>{{ item.service_name }}</span>
+            {% if item.published_display %}
+            <span aria-hidden="true">·</span>
+            <span>{{ item.published_display }}</span>
+            {% endif %}
+          </p>
+          <h3>{{ item.title }}</h3>
+          <p class="rv-desk-excerpt">«{{ item.excerpt_short }}»</p>
+        </div>
+        <span class="rv-desk-aside">
+          <span class="rv-rating-chip">
+            <span class="rv-rating-chip-value">{{ item.rating_value_display }}</span>
+            <span>از ۵</span>
+          </span>
+          <span class="rv-entry-cta">
+            {{ item.author_display_name }}
+            <span aria-hidden="true">←</span>
+          </span>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% elif not hub.featured %}
+  <div class="rv-empty">
+    <p>{{ mj.empty_title|default:"هنوز روایتی منتشر نشده است" }}</p>
+    <p>{{ mj.empty_copy }}</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="rv-journey rv-shell" aria-labelledby="rv-journey-heading" data-reveal>
+  <div class="rv-journey-inner">
+    <p class="section-label">{{ mj.journey_label|default:"گام بعدی" }}</p>
+    <h2 id="rv-journey-heading">{{ mj.journey_title|default:"نوبت خود را با اطمینان رزرو کنید." }}</h2>
+    <div class="rv-journey-actions">
+      <a href="{% if category %}{{ category.booking_href }}{% else %}{% url 'appointments:create' %}{% endif %}" class="btn-draw">
+        <span class="btn-draw-border" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+          </svg>
+        </span>
+        <span class="btn-draw-label relative z-10">{{ mj.cta_booking|default:"رزرو نوبت" }}</span>
+        <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+      </a>
+      <a href="{% if category %}{{ category.consultation_href }}{% else %}{% url 'consultations:hub' %}{% endif %}" class="btn-court">
+        {{ mj.cta_consult|default:"راهنمای پیش از مراجعه" }}
+      </a>
+      {% if hub.gbp_url %}
+      <a href="{{ hub.gbp_url }}" class="rv-gbp" target="_blank" rel="noopener noreferrer">
+        {{ mj.gbp_label|default:"مشاهده در گوگل" }}
+        <span aria-hidden="true">↗</span>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endwith %}

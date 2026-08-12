@@ -111,6 +111,28 @@ BARBERS_DEFAULTS = {
     },
 }
 
+REVIEWS_JSON_DEFAULTS = {
+    "label_en": "Reviews",
+    "signals": ["روایت واقعی", "امتیاز شفاف", "استودیوی اصفهان"],
+    "empty_title": "هنوز روایتی منتشر نشده است",
+    "empty_copy": "به‌زودی تجربه مشتریان اینجا قرار می‌گیرد.",
+    "journey_label": "گام بعدی",
+    "journey_title": "نوبت خود را با اطمینان رزرو کنید.",
+    "cta_booking": "رزرو نوبت",
+    "cta_consult": "راهنمای پیش از مراجعه",
+    "gbp_label": "مشاهده در گوگل",
+}
+
+REVIEWS_DEFAULTS = {
+    "section_label": "نظرات",
+    "title": "روایت کسانی که به استودیو آمده‌اند",
+    "lede": (
+        "تجربه داماد، اصلاح VIP و مراقبت پوست در صالح ایوبی اصفهان — "
+        "به زبان مشتری، با امتیاز مشخص."
+    ),
+    "content_json": REVIEWS_JSON_DEFAULTS,
+}
+
 
 def _deep_merge(base: dict, override: dict) -> dict:
     result = copy.deepcopy(base)
@@ -129,6 +151,7 @@ class PageContentService:
         PageContent.PageKey.BOOKING: {"ui": BOOKING_UI_DEFAULTS},
         PageContent.PageKey.CONSULTATIONS: CONSULTATIONS_DEFAULTS["content_json"],
         PageContent.PageKey.BARBERS: BARBERS_DEFAULTS["content_json"],
+        PageContent.PageKey.REVIEWS: REVIEWS_JSON_DEFAULTS,
     }
 
     DEFAULTS = {
@@ -137,6 +160,7 @@ class PageContentService:
         PageContent.PageKey.BOOKING: BOOKING_DEFAULTS,
         PageContent.PageKey.BARBERS: BARBERS_DEFAULTS,
         PageContent.PageKey.CONSULTATIONS: CONSULTATIONS_DEFAULTS,
+        PageContent.PageKey.REVIEWS: REVIEWS_DEFAULTS,
     }
 
     def get(self, page: str) -> dict:

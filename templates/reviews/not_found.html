@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}نظر یافت نشد | {{ SITE_NAME }}{% endblock %}
+{% block meta_robots %}noindex,follow{% endblock %}
+
+{% block content %}
+<section class="page-stage page-not-found" aria-labelledby="rv-404-heading">
+  <div class="page-atmosphere" aria-hidden="true">
+    <span class="page-atmosphere-orb page-atmosphere-orb-a"></span>
+  </div>
+
+  <div class="page-shell page-shell--narrow text-center">
+    <p class="page-not-found-code" aria-hidden="true">404</p>
+    <p class="section-label" data-reveal>نظرات</p>
+    <h1 id="rv-404-heading" class="page-title mx-auto mt-4" data-reveal>روایت یافت نشد</h1>
+    <p class="page-lede mx-auto" data-reveal data-delay="1">
+      این نظر حذف شده یا هنوز منتشر نشده است.
+    </p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4" data-reveal data-delay="2">
+      <a href="{% url 'reviews:hub' %}" class="btn-draw">
+        <span class="btn-draw-border" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+          </svg>
+        </span>
+        <span class="btn-draw-label relative z-10">بازگشت به نظرات</span>
+        <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
+      </a>
+      <a href="{% url 'core:home' %}" class="btn-quiet">صفحه اصلی</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -10,6 +10,7 @@ urlpatterns = [
     path("appointments/", include("apps.appointments.urls")),
     path("consultations/", include("apps.consultations.urls")),
     path("magazine/", include("apps.magazine.urls")),
+    path("reviews/", include("apps.reviews.urls")),
 ]
 
 handler404 = "apps.core.views.page_not_found"

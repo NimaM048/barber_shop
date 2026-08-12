@@ -213,6 +213,11 @@ def _fallback_payload() -> dict:
                 "external": False,
             },
             {
+                "label": "نظرات",
+                "href": FooterFinale.resolve_href("reviews:hub"),
+                "external": False,
+            },
+            {
                 "label": "مشاوره",
                 "href": FooterFinale.resolve_href("consultations:hub"),
                 "external": False,
@@ -337,6 +342,24 @@ def _build_contacts(finale: FooterFinale, fallback: dict) -> list[dict]:
     return items or fallback["contacts"]
 
 
+def _ensure_nav_links(nav_links: list[dict]) -> list[dict]:
+    """Keep footer nav complete without requiring a re-seed."""
+    extras = (
+        ("نظرات", "reviews:hub"),
+        ("مشاوره", "consultations:hub"),
+    )
+    hrefs = {item.get("href") for item in nav_links}
+    labels = {item.get("label") for item in nav_links}
+    for label, name in extras:
+        href = FooterFinale.resolve_href(name)
+        if not href or href == name or href in hrefs or label in labels:
+            continue
+        nav_links.append({"label": label, "href": href, "external": False})
+        hrefs.add(href)
+        labels.add(label)
+    return nav_links
+
+
 class FooterFinaleService:
     """Serialize published footer finale content for all pages."""
 
@@ -370,6 +393,10 @@ class FooterFinaleService:
             }
             for link in FooterNavLink.objects.filter(footer=finale, is_active=True)
         ]
+        if nav_links:
+            nav_links = _ensure_nav_links(nav_links)
+        else:
+            nav_links = fallback["nav_links"]
 
         copyright_text = finale.copyright_text.strip() if finale.copyright_text else ""
         if not copyright_text:
@@ -401,7 +428,7 @@ class FooterFinaleService:
             "founded_year": founded_year or _to_persian(current_year),
             "copyright": copyright_text,
             "show_navigation": finale.show_navigation,
-            "nav_links": nav_links or fallback["nav_links"],
+            "nav_links": nav_links,
             "website": finale.website or _site("SITE_WEBSITE"),
             "location": _location_payload(
                 finale.address or _site("SITE_ADDRESS"),

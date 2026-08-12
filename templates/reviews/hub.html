@@ -1,0 +1,60 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ page_seo.title }}{% endblock %}
+{% block meta_description %}{{ page_seo.description }}{% endblock %}
+{% block og_title %}{{ page_seo.og_title }}{% endblock %}
+{% block og_description %}{{ page_seo.og_description }}{% endblock %}
+{% block twitter_title %}{{ page_seo.og_title }}{% endblock %}
+{% block twitter_description %}{{ page_seo.og_description }}{% endblock %}
+
+{% block structured_data %}
+{% if schema_json %}<script type="application/ld+json">{{ schema_json|safe }}</script>{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="rv-stage">
+  <div class="rv-atmosphere" aria-hidden="true">
+    <span class="rv-atmosphere-rail"></span>
+    <span class="rv-atmosphere-ring rv-atmosphere-ring-a"></span>
+    <span class="rv-atmosphere-ring rv-atmosphere-ring-b"></span>
+  </div>
+
+  {% with mj=page_content.content_json %}
+  <header class="rv-mast rv-shell">
+    <div class="rv-mast-copy">
+      <p class="section-label">
+        <span lang="en" class="font-latin">{{ mj.label_en|default:"Reviews" }}</span>
+        <span class="rv-mast-sep" aria-hidden="true">·</span>
+        <span>{{ page_content.section_label|default:"نظرات" }}</span>
+      </p>
+      <h1 class="rv-mast-title">{{ page_content.title }}</h1>
+      <p class="rv-mast-lede">{{ page_content.lede }}</p>
+      {% if mj.signals %}
+      <ul class="rv-mast-signals" aria-label="ویژگی‌ها">
+        {% for signal in mj.signals %}
+        <li>{{ signal }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% if hub.aggregate.has_reviews %}
+    <p class="rv-score" aria-label="میانگین امتیاز {{ hub.aggregate.rating_display }} از {{ hub.aggregate.count_display }} نظر">
+      <span class="rv-score-value">{{ hub.aggregate.rating_value_display }}</span>
+      <span class="rv-score-meta">
+        <span>از ۵</span>
+        <span>{{ hub.aggregate.count_display }} روایت منتشرشده</span>
+      </span>
+    </p>
+    {% endif %}
+  </header>
+  {% endwith %}
+
+  <div class="rv-rail">
+    <div class="rv-shell">
+      {% include "reviews/_topics.html" %}
+    </div>
+  </div>
+
+  {% include "reviews/_listing.html" %}
+</div>
+{% endblock %}

@@ -38,8 +38,9 @@ class Command(BaseCommand):
             defaults = [
                 ("خدمات", "core:home#services", 0),
                 ("گالری", "core:home#gallery", 1),
-                ("مجله", "magazine:hub", 2),
-                ("مشاوره", "consultations:hub", 3),
+                ("نظرات", "reviews:hub", 2),
+                ("مجله", "magazine:hub", 3),
+                ("مشاوره", "consultations:hub", 4),
             ]
             for label, href, order in defaults:
                 HeaderNavLink.objects.create(
@@ -49,6 +50,16 @@ class Command(BaseCommand):
                     sort_order=order,
                 )
             self.stdout.write("Header nav links seeded.")
+        elif not site.nav_links.filter(href__in=["reviews:hub", "/reviews/"]).exists():
+            HeaderNavLink.objects.create(
+                settings=site,
+                label="نظرات",
+                href="reviews:hub",
+                sort_order=2,
+                is_active=True,
+                show_on_mobile=True,
+            )
+            self.stdout.write("Header nav link for reviews added.")
 
         home, created = HomePage.objects.get_or_create(key="home")
         if created or not home.hero_title:
@@ -72,6 +83,21 @@ class Command(BaseCommand):
                         sort_order=i,
                     )
             self.stdout.write("HomePage seeded.")
+        else:
+            reviews_fields = (
+                "reviews_label",
+                "reviews_title",
+                "reviews_lede",
+                "reviews_cta_label",
+            )
+            changed = [
+                field for field in reviews_fields if not getattr(home, field, "")
+            ]
+            if changed:
+                for field in changed:
+                    setattr(home, field, DEFAULTS[field])
+                home.save(update_fields=[*changed, "updated_at"])
+                self.stdout.write("HomePage reviews chrome seeded.")
 
         for page_key, defaults in PageContentService.DEFAULTS.items():
             content, created = PageContent.objects.get_or_create(page=page_key)

@@ -6,14 +6,25 @@
   data-footer-finale
   aria-label="{{ f.aria_label|default:'تماس' }}"
 >
-  <div class="ff-inner">
-    {# Act I — Decision #}
-    <section class="ff-act ff-act-decide" aria-labelledby="ff-cta-heading">
-      <p class="ff-act-label section-label" data-ff-reveal>دعوت</p>
+  <div class="ff-atmosphere" aria-hidden="true">
+    <span class="ff-atmosphere-ring ff-atmosphere-ring-a"></span>
+    <span class="ff-atmosphere-ring ff-atmosphere-ring-b"></span>
+  </div>
+  {% if f.bg_word %}
+  <p class="ff-bg-word" lang="en" dir="ltr" aria-hidden="true">{{ f.bg_word }}</p>
+  {% endif %}
 
-      {% if f.cta_statement %}
-      <p id="ff-cta-heading" class="ff-cta-statement" data-ff-reveal>{{ f.cta_statement }}</p>
-      {% endif %}
+  <div class="ff-inner">
+    <section class="ff-act ff-act-decide" aria-labelledby="ff-cta-heading">
+      <div class="ff-decide-copy">
+        <p class="ff-act-label section-label" data-ff-reveal>دعوت</p>
+        {% if f.cta_statement %}
+        <p id="ff-cta-heading" class="ff-cta-statement" data-ff-reveal>{{ f.cta_statement }}</p>
+        {% endif %}
+        {% if f.cta_prompt %}
+        <p class="ff-cta-prompt" data-ff-reveal>{{ f.cta_prompt }}</p>
+        {% endif %}
+      </div>
 
       {% if f.cta_primary_label and f.cta_primary_href %}
       <div class="ff-cta-actions" data-ff-reveal role="group" aria-label="اقدام‌ها">
@@ -27,22 +38,27 @@
           <span class="btn-draw-label relative z-10" aria-hidden="true">←</span>
         </a>
         {% if f.cta_secondary_label and f.cta_secondary_href %}
-        <a href="{{ f.cta_secondary_href }}" class="btn-quiet ff-cta-secondary">
+        <a href="{{ f.cta_secondary_href }}" class="btn-court ff-cta-secondary">
           {{ f.cta_secondary_label }}
+        </a>
+        {% else %}
+        <a href="{% url 'consultations:hub' %}" class="btn-court ff-cta-secondary">
+          راهنمای پیش از مراجعه
         </a>
         {% endif %}
       </div>
       {% endif %}
     </section>
 
-    {# Act II — Location #}
     {% include "components/location.html" %}
 
-    {# Act III — Connection #}
     <section class="ff-act ff-act-connect" aria-labelledby="ff-contact-heading">
-      <p id="ff-contact-heading" class="ff-contact-caption section-label" data-ff-reveal>
-        {{ f.contact_caption|default:"ارتباط" }}
-      </p>
+      <header class="ff-connect-head" data-ff-reveal>
+        <p id="ff-contact-heading" class="ff-contact-caption section-label">
+          {{ f.contact_caption|default:"ارتباط" }}
+        </p>
+        <p class="ff-connect-lede">تلفن، شبکه‌ها و مسیر مستقیم به استودیو.</p>
+      </header>
 
       <ul class="ff-contact-list" data-ff-reveal>
         {% for item in f.contacts %}
@@ -70,10 +86,20 @@
       </ul>
     </section>
 
-    {# Closing — signature + nav #}
     <div class="ff-finale" data-ff-reveal>
       <div class="ff-signature ff-signature--minimal">
-        <p class="ff-monogram" lang="en" dir="ltr">{{ SITE_NAME|default:"SA" }}</p>
+        {% if header_nav.logo_src or f.logo_src %}
+        <img
+          src="{{ header_nav.logo_src|default:f.logo_src }}"
+          alt="{{ f.logo_alt|default:SITE_NAME }}"
+          class="ff-logo"
+          width="800"
+          height="491"
+          decoding="async"
+        >
+        {% else %}
+        <p class="ff-monogram">{{ SITE_NAME|default:"صالح ایوبی" }}</p>
+        {% endif %}
         {% if f.signature %}
         <p class="ff-sig-tagline" lang="en" dir="ltr">{{ f.signature }}</p>
         {% endif %}

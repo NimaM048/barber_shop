@@ -71,6 +71,8 @@ NAV_LINKS = [
     {"label": "خدمات", "href": "/#services", "sort_order": 1},
     {"label": "نمونه‌کارها", "href": "/#gallery", "sort_order": 2},
     {"label": "مجله", "href": "magazine:hub", "sort_order": 3},
+    {"label": "نظرات", "href": "reviews:hub", "sort_order": 4},
+    {"label": "مشاوره", "href": "consultations:hub", "sort_order": 5},
 ]
 
 
