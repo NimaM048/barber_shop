@@ -35,10 +35,10 @@
   .site-header-logo {
     display: block;
     width: auto;
-  height: 2.05rem;
-  max-width: min(40vw, 9.5rem);
-  object-fit: contain;
-  opacity: 0.96;
+    height: 2.55rem;
+    max-width: min(42vw, 11.5rem);
+    object-fit: contain;
+    opacity: 0.96;
     filter: none;
     transition:
       opacity var(--duration-fast) ease,
@@ -48,9 +48,9 @@
 
   body.is-home:not(.is-scrolled) .site-header-logo,
   body.is-home .site-header:not(.is-compact) .site-header-logo {
-  height: 1.85rem;
-  max-width: min(36vw, 8.5rem);
-  opacity: 0.9;
+    height: 2.25rem;
+    max-width: min(38vw, 10.5rem);
+    opacity: 0.9;
   }
 
   .site-header-logo:hover,
@@ -269,29 +269,29 @@
     }
 
     .site-header-logo {
-    height: 2.2rem;
-    max-width: 10.5rem;
+      height: 2.75rem;
+      max-width: 13rem;
     }
 
     body.is-home .site-header:not(.is-compact) .site-header-logo {
-    height: 2rem;
-    max-width: 9.25rem;
+      height: 2.5rem;
+      max-width: 11.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .site-header-inner {
-      min-height: 3.75rem;
+      min-height: 4.25rem;
     }
 
     .site-header-logo {
-    height: 2.35rem;
-    max-width: 11rem;
+      height: 2.9rem;
+      max-width: 13.5rem;
     }
 
     body.is-home .site-header:not(.is-compact) .site-header-logo {
-    height: 2.1rem;
-    max-width: 9.75rem;
+      height: 2.6rem;
+      max-width: 12rem;
     }
 
     .mobile-nav,

@@ -122,7 +122,7 @@ class SiteSettingsService:
         return {
             "eyebrow": (rec.location_eyebrow if rec else "") or "موقعیت در اصفهان",
             "title_fa": (rec.location_title_fa if rec else "") or f"آدرس سالن {site} در اصفهان",
-            "badge": (rec.location_badge if rec else "") or "سالن تخصصی",
+            "badge": (rec.location_badge if rec else "") or "سالن تخصصی پوست و مو",
             "lede": (rec.location_lede if rec else "") or (
                 f"استودیوی تخصصی داماد، پوست و مو {site} در مشتاق اول اصفهان — "
                 "رزرو قبلی، مسیریابی آسان."
