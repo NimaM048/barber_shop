@@ -2435,6 +2435,35 @@ html.is-page-entering .site-shell {
   line-height: 1.65;
 }
 
+.catalog-service-menu .service-menu-details {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.55rem;
+  font-size: var(--text-caption);
+  line-height: 1.7;
+  color: rgba(251, 248, 242, 0.68);
+}
+
+.catalog-service-menu .service-menu-details p,
+.catalog-service-menu .service-menu-booking-status {
+  margin: 0;
+}
+
+.catalog-service-menu .service-menu-details strong {
+  color: rgba(201, 170, 114, 0.94);
+  font-weight: 500;
+}
+
+.catalog-service-menu .service-menu-booking-status {
+  grid-column: 1 / -1;
+  padding: 0.6rem 0.7rem;
+  border-inline-start: 2px solid var(--color-brass);
+  background: rgba(201, 170, 114, 0.06);
+  color: rgba(251, 248, 242, 0.74);
+  font-size: var(--text-caption);
+  line-height: 1.7;
+}
+
 .catalog-service-menu .service-menu-duration,
 .catalog-service-menu .service-menu-price {
   display: flex;

@@ -746,7 +746,7 @@
       state.selectedDate;
 
     const rows = [
-      ["سرویس", state.service.name],
+      ["خدمات", state.service.name],
       ["تاریخ", `${state.slotsMeta?.weekday_label || ""} ${dateLabel}`.trim()],
       [
         "ساعت",
@@ -773,10 +773,10 @@
     const box = qs("[data-booking-summary]");
     if (!box) return;
     if (!state.service) {
-      box.innerHTML = `<p class="booking-summary-empty">هنوز سرویسی انتخاب نشده است.</p>`;
+      box.innerHTML = `<p class="booking-summary-empty">هنوز خدمتی انتخاب نشده است.</p>`;
       return;
     }
-    const rows = [["سرویس", state.service.name]];
+    const rows = [["خدمات", state.service.name]];
     if (state.service.duration_display || state.service.duration_minutes) {
       rows.push([
         "مدت",
@@ -952,7 +952,7 @@
 
     const rows = [
       ["کد رزرو", b.booking_code],
-      ["سرویس", b.service_name],
+      ["خدمات", b.service_name],
       ["تاریخ", b.date_display],
       ["ساعت", `${b.start_time_display} تا ${b.end_time_display}`],
       ["نام", b.full_name],

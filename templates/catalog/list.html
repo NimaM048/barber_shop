@@ -56,7 +56,7 @@
           <p class="service-menu-eyebrow">{{ cj.menu_eyebrow }}</p>
           <p class="service-menu-intro-copy">{{ cj.menu_intro }}</p>
         </div>
-        <p class="service-menu-intro-status"><span aria-hidden="true"></span> {{ cj.menu_status }}</p>
+        <p class="service-menu-intro-status"><span aria-hidden="true"></span> {{ booking_status }}</p>
       </div>
       <div class="service-menu-head" aria-hidden="true">
         <span>خدمت</span>
@@ -89,12 +89,19 @@
               {% if service.description %}
               <p class="service-menu-desc">{{ service.description|truncatewords:18 }}</p>
               {% endif %}
+              <div class="service-menu-details">
+                <p><strong>شامل مراحل:</strong> {{ service.details.includes }}</p>
+                <p><strong>مناسب برای:</strong> {{ service.details.suitable_for }}</p>
+                <p><strong>اجرا:</strong> {{ service.details.provider }}</p>
+                <p><strong>مشاوره پیش از رزرو:</strong> {{ service.details.consultation }}</p>
+              </div>
             </div>
           </div>
           <span class="service-menu-duration"><small>مدت جلسه</small><span>{{ service.duration }} دقیقه</span></span>
-          <span class="service-menu-price"><small>سرمایه‌گذاری</small><span dir="ltr"><strong>{{ service.price }}</strong> تومان</span></span>
+          <span class="service-menu-price"><small>هزینه</small><span dir="ltr"><strong>{{ service.price }}</strong> تومان</span></span>
+          <p class="service-menu-booking-status">{{ service.booking_status }}</p>
           <a href="{% url 'appointments:create' %}?service={{ service.slug }}" class="service-menu-cta">
-            <span class="service-menu-cta-copy"><small>انتخاب و ادامه</small><span>رزرو</span></span>
+            <span class="service-menu-cta-copy"><small>زمان و هزینه: {{ service.duration }} دقیقه · {{ service.price }} تومان</small><span>رزرو خدمات</span></span>
             <span aria-hidden="true">←</span>
           </a>
         </li>

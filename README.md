@@ -6,11 +6,7 @@
 
 ```
 barber_shop/
-├── config/                 # تنظیمات پروژه (settings, urls, wsgi)
-│   └── settings/
-│       ├── base.py
-│       ├── development.py
-│       └── production.py
+├── config/                 # تنظیمات پروژه (settings.py, urls, wsgi)
 ├── apps/
 │   ├── core/               # مدل‌های پایه، Repository/Service پایه، صفحه خانه
 │   ├── accounts/           # کاربران و احراز هویت
@@ -77,11 +73,26 @@ npm run dev:css
 
 ### 5. اجرای سرور
 
+**توسعه:**
+
 ```powershell
+$env:DJANGO_ENV="development"
 python manage.py runserver
 ```
 
-سایت: http://127.0.0.1:8000/
+**پروداکشن:**
+
+```powershell
+npm run build:css
+python manage.py collectstatic --noinput
+python manage.py migrate
+gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+```
+
+روی سرور `.env` را با `DJANGO_ENV=production` و `SITE_PUBLIC_URL=https://salehayoubi.com` تنظیم کنید.
+Nginx/Cloudflare باید `X-Forwarded-Proto: https` را به Django پاس دهد.
+
+سایت: http://127.0.0.1:8000/ (توسعه) · https://salehayoubi.com (پروداکشن)
 
 ## SEO هنگام دیپلوی
 

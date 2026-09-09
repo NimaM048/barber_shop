@@ -3,7 +3,9 @@
   <div class="home-reviews-shell" data-reveal>
     <header class="home-section-head home-section-head--split">
       <div>
+        {% if reviews_chrome.label and reviews_chrome.label != reviews_chrome.title %}
         <p class="section-label">{{ reviews_chrome.label }}</p>
+        {% endif %}
         <h2 id="home-reviews-heading">{{ reviews_chrome.title }}</h2>
       </div>
       <div class="home-reviews-intro">
@@ -21,10 +23,15 @@
       </div>
     </header>
 
-    <ul class="home-reviews-grid">
+    <div class="home-reviews-carousel">
+      <button class="home-reviews-nav home-reviews-nav--prev" type="button" data-home-reviews-prev aria-label="نظر قبلی">
+        <span aria-hidden="true">→</span>
+      </button>
+      <div class="home-reviews-grid home-reviews-swiper swiper" data-home-reviews-swiper>
+        <div class="swiper-wrapper">
       {% for item in home_reviews %}
-      <li>
-        <a href="{{ item.url }}" class="home-review">
+          <div class="swiper-slide home-review-slide">
+            <a href="{{ item.url }}" class="home-review">
           <span class="home-review-index" aria-hidden="true">{{ item.index_label }}</span>
           <blockquote>
             <p>«{{ item.excerpt_short }}»</p>
@@ -36,10 +43,16 @@
             </span>
             <span class="home-review-rating">{{ item.rating_display }}</span>
           </span>
-        </a>
-      </li>
+            </a>
+          </div>
       {% endfor %}
-    </ul>
+        </div>
+      </div>
+      <button class="home-reviews-nav home-reviews-nav--next" type="button" data-home-reviews-next aria-label="نظر بعدی">
+        <span aria-hidden="true">←</span>
+      </button>
+      <div class="home-reviews-pagination" data-home-reviews-pagination aria-label="صفحه‌های نظرات"></div>
+    </div>
 
     <div class="home-reviews-actions">
       <a href="{% url 'reviews:hub' %}" class="home-text-link">

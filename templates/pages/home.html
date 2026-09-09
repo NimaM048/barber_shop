@@ -99,19 +99,22 @@
         </g>
       </svg>
 
-      <img
-        src="{{ home_cms.hero_logo_webp }}"
-        sizes="(max-width: 719px) 72vw, min(44vw, 25rem)"
-        alt="{{ SITE_NAME }}"
-        class="hero-logo-img"
-        data-hero-logo-img
-        width="800"
-        height="491"
-        decoding="async"
-      >
+      <h1 id="hero-heading" class="sr-only">{{ home_cms.hero_title }}</h1>
+      <div class="hero-brand-lockup">
+        <img
+          src="{{ home_cms.hero_logo_webp }}"
+          sizes="(max-width: 719px) 72vw, min(44vw, 25rem)"
+          alt="صالح ایوبی"
+          class="hero-logo-img"
+          data-hero-logo-img
+          width="800"
+          height="491"
+          decoding="async"
+        >
+        <p class="hero-brand-subtitle">معمار زیبایی تو</p>
+      </div>
     </div>
 
-    <h1 id="hero-heading" class="hero-title">{{ home_cms.hero_title }}</h1>
     <p class="hero-tagline" data-hero-tagline>{{ home_cms.hero_tagline }}</p>
     <div class="hero-cta" data-hero-cta>
       <a
@@ -132,6 +135,17 @@
         <span aria-hidden="true">←</span>
       </a>
     </div>
+    <p class="hero-booking-status"><span aria-hidden="true"></span>{{ home_booking_status }}</p>
+    <nav class="hero-guidance" aria-label="مسیرهای مراجعه">
+      <a href="{% url 'consultations:hub' %}" class="hero-guidance-link">
+        <strong>درخواست مشاوره</strong>
+        <span>برای انتخاب خدمت و هماهنگی اولیه</span>
+      </a>
+      <a href="#faq" class="hero-guidance-link">
+        <strong>راهنمای مراجعه</strong>
+        <span>پاسخ سؤال‌های ضروری پیش از حضور</span>
+      </a>
+    </nav>
     <ul class="hero-proof" aria-label="مزیت‌های تجربه">
       {% for bullet in home_cms.proof_bullets %}
       <li><span aria-hidden="true">✓</span> {{ bullet }}</li>
@@ -144,22 +158,17 @@
   </a>
 </section>
 
-<section class="home-assurance" aria-labelledby="home-assurance-heading">
-  <div class="home-assurance-shell" data-reveal>
-    <header class="home-assurance-intro">
-      <p class="section-label">{{ home_cms.assurance_label }}</p>
-      <h2 id="home-assurance-heading">{{ home_cms.assurance_title }}</h2>
-      <p>{{ home_cms.assurance_lede }}</p>
-    </header>
-    <ol class="home-assurance-list">
-      {% for step in home_cms.assurance_steps %}
-      <li>
-        <span class="home-assurance-index" aria-hidden="true">{{ step.number_label }}</span>
-        <h3>{{ step.title }}</h3>
-        <p>{{ step.description }}</p>
-      </li>
-      {% endfor %}
-    </ol>
+<section class="home-studio-intro" aria-labelledby="studio-intro-heading">
+  <div class="home-studio-intro-shell" data-reveal>
+    <p class="section-label">درباره صالح ایوبی و سالن</p>
+    <h2 id="studio-intro-heading">تجربه‌ای دقیق برای روزهای مهم شما</h2>
+    <p>
+      صالح ایوبی با بیش از <strong>۱۰ سال تجربه</strong> در طراحی مو، گریم و آماده‌سازی آقایان، در کنار تیم سالن، تجربه‌ای شخصی و دقیق می‌سازد؛ مسیری که تاکنون همراه <strong>بیش از ۱٬۰۰۰ داماد</strong> در مهم‌ترین روز زندگی‌شان بوده است.
+    </p>
+    <dl class="home-studio-intro-stats" aria-label="سابقه و تجربه سالن">
+      <div><dt>۱۰+ سال</dt><dd>تجربه تخصصی</dd></div>
+      <div><dt>۱٬۰۰۰+ داماد</dt><dd>همراهی تا روز مراسم</dd></div>
+    </dl>
   </div>
 </section>
 
@@ -299,4 +308,5 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 <script src="{% static 'js/gallery.js' %}" defer></script>
+<script src="{% static 'js/home-reviews.js' %}" defer></script>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from apps.catalog.services import CatalogService
+from apps.appointments.models import BookingSettings
 from apps.consultations.models import ConsultationFAQ, ConsultationHubPage
 from apps.core.services import SeoService
 from apps.core.services.home_page_service import HomePageService
@@ -61,34 +62,21 @@ class HomeView(TemplateView):
 
     HOME_FAQ_DEFAULTS = {
         "enabled": True,
-        "label": "پرسش‌های پرتکرار",
-        "title": "پیش از مراجعه، پاسخ‌ها روشن‌اند.",
-        "description": "برای جزئیات هر مسیر، راهنمای مشاوره همیشه در دسترس است.",
+        "label": "سوالات متداول",
+        "title": "سوالات متداول",
+        "description": "قبل از مراجعه باید بدونی …",
         "link_label": "همهٔ راهنماهای پیش از مراجعه",
     }
 
     @staticmethod
-    def _homepage_faqs(limit: int = 4) -> list[dict[str, str]]:
-        """Return a compact, category-balanced set of published FAQs."""
+    def _homepage_faqs(limit: int = 7) -> list[dict[str, str]]:
+        """Return the ordered set of published FAQs shown on the homepage."""
         candidates = list(
             ConsultationFAQ.objects.filter(enabled=True)
             .select_related("category")
             .order_by("sort_order", "id")
         )
-        selected = []
-        category_ids: set[int] = set()
-
-        for faq in candidates:
-            if faq.category_id in category_ids:
-                continue
-            selected.append(faq)
-            category_ids.add(faq.category_id)
-            if len(selected) == limit:
-                break
-
-        if len(selected) < limit:
-            selected_ids = {faq.id for faq in selected}
-            selected.extend(faq for faq in candidates if faq.id not in selected_ids)
+        selected = candidates[:limit]
 
         return [
             {
@@ -143,6 +131,12 @@ class HomeView(TemplateView):
         ctx["home_reviews_aggregate"] = reviews["aggregate"]
         ctx["home_reviews_gbp_url"] = reviews["gbp_url"]
         ctx["home_reviews_gbp_label"] = reviews["gbp_label"]
+        booking_settings = BookingSettings.objects.filter(key="site", is_active=True).first()
+        ctx["home_booking_status"] = (
+            "رزرو پس از انتخاب زمان قطعی است."
+            if not booking_settings or booking_settings.auto_confirm
+            else "رزرو ثبت می‌شود و برای قطعی‌شدن نیاز به هماهنگی دارد."
+        )
         ctx["home_faqs"] = self._homepage_faqs()
         home_faq_section = self.HOME_FAQ_DEFAULTS.copy()
         hub = (
