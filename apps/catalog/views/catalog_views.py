@@ -5,7 +5,6 @@ from django.views import View
 
 from apps.core.services import SeoService
 from apps.core.services.page_content_service import PageContentService
-from apps.appointments.models import BookingSettings
 
 from ..services import CatalogService
 
@@ -31,27 +30,6 @@ CATEGORY_LABELS = {
     "hair": "طراحی مو",
 }
 
-SERVICE_DETAILS = {
-    "vip": {
-        "includes": "بررسی کوتاه استایل، اصلاح و فرم‌دهی مو و ریش، و پرداخت نهایی جزئیات.",
-        "suitable_for": "برای اصلاح اختصاصی، جلسه مهم یا زمانی که به نتیجه دقیق‌تر نیاز دارید.",
-        "provider": "صالح ایوبی یا یکی از اعضای تخصصی تیم، متناسب با زمان و نوع خدمت.",
-        "consultation": "مشاوره پیش از رزرو پیشنهاد می‌شود؛ برای انتخاب اولیه الزامی نیست.",
-    },
-    "skin": {
-        "includes": "ارزیابی پوست، پاکسازی و مراقبت پوست سر، همراه با طراحی و استایل مو.",
-        "suitable_for": "برای رسیدگی پوست و مو، پیش از قرار مهم یا یک نوبت مراقبتی کامل.",
-        "provider": "عضو تخصصی تیم در حوزه پوست و مو؛ در صورت نیاز با هماهنگی صالح.",
-        "consultation": "اگر پوست حساس یا هدف مشخصی دارید، مشاوره پیش از رزرو توصیه می‌شود.",
-    },
-    "groom": {
-        "includes": "هماهنگی استایل، طراحی مو و ریش، آماده‌سازی پوست و جزئیات نهایی داماد.",
-        "suitable_for": "برای داماد و مراسمی که زمان‌بندی و نتیجه نهایی در آن اهمیت دارد.",
-        "provider": "صالح ایوبی با همراهی تیم تخصصی، پس از هماهنگی برنامه مراسم.",
-        "consultation": "مشاوره پیش از رزرو لازم است تا زمان‌بندی و جزئیات مراسم هماهنگ شود.",
-    },
-}
-
 
 def _clean_label(raw: str, fallback: str) -> str:
     text = EMOJI_RE.sub("", raw or "").strip(" ·-–—")
@@ -65,12 +43,6 @@ class ServiceListView(View):
     def get(self, request):
         seo = SeoService()
         services = list(CatalogService().list_active_services())
-        booking_settings = BookingSettings.objects.filter(key="site", is_active=True).first()
-        booking_status = (
-            "رزرو پس از انتخاب زمان قطعی است."
-            if not booking_settings or booking_settings.auto_confirm
-            else "رزرو ثبت می‌شود و برای قطعی‌شدن نیاز به هماهنگی دارد."
-        )
         cards = []
         for i, service in enumerate(services):
             cfg = getattr(service, "booking_config", None)
@@ -86,15 +58,6 @@ class ServiceListView(View):
             raw_label = preferred if slug_key in CATEGORY_LABELS else (
                 cfg.card_label if cfg and cfg.card_label else preferred
             )
-            details = SERVICE_DETAILS.get(
-                slug_key,
-                {
-                    "includes": "جزئیات مراحل این خدمت هنگام رزرو به شما نمایش داده می‌شود.",
-                    "suitable_for": "برای انتخاب دقیق، هدف و زمان مراجعه خود را با ما در میان بگذارید.",
-                    "provider": "توسط عضو تخصصی تیم و با هماهنگی سالن اجرا می‌شود.",
-                    "consultation": "در صورت نیاز می‌توانید پیش از رزرو درخواست مشاوره ثبت کنید.",
-                },
-            )
             cards.append(
                 {
                     "name": service.name,
@@ -108,8 +71,6 @@ class ServiceListView(View):
                     "image_webp": webp,
                     "image_jpg": jpg,
                     "category": category,
-                    "details": details,
-                    "booking_status": booking_status,
                 }
             )
         page_seo = seo.catalog_meta()
@@ -132,7 +93,6 @@ class ServiceListView(View):
                 "services": cards,
                 "page_seo": page_seo,
                 "page_content": page_content,
-                "booking_status": booking_status,
                 "schema_json": seo.dumps(schemas),
             },
         )

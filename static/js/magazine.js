@@ -667,6 +667,21 @@
 
     const likeBtn = root.querySelector("[data-like-btn]");
     const bookmarkBtn = root.querySelector("[data-bookmark-btn]");
+    const moreMenu = root.querySelector(".mag-more");
+
+    // Native <details> stays open until its summary is clicked again. Close
+    // it when the user clicks elsewhere, matching a lightweight popover.
+    document.addEventListener("click", (event) => {
+      if (moreMenu?.open && !moreMenu.contains(event.target)) {
+        moreMenu.open = false;
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && moreMenu?.open) {
+        moreMenu.open = false;
+      }
+    });
 
     likeBtn?.addEventListener("click", async () => {
       try {

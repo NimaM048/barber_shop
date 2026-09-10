@@ -251,10 +251,16 @@
 
     // Restore scroll after back navigation
     const scrollKey = `sa_consult_scroll_${root.dataset.categoryKey}`;
+    let hasLoaded = false;
+    let loadSequence = 0;
 
     async function load() {
-      if (loading) loading.hidden = false;
-      if (detailRoot) detailRoot.hidden = true;
+      const isInitialLoad = !hasLoaded;
+      const requestSequence = ++loadSequence;
+      if (loading) loading.hidden = !isInitialLoad;
+      // Keep the detail layout mounted during filtering so the input and
+      // scroll position do not jump on every search request.
+      if (detailRoot && isInitialLoad) detailRoot.hidden = true;
       if (errBox) errBox.hidden = true;
 
       try {
@@ -264,11 +270,13 @@
         // Group chips scroll in-page; do not filter/reload by group
         const url = apiDetail + (params.toString() ? `?${params}` : "");
         const data = await apiGet(url);
+        if (requestSequence !== loadSequence) return;
         state.category = data.category;
         state.groups = data.groups || [];
         state.alerts = data.alerts || [];
         state.faqs = data.faqs || [];
         renderAll(data);
+        hasLoaded = true;
         if (detailRoot) detailRoot.hidden = false;
         setActiveChip(state.group);
 
@@ -285,7 +293,7 @@
         if (errBox) errBox.hidden = false;
         toast(toastHost, e.message, "error");
       } finally {
-        if (loading) loading.hidden = true;
+        if (loading && requestSequence === loadSequence) loading.hidden = true;
       }
     }
 

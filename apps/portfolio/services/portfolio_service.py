@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.urls import reverse
 from django.templatetags.static import static
+import jdatetime
 
 from apps.core.services import BaseService
 
@@ -14,6 +15,19 @@ def _static_or_empty(path: str) -> str:
     if path.startswith(("http://", "https://", "/media/", "/static/")):
         return path
     return static(path)
+
+
+def _jalali_date_display(value) -> str:
+    """Return a completed date in the Persian calendar for the gallery UI."""
+    if not value:
+        return ""
+    jalali = jdatetime.date.fromgregorian(
+        year=value.year,
+        month=value.month,
+        day=value.day,
+    )
+    digits = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+    return jalali.strftime("%Y/%m/%d").translate(digits)
 
 
 class PortfolioService(BaseService[GalleryItemRepository]):
@@ -98,9 +112,7 @@ class PortfolioService(BaseService[GalleryItemRepository]):
 
         consultation_url = reverse("consultations:hub")
 
-        completed = ""
-        if item.completed_at:
-            completed = item.completed_at.isoformat()
+        completed = _jalali_date_display(item.completed_at)
 
         return {
             "id": item.pk,

@@ -128,6 +128,8 @@
   .btn-draw:hover {
     color: #f7f4ef;
     background: transparent;
+    /* Keep a complete fallback outline while the SVG draw animation runs. */
+    border-color: #f7f4ef;
   }
 
   .btn-draw:hover .btn-draw-border rect {
@@ -136,6 +138,10 @@
 
   .btn-draw:focus-visible .btn-draw-border rect {
     stroke-dashoffset: 0;
+  }
+
+  .btn-draw:focus-visible {
+    border-color: #f7f4ef;
   }
 
   .btn-draw:disabled,

@@ -17,11 +17,14 @@ def _static(path: str) -> str:
 
 
 DEFAULTS = {
-    "hero_eyebrow": "سالن تخصصی آقایان در اصفهان",
-    "hero_title": "صالح ایوبی",
-    "hero_tagline": "از طراحی مو و ریش تا فیشیال، مراقبت پوست سر و آماده‌سازی داماد؛",
-    "hero_cta_primary_label": "رزرو خدمات",
-    "hero_cta_secondary_label": "درخواست مشاوره",
+    "hero_eyebrow": "استودیوی تخصصی داماد، پوست و مو در اصفهان",
+    "hero_title": "استایل داماد، پوست و مو؛ دقیق، شخصی و آماده برای روز مهم.",
+    "hero_tagline": (
+        "از مشاوره تا اجرای نهایی، هر خدمت متناسب با چهره، "
+        "زمان و نتیجه‌ای که می‌خواهید طراحی می‌شود."
+    ),
+    "hero_cta_primary_label": "رزرو آنلاین",
+    "hero_cta_secondary_label": "راهنمای پیش از مراجعه",
     # Lossless WebP from the 2250px master; avoids showing a visibly
     # over-compressed image in the desktop LCP slot.
     "hero_image_webp": "images/brand/hero-cinematic-frame-hq.webp",
@@ -37,15 +40,15 @@ DEFAULTS = {
     "services_label": "خدمات منتخب",
     "services_title": "خدمتی که می‌خواهید؛ با جزئیات شفاف و رزرو مستقیم.",
     "services_lede": "هر مسیر با زمان، قیمت و نتیجه‌ای که انتظار دارید مشخص است.",
-    "services_cta_label": "مشاهده خدمات",
+    "services_cta_label": "کاتالوگ کامل",
     "services_empty_message": "به‌زودی خدمات جدید اضافه می‌شود.",
-    "services_card_cta_label": "رزرو خدمات",
+    "services_card_cta_label": "رزرو این خدمت",
     "gallery_label": "نمونه کار",
     "gallery_title": "گالری",
     "gallery_lede": "نمونه‌های منتخب از اجرای خدمات در استودیو.",
-    "reviews_label": "نظرات",
-    "reviews_title": "نظرات",
-    "reviews_lede": "روایت شما از ما",
+    "reviews_label": "روایت مشتریان",
+    "reviews_title": "آن‌چه بعد از مراجعه می‌ماند.",
+    "reviews_lede": "تجربه داماد، VIP و پوست در استودیوی اصفهان — به روایت کسانی که آمده‌اند.",
     "reviews_cta_label": "همه روایت‌ها",
 }
 
@@ -75,7 +78,7 @@ DEFAULT_ASSURANCE = [
     },
     {
         "number_label": "۰۳",
-        "title": "رزرو خدمات",
+        "title": "رزرو بدون اصطکاک",
         "description": "خدمت و زمان مناسب را آنلاین انتخاب کنید و آماده مراجعه شوید.",
     },
 ]

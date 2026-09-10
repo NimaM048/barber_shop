@@ -450,7 +450,7 @@
       gallerySwiper.autoplay.stop();
     }
 
-    const closeBtn = lightbox.querySelector("[data-gallery-lb-close]");
+    const closeBtn = lightbox.querySelector("button[data-gallery-lb-close]");
     if (closeBtn) closeBtn.focus({ preventScroll: true });
   };
 

@@ -108,6 +108,10 @@
                 </div>
               </div>
               <div class="gallery-meta">
+                <div class="gallery-meta-line">
+                  <span class="gallery-meta-category">{{ item.category_title|default:"منتخب" }}</span>
+                  <span class="gallery-meta-index" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+                </div>
                 <h3 class="gallery-title">{{ item.title }}</h3>
               </div>
             </button>
@@ -150,6 +154,10 @@
     aria-labelledby="gallery-lightbox-title"
   >
     <div class="gallery-lb-backdrop" data-gallery-lb-close aria-hidden="true"></div>
+    <button type="button" class="gallery-lb-mobile-close" data-gallery-lb-close aria-label="بستن نمایش نمونه‌کار">
+      <span aria-hidden="true">✕</span>
+      <span>بستن</span>
+    </button>
 
     <div class="gallery-lb-shell">
       <header class="gallery-lb-top">

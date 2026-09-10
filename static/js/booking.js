@@ -746,7 +746,7 @@
       state.selectedDate;
 
     const rows = [
-      ["خدمات", state.service.name],
+      ["سرویس", state.service.name],
       ["تاریخ", `${state.slotsMeta?.weekday_label || ""} ${dateLabel}`.trim()],
       [
         "ساعت",
@@ -759,7 +759,10 @@
       rows.push(["توضیحات", state.form.notes.trim()]);
     }
 
-    box.innerHTML = `<dl>${rows
+    box.innerHTML = `<div class="booking-confirm-card-head">
+      <span class="booking-confirm-card-kicker">مرور رزرو</span>
+      <span class="booking-confirm-card-note">لطفاً اطلاعات را یک‌بار دیگر بررسی کنید</span>
+    </div><dl>${rows
       .map(
         ([k, v]) =>
           `<div class="booking-summary-row"><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd></div>`
@@ -773,10 +776,10 @@
     const box = qs("[data-booking-summary]");
     if (!box) return;
     if (!state.service) {
-      box.innerHTML = `<p class="booking-summary-empty">هنوز خدمتی انتخاب نشده است.</p>`;
+      box.innerHTML = `<p class="booking-summary-empty">هنوز سرویسی انتخاب نشده است.</p>`;
       return;
     }
-    const rows = [["خدمات", state.service.name]];
+    const rows = [["سرویس", state.service.name]];
     if (state.service.duration_display || state.service.duration_minutes) {
       rows.push([
         "مدت",
@@ -952,7 +955,7 @@
 
     const rows = [
       ["کد رزرو", b.booking_code],
-      ["خدمات", b.service_name],
+      ["سرویس", b.service_name],
       ["تاریخ", b.date_display],
       ["ساعت", `${b.start_time_display} تا ${b.end_time_display}`],
       ["نام", b.full_name],
@@ -1070,6 +1073,9 @@
 
     // Persist form fields as user types and clear stale field errors as they are corrected.
     els.form?.addEventListener("input", (event) => {
+      if (event.target?.name === "phone") {
+        event.target.value = event.target.value.slice(0, 11);
+      }
       readForm();
       const field = event.target;
       if (!field?.name) return;
@@ -1148,6 +1154,9 @@
     els.serviceGrid = qs("[data-service-grid]");
     els.calendar = qs("[data-calendar]");
     els.form = qs("[data-booking-form]");
+    if (els.form?.elements?.phone) {
+      els.form.elements.phone.maxLength = 11;
+    }
     return true;
   }
 
