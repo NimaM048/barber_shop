@@ -99,20 +99,6 @@ class Command(BaseCommand):
                 home.save(update_fields=[*changed, "updated_at"])
                 self.stdout.write("HomePage reviews chrome seeded.")
 
-        # Keep the public terminology consistent on existing production databases.
-        copy_updates = {
-            "hero_cta_primary_label": "رزرو خدمات",
-            "hero_cta_secondary_label": "درخواست مشاوره",
-            "services_cta_label": "مشاهده خدمات",
-            "services_card_cta_label": "رزرو خدمات",
-        }
-        changed = [field for field, value in copy_updates.items() if getattr(home, field) != value]
-        if changed:
-            for field in changed:
-                setattr(home, field, copy_updates[field])
-            home.save(update_fields=[*changed, "updated_at"])
-            self.stdout.write("Homepage public copy updated.")
-
         for page_key, defaults in PageContentService.DEFAULTS.items():
             content, created = PageContent.objects.get_or_create(page=page_key)
             if created or not content.title:
@@ -127,26 +113,6 @@ class Command(BaseCommand):
                 content.content_json = defaults.get("content_json", {})
                 content.save(update_fields=["content_json", "updated_at"])
                 self.stdout.write(f"PageContent '{page_key}' content_json updated.")
-
-            if page_key == "booking":
-                content_json = content.content_json or {}
-                ui = dict(content_json.get("ui") or {})
-                booking_copy = {
-                    "step1_title": "انتخاب خدمات",
-                    "step1_sub": "یکی از خدمات قابل رزرو را انتخاب کنید",
-                    "services_empty_title": "در حال حاضر خدمتی برای رزرو فعال نیست.",
-                    "services_error": "خطا در دریافت خدمات",
-                    "gate_back": "بازگشت به انتخاب خدمات",
-                    "gate_phase_1": "خدمت انتخاب شد",
-                }
-                ui_changed = [key for key, value in booking_copy.items() if ui.get(key) != value]
-                if ui_changed:
-                    for key in ui_changed:
-                        ui[key] = booking_copy[key]
-                    content_json["ui"] = ui
-                    content.content_json = content_json
-                    content.save(update_fields=["content_json", "updated_at"])
-                    self.stdout.write("Booking public copy updated.")
 
         booking_settings, created = BookingSettings.objects.get_or_create(key="site")
         if created:
